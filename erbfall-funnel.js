@@ -2352,7 +2352,10 @@
   function renderSituationScreen() {
 
     const selected = state.situation;
-    const heroImage = CONFIG.assets.hero;
+
+    /* Im Kompakt-Modus (schmale Hero-Karte) kein Einstiegsbild:
+       Die drei Optionen sollen ohne Scrollen sichtbar sein. */
+    const heroImage = window.BW_FUNNEL_COMPACT ? "" : CONFIG.assets.hero;
 
     return `
       <div class="bw-situation-layout${heroImage ? "" : " bw-situation-layout--no-hero"}">
