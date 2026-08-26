@@ -1534,11 +1534,11 @@
 
     steps: [
       "situation",
+      "timing",
       "property_type",
       "house_type",
       "location",
       "property_details",
-      "timing",
       "inheritance",
       "heirs",
       "financing",
@@ -1677,7 +1677,7 @@
 
     intention: null,
 
-    priority: null,
+    priority: [],
 
     inheritance: null,
 
@@ -2137,7 +2137,7 @@
         </div>
 
         <h1 class="bw-header__title">
-          Was haben Sie geerbt?
+          Um welche Immobilie geht es?
         </h1>
 
         <p class="bw-header__description">
@@ -2150,11 +2150,11 @@
 
         ${renderPropertyCard("house", "Haus", "Ein- oder Zweifamilienhaus", renderHouseIllustration(), selected === "house")}
 
-        ${renderPropertyCard("apartment", "Wohnung", "Eigentumswohnung", renderApartmentIllustration(), selected === "apartment")}
+        ${renderPropertyCard("apartment", "Eigentumswohnung", "", renderApartmentIllustration(), selected === "apartment")}
 
         ${renderPropertyCard("multi_family", "Mehrfamilienhaus", "Haus mit mehreren Wohneinheiten", renderMultiFamilyIllustration(), selected === "multi_family")}
 
-        ${renderPropertyCard("commercial", "Gewerbe", "Büro-, Handels- oder Gewerbeobjekt", renderOfficeIllustration(), selected === "commercial")}
+        ${renderPropertyCard("commercial", "Gewerbeimmobilie", "Büro-, Handels- oder Gewerbeobjekt", renderOfficeIllustration(), selected === "commercial")}
 
         ${renderPropertyCard("land", "Grundstück", "Bauland oder unbebautes Grundstück", renderLandIllustration(), selected === "land")}
 
@@ -2179,7 +2179,7 @@
 
         <span class="bw-property-card__body">
           <span class="bw-property-card__title">${title}</span>
-          <span class="bw-property-card__description">${description}</span>
+          ${description ? `<span class="bw-property-card__description">${description}</span>` : ""}
           <span class="bw-property-card__arrow" aria-hidden="true">›</span>
         </span>
       </button>
@@ -2365,16 +2365,16 @@
         </div>` : ""}
 
         <section class="bw-situation-content">
-          <h1>Wobei können wir Ihnen helfen?</h1>
+          <h1>Wobei können wir Ihnen gerade helfen?</h1>
 
           <p class="bw-situation-lead">
             Wählen Sie, was Sie gerade klären möchten.
           </p>
 
           <div class="bw-situation-options" role="group" aria-label="Ihre Situation">
-            ${renderSituationCard("value", "Was ist meine Immobilie wert?", "Marktwert meiner geerbten Immobilie einschätzen", selected === "value")}
-            ${renderSituationCard("sell_or_keep", "Was soll ich mit der Immobilie machen?", "Verkaufen, behalten oder vermieten?", selected === "sell_or_keep")}
-            ${renderSituationCard("unsure", "Ich weiß gar nicht, wo ich anfangen soll.", "Orientierung für die nächsten Schritte bekommen", selected === "unsure")}
+            ${renderSituationCard("value", "Ich möchte wissen, was meine Immobilie wert ist", "", selected === "value")}
+            ${renderSituationCard("sell_or_keep", "Ich überlege, was ich mit der Immobilie machen soll", "", selected === "sell_or_keep")}
+            ${renderSituationCard("unsure", "Ich weiß gerade nicht, was ich als Nächstes tun sollte", "", selected === "unsure")}
           </div>
 
           <div class="bw-situation-helper">
@@ -2398,7 +2398,7 @@
         <span class="bw-situation-card__number" aria-hidden="true">${SITUATION_ICONS[value] || ""}</span>
         <span>
           <span class="bw-situation-card__title">${title}</span>
-          <span class="bw-situation-card__description">${description}</span>
+          ${description ? `<span class="bw-situation-card__description">${description}</span>` : ""}
         </span>
         <span class="bw-situation-card__arrow" aria-hidden="true">›</span>
       </button>
@@ -2557,7 +2557,8 @@
   }
 
   function renderChoice(field, value, label) {
-    const selected = getChoiceValue(field) === value;
+    const current = getChoiceValue(field);
+    const selected = Array.isArray(current) ? current.includes(value) : current === value;
     return `
       <button type="button" class="bw-choice ${selected ? "bw-choice--selected" : ""}"
         aria-pressed="${selected}"
@@ -2572,15 +2573,15 @@
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Situation</div>
-        <h1 class="bw-header__title">Was möchten Sie mit der Immobilie machen?</h1>
-        <p class="bw-header__description">Es geht zunächst nur um Ihre aktuelle Tendenz.</p>
+        <h1 class="bw-header__title">Was ist aktuell Ihr Gedanke?</h1>
+        <p class="bw-header__description">Es geht nur um Ihre Tendenz – nichts davon ist verbindlich.</p>
       </div>
 
       <div class="bw-choice-grid">
         ${renderSimpleChoice("intention","sell","tag","Verkaufen")}
         ${renderSimpleChoice("intention","keep","key","Behalten")}
         ${renderSimpleChoice("intention","rent","banknote","Vermieten")}
-        ${renderSimpleChoice("intention","undecided","help","Noch nicht entschieden")}
+        ${renderSimpleChoice("intention","undecided","help","Ich bin noch unsicher")}
       </div>
 
       ${renderBackButton()}
@@ -2609,7 +2610,7 @@
       </div>
 
       <div class="bw-choice-grid">
-        ${renderSimpleChoice("inheritance","sole_heir","person","Ja, alleiniger Erbe")}
+        ${renderSimpleChoice("inheritance","sole_heir","person","Ja, ich bin alleiniger Erbe")}
         ${renderSimpleChoice("inheritance","multiple_heirs","people","Nein, wir sind mehrere Erben")}
         ${renderSimpleChoice("inheritance","unclear","help","Noch nicht geklärt")}
       </div>
@@ -2629,7 +2630,7 @@
       <div class="bw-choice-grid">
         ${renderChoice("timing","lt_6w","Vor weniger als 6 Wochen")}
         ${renderChoice("timing","w6_m6","Vor 6 Wochen bis 6 Monaten")}
-        ${renderChoice("timing","m6_y2","Vor 6 Monaten bis 2 Jahren")}
+        ${renderChoice("timing","m6_y2","Vor 6 bis 24 Monaten")}
         ${renderChoice("timing","gt_2y","Vor mehr als 2 Jahren")}
         ${renderChoice("timing","unknown","Weiß ich nicht genau")}
       </div>
@@ -2647,7 +2648,7 @@
       </div>
 
       <div class="bw-form-card">
-        <div class="bw-section-label" style="margin-top:0">Wie viele Erben gibt es?</div>
+        <div class="bw-section-label" style="margin-top:0">Wie viele Personen sind beteiligt?</div>
         <div class="bw-choice-grid">
           ${renderChoice("heirsCount","2","2")}
           ${renderChoice("heirsCount","3","3")}
@@ -2655,12 +2656,11 @@
           ${renderChoice("heirsCount","5plus","5 oder mehr")}
         </div>
 
-        <div class="bw-section-label">Wie einig sind sich die Erben?</div>
+        <div class="bw-section-label">Wie sind sich die Erben aktuell einig?</div>
         <div class="bw-choice-grid">
-          ${renderChoice("heirsAgreement","all_sell","Alle wollen verkaufen")}
-          ${renderChoice("heirsAgreement","all_keep","Alle wollen behalten")}
-          ${renderChoice("heirsAgreement","undecided","Noch keine gemeinsame Entscheidung")}
-          ${renderChoice("heirsAgreement","different","Unterschiedliche Vorstellungen")}
+          ${renderChoice("heirsAgreement","agreed","Wir sind uns einig")}
+          ${renderChoice("heirsAgreement","undecided","Es wurde noch keine Entscheidung getroffen")}
+          ${renderChoice("heirsAgreement","different","Wir haben unterschiedliche Vorstellungen")}
           ${renderChoice("heirsAgreement","dispute","Es gibt bereits Streit")}
         </div>
       </div>
@@ -2680,7 +2680,7 @@
       </div>
 
       <div class="bw-form-card">
-        <div class="bw-section-label" style="margin-top:0">Besteht noch eine Finanzierung?</div>
+        <div class="bw-section-label" style="margin-top:0">Besteht noch eine Finanzierung für die Immobilie?</div>
         <div class="bw-choice-grid">
           ${renderChoice("financing","no","Nein")}
           ${renderChoice("financing","yes","Ja")}
@@ -2688,7 +2688,7 @@
         </div>
 
         ${f.financing === "yes" ? `
-        <div class="bw-section-label">Ungefähre Restschuld</div>
+        <div class="bw-section-label">Wie hoch ist die ungefähre Restschuld?</div>
         <div class="bw-choice-grid">
           ${renderChoice("remainingDebt","lt_100k","Unter 100.000 €")}
           ${renderChoice("remainingDebt","k100_250","100.000–250.000 €")}
@@ -2697,9 +2697,9 @@
           ${renderChoice("remainingDebt","unknown","Weiß ich nicht")}
         </div>` : ""}
 
-        <div class="bw-section-label">Gibt es weitere Belastungen?</div>
+        <div class="bw-section-label">Sind Ihnen weitere Belastungen bekannt?</div>
         <div class="bw-choice-grid">
-          ${renderChoice("encumbrance","none","Keine bekannt")}
+          ${renderChoice("encumbrance","none","Keine")}
           ${renderChoice("encumbrance","grundschuld","Grundschuld")}
           ${renderChoice("encumbrance","wohnrecht","Wohnrecht")}
           ${renderChoice("encumbrance","niessbrauch","Nießbrauch")}
@@ -2717,20 +2717,21 @@
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Prioritäten</div>
-        <h1 class="bw-header__title">Was ist Ihnen bei der Entscheidung am wichtigsten?</h1>
-        <p class="bw-header__description">Danach richten wir die Empfehlungen in Ihrem Report aus.</p>
+        <h1 class="bw-header__title">Wenn Sie an die Entscheidung denken – was ist Ihnen am wichtigsten?</h1>
+        <p class="bw-header__description">Mehrfachauswahl möglich – danach richten wir die Empfehlungen in Ihrem Report aus.</p>
       </div>
 
       <div class="bw-choice-grid">
-        ${renderChoice("priority","price","Möglichst hohen Verkaufspreis erzielen")}
+        ${renderChoice("priority","price","Einen möglichst hohen Preis erzielen")}
         ${renderChoice("priority","speed","Schnell eine Lösung finden")}
-        ${renderChoice("priority","effort","Möglichst wenig Aufwand")}
-        ${renderChoice("priority","family","Immobilie in der Familie behalten")}
+        ${renderChoice("priority","effort","Möglichst wenig Aufwand haben")}
+        ${renderChoice("priority","family","Die Immobilie in der Familie behalten")}
         ${renderChoice("priority","costs","Laufende Kosten vermeiden")}
         ${renderChoice("priority","wealth","Langfristig Vermögen aufbauen")}
-        ${renderChoice("priority","unknown","Weiß ich noch nicht")}
+        ${renderChoice("priority","unknown","Ich weiß es noch nicht")}
       </div>
 
+      ${renderContinueButton()}
       ${renderBackButton()}
     `;
   }
@@ -3096,6 +3097,12 @@
       }
     }
 
+    if (state.currentStep === "priority") {
+      if (!state.priority.length) {
+        return "Bitte mindestens eine Option auswählen.";
+      }
+    }
+
     return null;
   }
 
@@ -3119,8 +3126,8 @@
     if (agr === "dispute") { pressure += 2; cx += 2; }
     else if (agr === "different") { pressure += 1; cx += 1; }
     else if (agr === "undecided") pressure += 1;
-    if (state.priority === "speed") pressure += 2;
-    else if (state.priority === "costs") pressure += 1;
+    if (state.priority.includes("speed")) pressure += 2;
+    if (state.priority.includes("costs")) pressure += 1;
 
     if (state.inheritance === "multiple_heirs") {
       cx += state.heirs.count === "5plus" ? 3 : state.heirs.count === "2" ? 1 : 2;
@@ -3224,6 +3231,29 @@
 
   function setChoice(field, value) {
 
+    /* Prioritäten: Mehrfachauswahl ohne Auto-Weiter.
+       "unknown" ist exklusiv zu allen anderen Optionen. */
+    if (field === "priority") {
+      const list = state.priority;
+      if (value === "unknown") {
+        state.priority = list.includes("unknown") ? [] : ["unknown"];
+      } else {
+        const i = list.indexOf(value);
+        if (i >= 0) {
+          list.splice(i, 1);
+        } else {
+          list.push(value);
+          const u = list.indexOf("unknown");
+          if (u >= 0) list.splice(u, 1);
+        }
+      }
+      track("option_selected", { step: state.currentStep, answer: value });
+      suppressEnterAnimation = true;
+      render();
+      suppressEnterAnimation = false;
+      return;
+    }
+
     const target = choiceTarget(field);
 
     if (target) {
@@ -3313,7 +3343,7 @@
       remaining_debt: state.finance.remainingDebt || "",
       encumbrances: state.finance.encumbrance || "",
       intention: state.intention || "",
-      priority: state.priority || "",
+      priority: state.priority.join(" | "),
       assessment_pressure: assessment.pressure,
       assessment_complexity: assessment.complexity,
       assessment_risks: assessment.risks.join(" | "),
