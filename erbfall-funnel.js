@@ -545,7 +545,8 @@
   border-right: 1px solid var(--bw-line);
 }
 
-#bw-property-funnel .bw-property-card__visual svg {
+#bw-property-funnel .bw-property-card__visual svg,
+#bw-property-funnel .bw-house-type-card__visual svg {
   width: 100%;
   height: auto;
   max-height: 68px;
@@ -1305,7 +1306,8 @@
     padding: 14px 20px 8px;
   }
 
-  #bw-property-funnel .bw-property-card__visual svg {
+  #bw-property-funnel .bw-property-card__visual svg,
+  #bw-property-funnel .bw-house-type-card__visual svg {
     max-height: 108px;
     max-width: 150px;
   }
@@ -2140,10 +2142,6 @@
           Um welche Immobilie geht es?
         </h1>
 
-        <p class="bw-header__description">
-          Wählen Sie die Art der Immobilie aus. Damit können wir die nächsten Fragen auf das Wesentliche reduzieren.
-        </p>
-
       </div>
 
       <div class="bw-property-options" role="group" aria-label="Art der Immobilie">
@@ -2159,6 +2157,8 @@
         ${renderPropertyCard("land", "Grundstück", "Bauland oder unbebautes Grundstück", renderLandIllustration(), selected === "land")}
 
       </div>
+
+      ${renderBackButton()}
 
     `;
   }
@@ -2251,6 +2251,18 @@
   }
 
 
+  function renderTwoFamilyIllustration() {
+    return bwScene(
+      '<path d="M35 70 L110 22 L185 70" fill="#DCE3EF"/>' +
+      '<path d="M49 62 V142 H171 V62" fill="#FFFFFF"/>' +
+      '<path d="M49 100 H171"/>' +
+      bwWin(63, 74) + bwWin(135, 74) + bwWin(63, 110) + bwWin(135, 110) +
+      '<rect x="98" y="108" width="24" height="34" fill="#DCE3EF"/>' +
+      '<path d="M35 70 H185"/>',
+      "M28 142 H192");
+  }
+
+
   function renderLandIllustration() {
     return bwScene(
       '<rect x="55" y="38" width="110" height="38" rx="3" fill="#FFFFFF"/>' +
@@ -2283,10 +2295,6 @@
           Welcher Haustyp ist es?
         </h1>
 
-        <p class="bw-header__description">
-          Eine grobe Einordnung reicht völlig aus.
-        </p>
-
       </div>
 
       <div class="bw-house-type-options" role="group" aria-label="Haustyp">
@@ -2311,6 +2319,8 @@
         Weiß ich nicht
       </button>
 
+      ${renderBackButton()}
+
     `;
   }
 
@@ -2323,18 +2333,29 @@
     multi_family: CONFIG.assets.houseMultiFamily
   };
 
+  /* Ohne konfiguriertes Foto zeigt die Karte eine passende
+     SVG-Illustration — jede Karte hat damit immer ein Bild. */
+  const HOUSE_TYPE_FALLBACK = {
+    two_family: renderTwoFamilyIllustration,
+    multi_family: renderMultiFamilyIllustration
+  };
+
   function renderHouseTypeCard(value, title, description, isSelected) {
+
+    const visual = HOUSE_TYPE_IMAGES[value]
+      ? `<img src="${HOUSE_TYPE_IMAGES[value]}" alt="">`
+      : (HOUSE_TYPE_FALLBACK[value] || renderHouseIllustration)();
 
     return `
       <button
-        class="bw-house-type-card ${isSelected ? "bw-house-type-card--selected" : ""}${HOUSE_TYPE_IMAGES[value] ? "" : " bw-house-type-card--no-visual"}"
+        class="bw-house-type-card ${isSelected ? "bw-house-type-card--selected" : ""}"
         type="button"
         aria-pressed="${isSelected}"
         onclick="window.BWPropertyFunnel.selectOption('houseType', '${value}')"
       >
-        ${HOUSE_TYPE_IMAGES[value] ? `<span class="bw-house-type-card__visual" aria-hidden="true">
-          <img src="${HOUSE_TYPE_IMAGES[value]}" alt="">
-        </span>` : ""}
+        <span class="bw-house-type-card__visual" aria-hidden="true">
+          ${visual}
+        </span>
         <span class="bw-house-type-card__body">
           <span class="bw-house-type-card__title">${title}</span>
           <span class="bw-property-card__description">${description}</span>
@@ -2367,11 +2388,7 @@
         <section class="bw-situation-content">
           <h1>Wobei können wir Ihnen gerade helfen?</h1>
 
-          <p class="bw-situation-lead">
-            Wählen Sie, was Sie gerade klären möchten.
-          </p>
-
-          <div class="bw-situation-options" role="group" aria-label="Ihre Situation">
+          <div class="bw-situation-options" role="group" aria-label="Ihre Situation" style="margin-top:18px">
             ${renderSituationCard("value", "Ich möchte wissen, was meine Immobilie wert ist", "", selected === "value")}
             ${renderSituationCard("sell_or_keep", "Ich überlege, was ich mit der Immobilie machen soll", "", selected === "sell_or_keep")}
             ${renderSituationCard("unsure", "Ich weiß gerade nicht, was ich als Nächstes tun sollte", "", selected === "unsure")}
@@ -2453,7 +2470,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Die Lage</div>
         <h1 class="bw-header__title">Wo befindet sich die Immobilie?</h1>
-        <p class="bw-header__description">Geben Sie Straße und Hausnummer ein. Wir ergänzen PLZ und Ort automatisch.</p>
       </div>
 
       <div class="bw-form-card">
@@ -2499,7 +2515,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Immobilie</div>
         <h1 class="bw-header__title">${isLand ? "Wie groß ist das Grundstück?" : "Ein paar Angaben zu Ihrer Immobilie"}</h1>
-        <p class="bw-header__description">Mehr brauchen wir für die erste Einschätzung nicht.</p>
       </div>
 
       <div class="bw-form-card">
@@ -2574,7 +2589,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Situation</div>
         <h1 class="bw-header__title">Was ist aktuell Ihr Gedanke?</h1>
-        <p class="bw-header__description">Es geht nur um Ihre Tendenz – nichts davon ist verbindlich.</p>
       </div>
 
       <div class="bw-choice-grid">
@@ -2606,7 +2620,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Erbensituation</div>
         <h1 class="bw-header__title">Sind Sie alleiniger Erbe?</h1>
-        <p class="bw-header__description">Eine grobe Einordnung reicht für den ersten Kontakt.</p>
       </div>
 
       <div class="bw-choice-grid">
@@ -2624,7 +2637,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Erbfall</div>
         <h1 class="bw-header__title">Wann ist der Erbfall eingetreten?</h1>
-        <p class="bw-header__description">Der Zeitpunkt bestimmt Fristen und sinnvolle nächste Schritte.</p>
       </div>
 
       <div class="bw-choice-grid">
@@ -2644,7 +2656,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Erbensituation</div>
         <h1 class="bw-header__title">Ihre Erbengemeinschaft</h1>
-        <p class="bw-header__description">Zwei kurze Angaben – sie bestimmen, was rechtlich möglich ist.</p>
       </div>
 
       <div class="bw-form-card">
@@ -2676,7 +2687,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Finanzierung</div>
         <h1 class="bw-header__title">Finanzierung &amp; Belastungen</h1>
-        <p class="bw-header__description">Eine grobe Einordnung reicht – Details klären wir später.</p>
       </div>
 
       <div class="bw-form-card">
@@ -2718,8 +2728,9 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Prioritäten</div>
         <h1 class="bw-header__title">Wenn Sie an die Entscheidung denken – was ist Ihnen am wichtigsten?</h1>
-        <p class="bw-header__description">Mehrfachauswahl möglich – danach richten wir die Empfehlungen in Ihrem Report aus.</p>
       </div>
+
+      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich</div>
 
       <div class="bw-choice-grid">
         ${renderChoice("priority","price","Einen möglichst hohen Preis erzielen")}
@@ -2744,9 +2755,6 @@
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihr Ergebnis</div>
         <h1 class="bw-header__title">Ihr persönlicher Erbfall-Report ist fertig.</h1>
-        <p class="bw-header__description">
-          Erstellt auf Basis Ihrer Angaben – wir senden ihn Ihnen kostenlos zu.
-        </p>
       </div>
 
       <div class="bw-lead-layout">
