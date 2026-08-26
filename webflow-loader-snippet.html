@@ -1,0 +1,25 @@
+<!-- IMMOBILIEN ERBFALL-FUNNEL (Code + Bilder gehostet auf GitHub) -->
+<div id="bw-property-funnel"></div>
+<script>
+  /* true = kompakte Variante fuer schmale Spalten (Hero-Karte).
+     Zeile loeschen oder false setzen = normale Variante. */
+  window.BW_FUNNEL_COMPACT = true;
+</script>
+<script src="https://cdn.jsdelivr.net/gh/DEIN-USERNAME/DEIN-REPO@main/erbfall-funnel.js" defer></script>
+
+<!-- Bilder muessen NICHT konfiguriert werden: Sie liegen im Repo neben
+     der JS-Datei und werden automatisch von dort geladen. Nur wenn du
+     einzelne Bilder ueberschreiben willst (z. B. aus Webflow-Assets),
+     kannst du VOR dem src-Script optional setzen:
+
+<script>
+  window.BW_FUNNEL_ASSETS = {
+    hero: "",
+    houseDetached: "https://...",
+    houseSemiDetached: "https://...",
+    houseTerraced: "https://...",
+    houseTwoFamily: "",
+    houseMultiFamily: ""
+  };
+</script>
+-->
