@@ -5,21 +5,14 @@
      Zeile loeschen oder false setzen = normale Variante. */
   window.BW_FUNNEL_COMPACT = true;
 </script>
-<script src="https://cdn.jsdelivr.net/gh/DEIN-USERNAME/DEIN-REPO@main/erbfall-funnel.js" defer></script>
 
-<!-- Bilder muessen NICHT konfiguriert werden: Sie liegen im Repo neben
-     der JS-Datei und werden automatisch von dort geladen. Nur wenn du
-     einzelne Bilder ueberschreiben willst (z. B. aus Webflow-Assets),
-     kannst du VOR dem src-Script optional setzen:
+<!-- EMPFOHLEN: GitHub Pages — URL bleibt fuer immer gleich,
+     Updates sind nach ~1 Minute live (einmalig aktivieren:
+     Repo → Settings → Pages → Branch "main" / Ordner "/ (root)"). -->
+<script src="https://horizonisscanned.github.io/Immo-Project/erbfall-funnel.js" defer></script>
 
-<script>
-  window.BW_FUNNEL_ASSETS = {
-    hero: "",
-    houseDetached: "https://...",
-    houseSemiDetached: "https://...",
-    houseTerraced: "https://...",
-    houseTwoFamily: "",
-    houseMultiFamily: ""
-  };
-</script>
+<!-- ALTERNATIVE (jsDelivr): Erfordert nach JEDEM Update, dass die
+     Commit-ID nach dem @ ausgetauscht wird — sonst bleibt die alte
+     Version live. Nur nutzen, wenn GitHub Pages nicht in Frage kommt.
+<script src="https://cdn.jsdelivr.net/gh/HorizonIsScanned/Immo-Project@COMMIT-ID/erbfall-funnel.js" defer></script>
 -->

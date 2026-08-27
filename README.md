@@ -44,14 +44,34 @@ Settings → Pages): `https://DEIN-USERNAME.github.io/DEIN-REPO/erbfall-funnel.j
 - Einzelne Bilder überschreiben ohne Code-Änderung: optionaler
   `window.BW_FUNNEL_ASSETS`-Block im Loader (siehe Snippet-Datei).
 
+## Hosting: GitHub Pages (empfohlen)
+
+Einmalig aktivieren: **Repo → Settings → Pages → Source „Deploy from a
+branch" → Branch `main`, Ordner `/ (root)` → Save.** Nach ein bis zwei
+Minuten liegt die Datei unter:
+
+```
+https://horizonisscanned.github.io/Immo-Project/erbfall-funnel.js
+```
+
+Diese URL ist die, die ins Webflow-Snippet gehört. Sie bleibt für immer
+gleich.
+
 ## Updates deployen
 
 1. Datei im Repo ändern (direkt auf github.com: Datei öffnen → Stift-Icon
-   → ändern → Commit changes).
-2. **jsDelivr-Cache:** Die `@main`-URL wird bis zu 12 h gecacht. Sofort
-   aktualisieren: `https://www.jsdelivr.com/tools/purge` aufrufen und die
-   Datei-URL purgen — oder GitHub Pages nutzen (cacht nur ~10 Minuten).
-3. Das Webflow-Snippet muss bei Updates NIE angefasst werden.
+   → ändern → Commit changes) oder neu hochladen.
+2. ~1 Minute warten, Seite mit Cmd+Shift+R laden. Fertig.
+3. Das Webflow-Snippet wird bei Updates **nie** angefasst.
+
+### Warum nicht jsDelivr?
+
+`cdn.jsdelivr.net/gh/…@main/…` cacht bis zu 12 Stunden und ignoriert
+`?v=`-Parameter; Purge-Aufrufe greifen nicht zuverlässig auf allen
+Edges. Die Alternative — die URL auf eine Commit-ID zu pinnen — liefert
+zwar sofort, erzwingt aber, dass nach **jedem** Update die ID im Webflow-
+Snippet ausgetauscht wird. Wird das vergessen, bleibt stillschweigend die
+alte Version live. GitHub Pages hat dieses Problem nicht.
 
 ## Lead-Webhook (Google Sheets)
 
