@@ -314,6 +314,43 @@
   color: var(--bw-white);
 }
 
+/* Kompakte Zahlen-Auswahl (Erbenanzahl) */
+#bw-property-funnel .bw-count-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#bw-property-funnel .bw-count {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1px solid var(--bw-line);
+  border-radius: var(--bw-radius-small);
+  background: var(--bw-white);
+  color: var(--bw-navy);
+  font-family: var(--bw-sans);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    border-color 150ms var(--bw-ease),
+    background 150ms var(--bw-ease);
+}
+
+#bw-property-funnel .bw-count:hover {
+  border-color: var(--bw-line-strong);
+}
+
+#bw-property-funnel .bw-count--selected {
+  border-color: var(--bw-navy);
+  background: var(--bw-tint);
+}
+
 /* =========================================================
    STEP 1 — EDITORIAL INTRO
    ========================================================= */
@@ -1572,7 +1609,10 @@
     banknote: bwIcon('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.5 9.5h.01M18.5 14.5h.01"/>'),
     help: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2a2.7 2.7 0 0 1 5.4.4c0 1.8-2.7 2.2-2.7 3.6"/><path d="M12 17h.01"/>'),
     person: bwIcon('<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>'),
-    people: bwIcon('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 5.9a3 3 0 0 1 0 5.2"/><path d="M17.5 14.6a5.5 5.5 0 0 1 3 4.9"/>')
+    people: bwIcon('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 5.9a3 3 0 0 1 0 5.2"/><path d="M17.5 14.6a5.5 5.5 0 0 1 3 4.9"/>'),
+    agree: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.4 2.4 4.6-5"/>'),
+    split: bwIcon('<path d="M10 12H3"/><path d="M6 9l-3 3 3 3"/><path d="M14 12h7"/><path d="M18 9l3 3-3 3"/>'),
+    conflict: bwIcon('<path d="M13 3 6 13.5h4.5L9 21l8-10.5h-4.5L13 3z"/>')
   };
 
   /* Icons der Situations-Karten (frueher CSS-Daten-URIs — inline spart
@@ -2651,6 +2691,31 @@
     `;
   }
 
+  /* Formular-Auswahl mit Icon-Kreis links (gleiche Optik wie die
+     Icon-Karten der Auswahl-Schritte) und Haken-Kreis rechts. */
+  function renderIconChoice(field, value, icon, label) {
+    const current = getChoiceValue(field);
+    const selected = Array.isArray(current) ? current.includes(value) : current === value;
+    return `
+      <button type="button" class="bw-choice ${selected ? "bw-choice--selected" : ""}"
+        aria-pressed="${selected}"
+        onclick="window.BWPropertyFunnel.setChoice('${field}','${value}')">
+        <span class="bw-choice__icon" aria-hidden="true">${BW_ICONS[icon] || ""}</span>
+        <span class="bw-choice__label">${label}</span>
+        <span class="bw-choice__check" aria-hidden="true">${BW_ICONS.check}</span>
+      </button>
+    `;
+  }
+
+  function renderCountChoice(value, label, ariaLabel) {
+    const selected = state.heirs.count === value;
+    return `
+      <button type="button" class="bw-count ${selected ? "bw-count--selected" : ""}"
+        aria-pressed="${selected}" aria-label="${ariaLabel}"
+        onclick="window.BWPropertyFunnel.setChoice('heirsCount','${value}')">${label}</button>
+    `;
+  }
+
   function renderHeirsScreen() {
     return `
       <div class="bw-header">
@@ -2660,19 +2725,19 @@
 
       <div class="bw-form-card">
         <div class="bw-section-label" style="margin-top:0">Wie viele Personen sind beteiligt?</div>
-        <div class="bw-choice-grid">
-          ${renderChoice("heirsCount","2","2")}
-          ${renderChoice("heirsCount","3","3")}
-          ${renderChoice("heirsCount","4","4")}
-          ${renderChoice("heirsCount","5plus","5 oder mehr")}
+        <div class="bw-count-row">
+          ${renderCountChoice("2","2","2 Erben")}
+          ${renderCountChoice("3","3","3 Erben")}
+          ${renderCountChoice("4","4","4 Erben")}
+          ${renderCountChoice("5plus","5+","5 oder mehr Erben")}
         </div>
 
         <div class="bw-section-label">Wie sind sich die Erben aktuell einig?</div>
         <div class="bw-choice-grid">
-          ${renderChoice("heirsAgreement","agreed","Wir sind uns einig")}
-          ${renderChoice("heirsAgreement","undecided","Es wurde noch keine Entscheidung getroffen")}
-          ${renderChoice("heirsAgreement","different","Wir haben unterschiedliche Vorstellungen")}
-          ${renderChoice("heirsAgreement","dispute","Es gibt bereits Streit")}
+          ${renderIconChoice("heirsAgreement","agreed","agree","Wir sind uns einig")}
+          ${renderIconChoice("heirsAgreement","undecided","help","Es wurde noch keine Entscheidung getroffen")}
+          ${renderIconChoice("heirsAgreement","different","split","Wir haben unterschiedliche Vorstellungen")}
+          ${renderIconChoice("heirsAgreement","dispute","conflict","Es gibt bereits Streit")}
         </div>
       </div>
 
