@@ -730,10 +730,11 @@
   width: 100%;
 }
 
-#bw-property-funnel .bw-navigation--back {
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 8px;
+/* Zurück-Leiste oben: auf jedem Schritt ab dem zweiten sichtbar,
+   ohne dass der Nutzer ans Seitenende scrollen muss. */
+#bw-property-funnel .bw-topnav {
+  display: flex;
+  margin: 0 0 10px -12px;
 }
 
 #bw-property-funnel .bw-back {
@@ -1308,10 +1309,6 @@
   #bw-property-funnel .bw-navigation__right .bw-button {
     width: auto;
     min-width: 200px;
-  }
-
-  #bw-property-funnel .bw-navigation--back {
-    justify-content: center;
   }
 
   /* Property + house-type: three-column cards with panels */
@@ -2032,6 +2029,8 @@
 
       <div class="bw-app ${state.currentStep === "situation" ? "bw-app--situation" : state.currentStep === "contact" ? "bw-app--report" : ""}">
 
+        ${renderTopBack()}
+
         ${renderProgress()}
 
         <main class="bw-screen${suppressEnterAnimation ? " bw-screen--no-anim" : ""}">
@@ -2198,8 +2197,6 @@
 
       </div>
 
-      ${renderBackButton()}
-
     `;
   }
 
@@ -2359,8 +2356,6 @@
         Weiß ich nicht
       </button>
 
-      ${renderBackButton()}
-
     `;
   }
 
@@ -2486,9 +2481,13 @@
     track("field_updated", { field, has_value: Boolean(String(value || "").trim()) });
   }
 
-  function renderBackButton() {
+  /* Zurück steht zentral oben im Funnel (nicht pro Screen): So hat
+     JEDER Schritt ab dem zweiten die Möglichkeit zurückzugehen, ohne
+     scrollen zu müssen — und kein neuer Screen kann sie vergessen. */
+  function renderTopBack() {
+    if (getStepNumber(state.currentStep) <= 1) return "";
     return `
-      <div class="bw-navigation bw-navigation--back">
+      <div class="bw-topnav">
         <button type="button" class="bw-back" onclick="window.BWPropertyFunnel.back()">← Zurück</button>
       </div>
     `;
@@ -2542,7 +2541,6 @@
         <div class="bw-required-note">Tipp: Je genauer Sie Straße und Hausnummer eingeben, desto genauer können wir PLZ und Ort ergänzen.</div>
       </div>
       ${renderContinueButton()}
-      ${renderBackButton()}
     `;
   }
 
@@ -2607,7 +2605,6 @@
       </div>
 
       ${renderContinueButton()}
-      ${renderBackButton()}
     `;
   }
 
@@ -2637,8 +2634,6 @@
         ${renderSimpleChoice("intention","rent","banknote","Vermieten")}
         ${renderSimpleChoice("intention","undecided","help","Ich bin noch unsicher")}
       </div>
-
-      ${renderBackButton()}
     `;
   }
 
@@ -2667,8 +2662,6 @@
         ${renderSimpleChoice("inheritance","multiple_heirs","people","Nein, wir sind mehrere Erben")}
         ${renderSimpleChoice("inheritance","unclear","help","Noch nicht geklärt")}
       </div>
-
-      ${renderBackButton()}
     `;
   }
 
@@ -2686,8 +2679,6 @@
         ${renderChoice("timing","gt_2y","Vor mehr als 2 Jahren")}
         ${renderChoice("timing","unknown","Weiß ich nicht genau")}
       </div>
-
-      ${renderBackButton()}
     `;
   }
 
@@ -2742,7 +2733,6 @@
       </div>
 
       ${renderContinueButton()}
-      ${renderBackButton()}
     `;
   }
 
@@ -2784,7 +2774,6 @@
       </div>
 
       ${renderContinueButton()}
-      ${renderBackButton()}
     `;
   }
 
@@ -2808,7 +2797,6 @@
       </div>
 
       ${renderContinueButton()}
-      ${renderBackButton()}
     `;
   }
 
@@ -2901,8 +2889,6 @@
           </div>
         </div>
       </div>
-
-      ${renderBackButton()}
     `;
   }
 
