@@ -357,19 +357,18 @@
 
 /* Report-Banner oben — visueller Blickfang über den Optionen */
 #bw-property-funnel .bw-situation-banner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 16px 18px;
-  margin-bottom: 4px;
+  gap: 18px;
+  padding: 18px 20px;
+  margin-bottom: 8px;
   border-radius: var(--bw-radius);
   background: var(--bw-tint);
 }
 
 #bw-property-funnel .bw-situation-banner__thumb {
-  flex: 0 0 auto;
-  width: 64px;
+  width: 72px;
   overflow: hidden;
   border-radius: 6px;
   background: var(--bw-white);
@@ -383,7 +382,6 @@
 }
 
 #bw-property-funnel .bw-situation-banner__text {
-  flex: 1 1 200px;
   min-width: 0;
 }
 
@@ -415,9 +413,7 @@
 }
 
 #bw-property-funnel .bw-situation-banner__badge {
-  flex: 0 0 auto;
-  margin-left: auto;
-  align-self: center;
+  justify-self: end;
   padding: 8px 16px;
   border: 1px solid var(--bw-line-strong);
   border-radius: 999px;
@@ -429,6 +425,18 @@
   text-transform: uppercase;
   color: var(--bw-navy);
   white-space: nowrap;
+}
+
+/* Schmale Ansicht: Badge unter den Text, Thumbnail + Text bleiben eine Reihe */
+@container (max-width: 520px) {
+  #bw-property-funnel .bw-situation-banner {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px 16px;
+  }
+  #bw-property-funnel .bw-situation-banner__badge {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
 }
 
 #bw-property-funnel .bw-situation-content {
@@ -2311,12 +2319,20 @@
   function renderSituationScreen() {
 
     const selected = state.situation;
-    const reportImg = CONFIG.assets.report || (SCRIPT_BASE + "erbfall_report.png");
+    /* Report-Thumbnail: bevorzugt CONFIG.assets.report; sonst aus dem
+       (funktionierenden) Hero-Pfad ableiten — gleiche Asset-Ablage,
+       nur anderer Dateiname; sonst relativ zum Script. */
+    const reportImg =
+      CONFIG.assets.report ||
+      (CONFIG.assets.hero
+        ? CONFIG.assets.hero.replace(/[^/]+$/, "erbfall_report.png")
+        : SCRIPT_BASE + "erbfall_report.png");
 
     return `
       <div class="bw-situation-banner">
         <div class="bw-situation-banner__thumb" aria-hidden="true">
-          <img src="${reportImg}" alt="">
+          <img src="${reportImg}" alt=""
+            onerror="this.closest('.bw-situation-banner__thumb').style.display='none'">
         </div>
         <div class="bw-situation-banner__text">
           <div class="bw-situation-banner__eyebrow">Ihr Ergebnis</div>
