@@ -355,29 +355,80 @@
    STEP 1 — EDITORIAL INTRO
    ========================================================= */
 
-#bw-property-funnel .bw-situation-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
-#bw-property-funnel .bw-situation-hero {
-  height: 160px;
-  overflow: hidden;
+/* Report-Banner oben — visueller Blickfang über den Optionen */
+#bw-property-funnel .bw-situation-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 18px;
+  margin-bottom: 4px;
   border-radius: var(--bw-radius);
-  background: var(--bw-panel);
+  background: var(--bw-tint);
 }
 
-#bw-property-funnel .bw-situation-hero img {
-  width: 100%;
-  height: 100%;
+#bw-property-funnel .bw-situation-banner__thumb {
+  flex: 0 0 auto;
+  width: 64px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--bw-white);
+  box-shadow: 0 6px 18px rgba(5, 27, 76, .16);
+}
+
+#bw-property-funnel .bw-situation-banner__thumb img {
   display: block;
-  object-fit: cover;
-  object-position: center;
+  width: 100%;
+  height: auto;
 }
 
-/* Fallback: ohne konfiguriertes Hero-Bild volle Breite für den Inhalt */
-#bw-property-funnel .bw-situation-layout--no-hero {
-  grid-template-columns: 1fr !important;
+#bw-property-funnel .bw-situation-banner__text {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+#bw-property-funnel .bw-situation-banner__eyebrow {
+  font-family: var(--bw-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-situation-banner__title {
+  margin-top: 3px;
+  font-family: var(--bw-serif);
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-situation-banner__sub {
+  margin-top: 4px;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-situation-banner__badge {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: center;
+  padding: 8px 16px;
+  border: 1px solid var(--bw-line-strong);
+  border-radius: 999px;
+  background: var(--bw-white);
+  font-family: var(--bw-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--bw-navy);
+  white-space: nowrap;
 }
 
 #bw-property-funnel .bw-situation-content {
@@ -1264,29 +1315,8 @@
   }
 }
 
-/* Step 1 desktop: editorial split layout */
+/* Step 1 desktop: einspaltig, nur Typo-/Karten-Feinschliff */
 @container (min-width: 960px) {
-
-  #bw-property-funnel .bw-app--situation {
-    max-width: 1180px;
-  }
-
-  #bw-property-funnel .bw-situation-layout {
-    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
-    gap: clamp(32px, 4cqw, 64px);
-    align-items: center;
-  }
-
-  #bw-property-funnel .bw-situation-hero {
-    height: 400px;
-    min-height: 0;
-    border-radius: 18px;
-  }
-
-  #bw-property-funnel .bw-situation-content {
-    max-width: 600px;
-    padding: 12px 0;
-  }
 
   #bw-property-funnel .bw-situation-content h1 {
     font-size: clamp(26px, calc(6px + 2.2cqw), 36px);
@@ -1294,24 +1324,8 @@
     letter-spacing: -.03em;
   }
 
-  #bw-property-funnel .bw-situation-lead {
-    font-size: 15px;
-    margin: 10px 0 18px;
-  }
-
   #bw-property-funnel .bw-situation-card {
-    grid-template-columns: 44px minmax(0, 1fr) 18px;
-    min-height: 76px;
     padding: 12px 16px;
-  }
-
-  #bw-property-funnel .bw-situation-card__number {
-    width: 44px;
-    height: 44px;
-  }
-
-  #bw-property-funnel .bw-situation-card__title {
-    font-size: 16px;
   }
 }
 
@@ -1321,10 +1335,6 @@
   #bw-property-funnel .bw-app {
     padding-left: 16px;
     padding-right: 16px;
-  }
-
-  #bw-property-funnel .bw-situation-hero {
-    height: 140px;
   }
 
   #bw-property-funnel .bw-property-card,
@@ -2301,33 +2311,35 @@
   function renderSituationScreen() {
 
     const selected = state.situation;
-
-    /* Im Kompakt-Modus (schmale Hero-Karte) kein Einstiegsbild:
-       Die drei Optionen sollen ohne Scrollen sichtbar sein. */
-    const heroImage = window.BW_FUNNEL_COMPACT ? "" : CONFIG.assets.hero;
+    const reportImg = CONFIG.assets.report || (SCRIPT_BASE + "erbfall_report.png");
 
     return `
-      <div class="bw-situation-layout${heroImage ? "" : " bw-situation-layout--no-hero"}">
-        ${heroImage ? `
-        <div class="bw-situation-hero" aria-hidden="true">
-          <img src="${heroImage}" alt="Typisches Haus in Rheinhessen" />
-        </div>` : ""}
-
-        <section class="bw-situation-content">
-          <h1>Wobei können wir Ihnen gerade helfen?</h1>
-
-          <div class="bw-situation-options" role="group" aria-label="Ihre Situation" style="margin-top:18px">
-            ${renderSituationCard("value", "Wert der Immobilie", "Was ist sie wert?", selected === "value")}
-            ${renderSituationCard("sell_or_keep", "Gemeinsam geerbt", "Was ist jetzt sinnvoll?", selected === "sell_or_keep")}
-            ${renderSituationCard("unsure", "Noch keine Entscheidung", "Verkaufen · behalten · vermieten", selected === "unsure")}
-          </div>
-
-          <div class="bw-situation-helper">
-            ${SITUATION_ICONS.lock}
-            Ihre Angaben werden vertraulich behandelt.
-          </div>
-        </section>
+      <div class="bw-situation-banner">
+        <div class="bw-situation-banner__thumb" aria-hidden="true">
+          <img src="${reportImg}" alt="">
+        </div>
+        <div class="bw-situation-banner__text">
+          <div class="bw-situation-banner__eyebrow">Ihr Ergebnis</div>
+          <div class="bw-situation-banner__title">Erhalten Sie Ihren persönlichen Report</div>
+          <div class="bw-situation-banner__sub">Individuell auf Ihre Situation zugeschnitten</div>
+        </div>
+        <div class="bw-situation-banner__badge">Kostenlos</div>
       </div>
+
+      <section class="bw-situation-content">
+        <h1>Was möchten Sie klären?</h1>
+
+        <div class="bw-situation-options" role="group" aria-label="Ihre Situation" style="margin-top:18px">
+          ${renderSituationCard("value", "Wert der Immobilie", "Was ist sie wert?", selected === "value")}
+          ${renderSituationCard("sell_or_keep", "Gemeinsam geerbt", "Was ist jetzt sinnvoll?", selected === "sell_or_keep")}
+          ${renderSituationCard("unsure", "Noch keine Entscheidung", "Verkaufen · behalten · vermieten", selected === "unsure")}
+        </div>
+
+        <div class="bw-situation-helper">
+          ${SITUATION_ICONS.lock}
+          Ihre Angaben werden vertraulich behandelt.
+        </div>
+      </section>
     `;
   }
 
