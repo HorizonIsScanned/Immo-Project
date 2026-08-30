@@ -732,9 +732,10 @@
 
 /* Zurück-Leiste oben: auf jedem Schritt ab dem zweiten sichtbar,
    ohne dass der Nutzer ans Seitenende scrollen muss. */
-#bw-property-funnel .bw-topnav {
+#bw-property-funnel .bw-bottomnav {
   display: flex;
-  margin: 0 0 10px -12px;
+  justify-content: center;
+  margin: 24px 0 0;
 }
 
 #bw-property-funnel .bw-back {
@@ -1099,11 +1100,14 @@
   margin: 0 auto;
 }
 
-/* Zwei angedeutete Seiten dahinter — es wirkt wie ein mehrseitiges Dokument */
+/* Zwei angedeutete Seiten dahinter — es wirkt wie ein mehrseitiges Dokument.
+   z-index 0 hält sie hinter der Seite; ohne das legt sich ::after (weiß)
+   ueber den Inhalt und die Karte wirkt leer. */
 #bw-property-funnel .bw-cover::before,
 #bw-property-funnel .bw-cover::after {
   content: "";
   position: absolute;
+  z-index: 0;
   border: 1px solid var(--bw-line);
   border-radius: 14px;
 }
@@ -1118,6 +1122,7 @@
 
 #bw-property-funnel .bw-cover__page {
   position: relative;
+  z-index: 1;
   padding: 20px 18px;
   border: 1px solid var(--bw-line);
   border-radius: 14px;
@@ -2173,8 +2178,6 @@
 
       <div class="bw-app ${state.currentStep === "situation" ? "bw-app--situation" : state.currentStep === "contact" ? "bw-app--report" : ""}">
 
-        ${renderTopBack()}
-
         ${renderProgress()}
 
         <main class="bw-screen${suppressEnterAnimation ? " bw-screen--no-anim" : ""}">
@@ -2182,6 +2185,8 @@
           ${renderCurrentScreen()}
 
         </main>
+
+        ${renderBottomBack()}
 
       </div>
 
@@ -2625,13 +2630,12 @@
     track("field_updated", { field, has_value: Boolean(String(value || "").trim()) });
   }
 
-  /* Zurück steht zentral oben im Funnel (nicht pro Screen): So hat
-     JEDER Schritt ab dem zweiten die Möglichkeit zurückzugehen, ohne
-     scrollen zu müssen — und kein neuer Screen kann sie vergessen. */
-  function renderTopBack() {
+  /* Zurück steht zentral am unteren Ende jedes Schritts (ab dem zweiten).
+     Zentraler Ort statt pro Screen: kein neuer Screen kann ihn vergessen. */
+  function renderBottomBack() {
     if (getStepNumber(state.currentStep) <= 1) return "";
     return `
-      <div class="bw-topnav">
+      <div class="bw-bottomnav">
         <button type="button" class="bw-back" onclick="window.BWPropertyFunnel.back()">← Zurück</button>
       </div>
     `;
