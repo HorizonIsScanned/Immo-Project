@@ -1067,7 +1067,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  max-width: 480px;
+  max-width: 360px;
   margin: 20px auto 0;
 }
 
@@ -1085,265 +1085,21 @@
 }
 
 /* =========================================================
-   REPORT COVER (Step 12)
-   Personalisierte Dokument-Vorschau — spiegelt die echten
-   Angaben des Nutzers (Immobilie, Situation, wichtigster
-   Punkt). Dekorativ (aria-hidden); der echte Report kommt
-   per E-Mail.
+   REPORT-VORSCHAU (Step 12)
+   Statisches Report-Bild, bewusst kleiner dargestellt.
    ========================================================= */
 
-#bw-property-funnel .bw-cover {
-  container-type: inline-size;
-  position: relative;
+#bw-property-funnel .bw-report-image {
   width: 100%;
-  max-width: 480px;
+  max-width: 360px;
   margin: 0 auto;
 }
 
-/* Zwei angedeutete Seiten dahinter — es wirkt wie ein mehrseitiges Dokument.
-   z-index 0 hält sie hinter der Seite; ohne das legt sich ::after (weiß)
-   ueber den Inhalt und die Karte wirkt leer. */
-#bw-property-funnel .bw-cover::before,
-#bw-property-funnel .bw-cover::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  border: 1px solid var(--bw-line);
-  border-radius: 14px;
-}
-#bw-property-funnel .bw-cover::before {
-  top: 10px; left: 10px; right: -8px; bottom: -8px;
-  background: var(--bw-panel);
-}
-#bw-property-funnel .bw-cover::after {
-  top: 5px; left: 5px; right: -4px; bottom: -4px;
-  background: var(--bw-white);
-}
-
-#bw-property-funnel .bw-cover__page {
-  position: relative;
-  z-index: 1;
-  padding: 20px 18px;
-  border: 1px solid var(--bw-line);
-  border-radius: 14px;
-  background: var(--bw-white);
-  box-shadow: 0 20px 48px rgba(5, 27, 76, .14);
-}
-
-#bw-property-funnel .bw-cover__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-#bw-property-funnel .bw-cover__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--bw-serif);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -.01em;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__brand-mark {
-  width: 13px;
-  height: 13px;
-  border: 2.5px solid var(--bw-navy);
-  border-radius: 50%;
-}
-#bw-property-funnel .bw-cover__brand em { font-style: italic; font-weight: 400; }
-
-#bw-property-funnel .bw-cover__confidential {
-  text-align: right;
-  font-size: 8px;
-  line-height: 1.4;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__confidential span {
+#bw-property-funnel .bw-report-image img {
   display: block;
-  font-weight: 500;
-  letter-spacing: .03em;
-  text-transform: none;
-  color: var(--bw-soft);
-}
-
-#bw-property-funnel .bw-cover__title {
-  margin: 16px 0 0;
-  font-family: var(--bw-serif);
-  font-size: 25px;
-  line-height: 1.05;
-  font-weight: 700;
-  letter-spacing: -.02em;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__rule {
-  width: 40px;
-  height: 3px;
-  margin: 12px 0;
-  border-radius: 2px;
-  background: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__lead {
-  margin: 0 0 14px;
-  font-size: 12.5px;
-  line-height: 1.4;
-  color: var(--bw-muted);
-}
-
-#bw-property-funnel .bw-cover__main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-#bw-property-funnel .bw-cover__media {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-#bw-property-funnel .bw-cover__photo {
-  height: 130px;
-  overflow: hidden;
-  border-radius: 8px;
-  background: var(--bw-panel);
-}
-#bw-property-funnel .bw-cover__photo img {
   width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-#bw-property-funnel .bw-cover__facts {
-  display: grid;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 8px;
-  background: var(--bw-panel);
-}
-#bw-property-funnel .bw-cover__fact {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 9px;
-  align-items: start;
-}
-#bw-property-funnel .bw-cover__fact svg {
-  width: 18px;
-  height: 18px;
-  color: var(--bw-navy);
-  margin-top: 1px;
-}
-#bw-property-funnel .bw-cover__fact-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__fact-value {
-  margin-top: 1px;
-  font-size: 10.5px;
-  line-height: 1.4;
-  color: var(--bw-muted);
-}
-
-#bw-property-funnel .bw-cover__toc-title {
-  margin-bottom: 10px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__toc { display: grid; gap: 12px; }
-#bw-property-funnel .bw-cover__toc-item {
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 10px;
-  align-items: start;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--bw-line);
-}
-#bw-property-funnel .bw-cover__toc-item:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-#bw-property-funnel .bw-cover__toc-icon {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--bw-line-strong);
-  border-radius: 50%;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__toc-icon svg { width: 15px; height: 15px; }
-#bw-property-funnel .bw-cover__toc-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-#bw-property-funnel .bw-cover__toc-name {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__toc-page {
-  flex: 0 0 auto;
-  font-size: 9px;
-  color: var(--bw-soft);
-}
-#bw-property-funnel .bw-cover__toc-desc {
-  margin-top: 2px;
-  font-size: 10.5px;
-  line-height: 1.4;
-  color: var(--bw-muted);
-}
-
-#bw-property-funnel .bw-cover__note {
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 10px;
-  align-items: start;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--bw-line);
-}
-#bw-property-funnel .bw-cover__note-icon {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--bw-line-strong);
-  border-radius: 50%;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__note-icon svg { width: 15px; height: 15px; }
-#bw-property-funnel .bw-cover__note-title {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--bw-navy);
-}
-#bw-property-funnel .bw-cover__note-text {
-  margin-top: 4px;
-  font-size: 10.5px;
-  line-height: 1.45;
-  color: var(--bw-muted);
-}
-
-/* Ab genügend Breite: Foto + Eckdaten links, Inhaltsverzeichnis rechts */
-@container (min-width: 420px) {
-  #bw-property-funnel .bw-cover__main { grid-template-columns: 1fr 1fr; }
-  #bw-property-funnel .bw-cover__photo { height: 150px; }
+  height: auto;
+  border-radius: var(--bw-radius);
 }
 
 /* =========================================================
@@ -1499,11 +1255,11 @@
   /* Report links als Blickfang, Formular rechts als Handlung —
      der Report-Schritt bekommt dafür mehr Containerbreite. */
   #bw-property-funnel .bw-app--report {
-    max-width: 1060px;
+    max-width: 940px;
   }
 
   #bw-property-funnel .bw-lead-layout {
-    grid-template-columns: minmax(0, 500px) minmax(300px, 1fr);
+    grid-template-columns: 360px minmax(0, 1fr);
     gap: 36px;
   }
 }
@@ -1697,7 +1453,8 @@
       houseSemiDetached: SCRIPT_BASE + "haus-doppelhaushaelfte.png",
       houseTerraced: SCRIPT_BASE + "haus-reihenhaus.png",
       houseTwoFamily: "",
-      houseMultiFamily: ""
+      houseMultiFamily: "",
+      report: SCRIPT_BASE + "erbfall_report.png"
     },
 
     steps: [
@@ -1751,19 +1508,6 @@
     sell_or_keep: bwIcon('<path d="M16 5v22"/><path d="M8 9h16"/><path d="M5 9l-4 7h8l-4-7Z"/><path d="M27 9l-4 7h8l-4-7Z"/><path d="M11 27h10"/>', "0 0 32 32"),
     unsure: bwIcon('<circle cx="16" cy="16" r="11"/><path d="M20 12l-3 7-7 3 3-7 7-3Z"/>', "0 0 32 32"),
     lock: bwIcon('<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>')
-  };
-
-  /* Icons der Report-Vorschau (Step 12). Waage/Kompass werden aus den
-     Situations-Icons wiederverwendet — dieselbe Linien-Sprache. */
-  const REPORT_ICONS = {
-    home: bwIcon('<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10.5V20h12v-9.5"/><path d="M10 20v-5h4v5"/>'),
-    scales: SITUATION_ICONS.sell_or_keep,
-    doc: bwIcon('<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'),
-    euro: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M15.5 8.6a4.4 4.4 0 1 0 0 6.8"/><path d="M6.8 11h6.2M6.8 13.4h5.2"/>'),
-    compass: SITUATION_ICONS.unsure,
-    people: BW_ICONS.people,
-    lock: SITUATION_ICONS.lock,
-    info: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M12 11.5v4.5"/><path d="M12 8h.01"/>')
   };
 
 
@@ -2982,154 +2726,15 @@
 
   /* =========================================================
      REPORT COVER (Step 12)
-     Baut die personalisierte Dokument-Vorschau aus dem State.
+     Statische Report-Vorschau (erbfall_report.png), kleiner
+     dargestellt. Dekorativ; der echte Report kommt per E-Mail.
      ========================================================= */
 
   function renderReportCover() {
-    const a = state.address;
-    const assessment = computeAssessment();
-
-    const propNames = {
-      house: "Wohnhaus",
-      apartment: "Eigentumswohnung",
-      multi_family: "Mehrfamilienhaus",
-      commercial: "Gewerbeimmobilie",
-      land: "Grundstück"
-    };
-    const propertyLabel = propNames[state.propertyType] || "Immobilie";
-    const standort = a.city
-      ? esc([a.postalCode, a.city].filter(Boolean).join(" "))
-      : "Deutschland";
-
-    const situationLines = [];
-    if (state.inheritance === "multiple_heirs") {
-      situationLines.push(
-        "Erbengemeinschaft mit mehreren Erben" +
-        (state.heirs.count ? " (" + (state.heirs.count === "5plus" ? "5+" : state.heirs.count) + ")" : "")
-      );
-    } else if (state.inheritance === "sole_heir") {
-      situationLines.push("Alleiniger Erbe");
-    } else {
-      situationLines.push("Erbfolge noch nicht abschließend geklärt");
-    }
-    if (state.finance.financing === "yes") situationLines.push("Laufende Finanzierung");
-    if (state.property.usage === "vacant") situationLines.push("Immobilie steht aktuell leer");
-
-    const months = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-    const now = new Date();
-    const dateStr = now.getDate() + ". " + months[now.getMonth()] + " " + now.getFullYear();
-
-    const forWhom = state.inheritance === "multiple_heirs" ? "Ihre Erbengemeinschaft" : "Ihre Immobilie";
-    const financeDesc = state.finance.financing === "yes"
-      ? "Einordnung der laufenden Finanzierung und Optionen für die Ablösung."
-      : "Einordnung möglicher Finanzierungs- und Kostenfaktoren.";
-
-    /* Erste Notiz-Zeile aus den stärksten Faktoren des Nutzers. */
-    const factors = [];
-    if (state.inheritance === "multiple_heirs") factors.push("mehrere Erben");
-    if (state.finance.financing === "yes") factors.push("eine laufende Finanzierung");
-    if (state.timing === "lt_6w") factors.push("die noch offene Ausschlagungsfrist");
-    if (state.property.usage === "vacant") factors.push("der aktuelle Leerstand");
-    if (state.heirs.agreement === "dispute" || state.heirs.agreement === "different") {
-      factors.push("unterschiedliche Vorstellungen in der Familie");
-    }
-    let noteLead;
-    if (!factors.length) {
-      noteLead = "Ihre Angaben ergeben ein klares Bild für die nächsten Schritte.";
-    } else if (factors.length === 1) {
-      noteLead = "Ein Aspekt wie " + factors[0] + " macht die nächsten Schritte besonders relevant.";
-    } else {
-      noteLead = "Faktoren wie " + factors[0] + " und " + factors[1] + " machen die nächsten Schritte besonders relevant.";
-    }
-
-    const toc = [
-      ["home", "Werte &amp; Bewertung", "Einschätzung des Immobilienwerts und erbschaftsrelevanter Werte in Ihrer Situation.", "Seite 04"],
-      ["scales", "Ihre Optionen", "Verkaufen, behalten oder vermieten – mit Vor- und Nachteilen.", "Seite 08"],
-      ["doc", "Recht &amp; Steuern", "Wichtige rechtliche und steuerliche Aspekte, die Sie kennen sollten.", "Seite 14"],
-      ["euro", "Finanzierung", financeDesc, "Seite 18"],
-      ["compass", "Ihr Fahrplan", "Konkrete Empfehlungen und priorisierte nächste Schritte für Ihre Situation.", "Seite 22"]
-    ];
-
-    const photo = CONFIG.assets.hero;
-
+    const src = CONFIG.assets.report || (SCRIPT_BASE + "erbfall_report.png");
     return `
-      <div class="bw-cover" aria-hidden="true">
-        <div class="bw-cover__page">
-          <div class="bw-cover__top">
-            <div class="bw-cover__brand">
-              <span class="bw-cover__brand-mark"></span>
-              <span><em>Immobilien</em> Punkt</span>
-            </div>
-            <div class="bw-cover__confidential">Vertraulich<span>Persönlich &amp; individuell</span></div>
-          </div>
-
-          <h2 class="bw-cover__title">Ihr persönlicher Erbfall-Report</h2>
-          <div class="bw-cover__rule"></div>
-          <p class="bw-cover__lead">Individuelle Einschätzung und Empfehlungen für ${forWhom}.</p>
-
-          <div class="bw-cover__main">
-            <div class="bw-cover__media">
-              ${photo ? `<div class="bw-cover__photo"><img src="${photo}" alt=""></div>` : ""}
-              <div class="bw-cover__facts">
-                <div class="bw-cover__fact">
-                  ${REPORT_ICONS.home}
-                  <div>
-                    <div class="bw-cover__fact-label">Ihre Immobilie</div>
-                    <div class="bw-cover__fact-value">${propertyLabel}<br>Standort: ${standort}</div>
-                  </div>
-                </div>
-                <div class="bw-cover__fact">
-                  ${REPORT_ICONS.people}
-                  <div>
-                    <div class="bw-cover__fact-label">Ihre Situation</div>
-                    <div class="bw-cover__fact-value">${situationLines.slice(0, 3).map(esc).join("<br>")}</div>
-                  </div>
-                </div>
-                <div class="bw-cover__fact">
-                  ${REPORT_ICONS.doc}
-                  <div>
-                    <div class="bw-cover__fact-label">Datum der Auswertung</div>
-                    <div class="bw-cover__fact-value">${dateStr}</div>
-                  </div>
-                </div>
-                <div class="bw-cover__fact">
-                  ${REPORT_ICONS.lock}
-                  <div>
-                    <div class="bw-cover__fact-label">Vertraulichkeit</div>
-                    <div class="bw-cover__fact-value">Ausschließlich für Sie bestimmt und vertraulich zu behandeln.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bw-cover__toc-wrap">
-              <div class="bw-cover__toc-title">Das erwartet Sie</div>
-              <div class="bw-cover__toc">
-                ${toc.map(function (item) {
-                  return `
-                  <div class="bw-cover__toc-item">
-                    <div class="bw-cover__toc-icon">${REPORT_ICONS[item[0]] || ""}</div>
-                    <div>
-                      <div class="bw-cover__toc-head">
-                        <span class="bw-cover__toc-name">${item[1]}</span>
-                        <span class="bw-cover__toc-page">${item[3]}</span>
-                      </div>
-                      <div class="bw-cover__toc-desc">${item[2]}</div>
-                    </div>
-                  </div>`;
-                }).join("")}
-              </div>
-            </div>
-          </div>
-
-          <div class="bw-cover__note">
-            <div class="bw-cover__note-icon">${REPORT_ICONS.info}</div>
-            <div>
-              <div class="bw-cover__note-title">Besonders wichtig in Ihrer Situation</div>
-              <div class="bw-cover__note-text">${esc(noteLead)} Unser Report zeigt Ihnen, worauf Sie jetzt achten sollten und wie Sie Klarheit schaffen.</div>
-            </div>
-          </div>
-        </div>
+      <div class="bw-report-image">
+        <img src="${src}" alt="Beispiel: persönlicher Erbfall-Report" loading="lazy">
       </div>
     `;
   }
