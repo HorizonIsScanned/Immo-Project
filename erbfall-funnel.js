@@ -1530,12 +1530,16 @@
 
 /* ---- App ---- */
 (function () {
+
   "use strict";
 
   /* =========================================================
      CONFIGURATION
      ========================================================= */
 
+  /* Basis-URL des ladenden Scripts: Wird der Funnel als externe Datei
+     (GitHub/CDN) geladen, findet er Bilder automatisch neben sich.
+     Bei Inline-Einbettung ist die Basis leer -> relative Pfade. */
   const SCRIPT_BASE = (function () {
     const s = document.currentScript;
     return s && s.src ? s.src.replace(/\/[^/]*$/, "/") : "";
@@ -1544,8 +1548,17 @@
   const CONFIG = {
     funnelName: "inheritance_property",
 
+    /* Lead-Übertragung an Google Sheets:
+       Die Web-App-URL aus dem Apps-Script-Deployment hier eintragen
+       (Format: https://script.google.com/macros/s/…/exec).
+       Solange sie leer ist, wird der Lead NICHT übertragen und nur
+       eine Warnung in der Konsole ausgegeben. */
     leadWebhookUrl: "https://script.google.com/macros/s/AKfycbyev7rNvjZRK2xkEAcMOXCULNwHxfSvr8jsICZGKQvng9CMWiZOlr-i8GpRmTdN249Z_g/exec",
 
+    /* Bild-URLs.
+       Im Webflow-Embed werden sie über window.BW_FUNNEL_ASSETS
+       gesetzt (kleiner Konfigurationsblock am Anfang des Embeds).
+       Die relativen Dateinamen hier sind der lokale Fallback. */
     assets: window.BW_FUNNEL_ASSETS || {
       hero: SCRIPT_BASE + "hero-rheinhessen.jpg",
       houseDetached: SCRIPT_BASE + "haus-freistehend.png",
@@ -1555,8 +1568,6 @@
       houseMultiFamily: ""
     },
 
-    /* Authoritative funnel sequence. Conditional steps are filtered
-       dynamically by getActiveSteps(). */
     steps: [
       "situation",
       "timing",
@@ -1573,10 +1584,15 @@
     ]
   };
 
+
   /* =========================================================
      ICON SET
+     One consistent line-icon language (1.7px stroke, navy via
+     currentColor) replacing the previous emoji/glyph mix.
      ========================================================= */
 
+  /* Ein gemeinsamer SVG-Rahmen statt sieben kopierter — spart im
+     minifizierten Embed mehrere hundert Zeichen. */
   function bwIcon(body, viewBox, strokeWidth) {
     return '<svg viewBox="' + (viewBox || "0 0 24 24") +
       '" fill="none" stroke="currentColor" stroke-width="' + (strokeWidth || "1.7") +
@@ -1584,42 +1600,60 @@
   }
 
   const BW_ICONS = {
-    check: bwIcon('<path d="M3 12.5l5.2 5L21 5.5"/>'),
-    arrow: bwIcon('<path d="M5 12h14M13 6l6 6-6 6"/>'),
-    person: bwIcon('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/>'),
-    people: bwIcon('<circle cx="9" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M3.5 20c.6-3.7 2.5-5.5 5.5-5.5s4.9 1.8 5.5 5.5M14 14.8c2.9-.7 5.1 1.2 6 5.2"/>'),
-    help: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.7 2.7 0 1 1 4.4 2.1c-1.3 1-2 1.5-2 3"/><path d="M12 17.5h.01"/>'),
-    tag: bwIcon('<path d="M4 5h8l7 7-7 7-8-8V5Z"/><circle cx="8" cy="9" r="1.2"/>'),
-    key: bwIcon('<circle cx="8.5" cy="15.5" r="4"/><path d="m11.5 12.5 7-7M15 7l2 2M17 5l2 2"/>'),
-    banknote: bwIcon('<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9h.01M18 15h.01"/>'),
-    agree: bwIcon('<path d="m4 12 4.5 4.5L20 5"/>'),
-    split: bwIcon('<path d="M5 5v14M5 12h7M12 12l6-6M12 12l6 6"/>'),
-    conflict: bwIcon('<path d="M7 4v16M17 4v16M7 8h10M7 16h10"/>'),
-    lock: bwIcon('<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>')
+    check: bwIcon('<path d="M3 8.5l3.2 3.2L13 5"/>', "0 0 16 16", "2.2"),
+    tag: bwIcon('<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z"/><line x1="7" y1="7" x2="7.01" y2="7"/>'),
+    key: bwIcon('<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>'),
+    banknote: bwIcon('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.5 9.5h.01M18.5 14.5h.01"/>'),
+    help: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2a2.7 2.7 0 0 1 5.4.4c0 1.8-2.7 2.2-2.7 3.6"/><path d="M12 17h.01"/>'),
+    person: bwIcon('<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>'),
+    people: bwIcon('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 5.9a3 3 0 0 1 0 5.2"/><path d="M17.5 14.6a5.5 5.5 0 0 1 3 4.9"/>'),
+    agree: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.4 2.4 4.6-5"/>'),
+    split: bwIcon('<path d="M10 12H3"/><path d="M6 9l-3 3 3 3"/><path d="M14 12h7"/><path d="M18 9l3 3-3 3"/>'),
+    conflict: bwIcon('<path d="M13 3 6 13.5h4.5L9 21l8-10.5h-4.5L13 3z"/>')
   };
 
+  /* Icons der Situations-Karten (frueher CSS-Daten-URIs — inline spart
+     im Embed mehrere hundert Zeichen) */
   const SITUATION_ICONS = {
-    value: bwIcon('<path d="M4 17 10 11l4 4 6-7"/><path d="M15 8h5v5"/>'),
-    sell_or_keep: BW_ICONS.people,
-    unsure: BW_ICONS.help,
-    lock: BW_ICONS.lock
+    value: bwIcon('<path d="M4 25h24"/><path d="M6 22l6-6 5 3 9-10"/><path d="M20 9h6v6"/>', "0 0 32 32", "1.8"),
+    sell_or_keep: bwIcon('<path d="M16 5v22"/><path d="M8 9h16"/><path d="M5 9l-4 7h8l-4-7Z"/><path d="M27 9l-4 7h8l-4-7Z"/><path d="M11 27h10"/>', "0 0 32 32"),
+    unsure: bwIcon('<circle cx="16" cy="16" r="11"/><path d="M20 12l-3 7-7 3 3-7 7-3Z"/>', "0 0 32 32"),
+    lock: bwIcon('<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>')
   };
+
 
   /* =========================================================
-     TRANSITION / SESSION / ATTRIBUTION
+     TRANSITION STATE
+     Guards double-taps and lets a selection register visually
+     for a beat before the next screen enters.
      ========================================================= */
 
   let isTransitioning = false;
   let suppressEnterAnimation = false;
-  let lastProgressPct = 0;
+
+
+  /* =========================================================
+     SESSION ID
+     ========================================================= */
 
   function createSessionId() {
-    return "bw_" + Date.now().toString(36) + "_" +
-      Math.random().toString(36).substring(2, 10);
+    return (
+      "bw_" +
+      Date.now().toString(36) +
+      "_" +
+      Math.random().toString(36).substring(2, 10)
+    );
   }
 
+
+  /* =========================================================
+     ATTRIBUTION
+     ========================================================= */
+
   function getAttribution() {
+
     const params = new URLSearchParams(window.location.search);
+
     return {
       utmSource: params.get("utm_source") || "",
       utmMedium: params.get("utm_medium") || "",
@@ -1631,19 +1665,25 @@
     };
   }
 
+
   /* =========================================================
      CENTRAL STATE
      ========================================================= */
 
   const state = {
+
     sessionId: createSessionId(),
+
     startedAt: Date.now(),
+
     currentStep: null,
+
     stepStartedAt: null,
 
     situation: null,
-    timing: null,
+
     propertyType: null,
+
     houseType: null,
 
     address: {
@@ -1660,18 +1700,16 @@
       floor: "",
       condition: null,
       usage: null,
-      rentalIncome: "",
-      monthlyColdRent: "",
-      units: "",
-      numberOfUnits: ""
+      rentIncome: "",
+      units: ""
     },
 
-    inheritance: null,
+    timing: null,
 
     heirs: {
       count: null,
       agreement: null,
-      familyTakeover: null
+      takeover: null
     },
 
     finance: {
@@ -1681,7 +1719,10 @@
     },
 
     intention: null,
+
     priority: [],
+
+    inheritance: null,
 
     contact: {
       firstName: "",
@@ -1693,28 +1734,64 @@
     attribution: getAttribution()
   };
 
+
   /* =========================================================
      TRACKING
      ========================================================= */
 
   function track(eventName, properties = {}) {
+
     const payload = {
       event: eventName,
+
       funnel_name: CONFIG.funnelName,
+
       session_id: state.sessionId,
+
       timestamp: new Date().toISOString(),
+
       ...properties
     };
 
+
+    /* ---------------------------------------------
+       Google Tag Manager / dataLayer
+       --------------------------------------------- */
+
     window.dataLayer = window.dataLayer || [];
+
     window.dataLayer.push(payload);
+
+
+    /* ---------------------------------------------
+       Future API endpoint
+       --------------------------------------------- */
+
+    /*
+      Später können wir hier beispielsweise:
+
+      fetch("/api/funnel-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      hinzufügen.
+
+      Für Version 1 senden wir Tracking
+      zunächst nur an dataLayer.
+    */
   }
+
 
   /* =========================================================
      STEP HELPERS
      ========================================================= */
 
   function getActiveSteps() {
+
     return CONFIG.steps.filter(function (step) {
       if (step === "house_type") return state.propertyType === "house";
       if (step === "heirs") return state.inheritance === "multiple_heirs";
@@ -1722,197 +1799,256 @@
     });
   }
 
+
   function getStepNumber(step) {
-    const index = getActiveSteps().indexOf(step);
-    return index >= 0 ? index + 1 : 0;
+
+    const activeSteps = getActiveSteps();
+
+    return activeSteps.indexOf(step) + 1;
   }
 
+
   function getTotalSteps() {
+
     return getActiveSteps().length;
   }
 
+
+  /* =========================================================
+     STEP ENTRY
+     ========================================================= */
+
   function enterStep(step) {
-    if (!step) return;
 
     state.currentStep = step;
+
     state.stepStartedAt = Date.now();
 
+
     track("step_viewed", {
+
       step: step,
+
       step_number: getStepNumber(step),
+
       total_steps: getTotalSteps()
+
     });
+
 
     render();
 
+    /* A new step must open at its headline. Without this, a tap
+       near the bottom of a long screen lands the user mid-page. */
     const funnelRoot = document.getElementById("bw-property-funnel");
     if (funnelRoot) {
-      const funnelTop = funnelRoot.getBoundingClientRect().top + window.pageYOffset;
+      const funnelTop =
+        funnelRoot.getBoundingClientRect().top + window.pageYOffset;
       if (window.pageYOffset > funnelTop + 8) {
-        window.scrollTo({
-          top: Math.max(funnelTop - 8, 0),
-          behavior: "auto"
-        });
+        window.scrollTo({ top: Math.max(funnelTop - 8, 0), behavior: "auto" });
       }
     }
   }
 
-  function exitStep(extra = {}) {
-    if (!state.currentStep || !state.stepStartedAt) return;
 
-    const durationSeconds = (Date.now() - state.stepStartedAt) / 1000;
+  /* =========================================================
+     STEP EXIT
+     ========================================================= */
+
+  function exitStep(extra = {}) {
+
+    if (!state.currentStep || !state.stepStartedAt) {
+      return;
+    }
+
+
+    const durationSeconds =
+      (Date.now() - state.stepStartedAt) / 1000;
+
 
     track("step_completed", {
+
       step: state.currentStep,
+
       step_number: getStepNumber(state.currentStep),
-      duration_seconds: Math.round(durationSeconds * 10) / 10,
+
+      duration_seconds:
+        Math.round(durationSeconds * 10) / 10,
+
       ...extra
+
     });
+
 
     state.stepStartedAt = null;
   }
 
+
+  /* =========================================================
+     NEXT STEP
+     ========================================================= */
+
   function goNext(data = {}) {
-    const activeSteps = getActiveSteps();
-    const currentIndex = activeSteps.indexOf(state.currentStep);
 
     exitStep(data);
+
+
+    const activeSteps = getActiveSteps();
+
+    const currentIndex =
+      activeSteps.indexOf(state.currentStep);
+
 
     if (currentIndex === -1) {
       enterStep(activeSteps[0]);
       return;
     }
 
-    const nextStep = activeSteps[currentIndex + 1];
+
+    const nextStep =
+      activeSteps[currentIndex + 1];
+
 
     if (!nextStep) {
+
+      track("funnel_completed", {
+
+        total_duration_seconds:
+          Math.round(
+            (Date.now() - state.startedAt) / 1000
+          )
+
+      });
+
       return;
     }
+
 
     enterStep(nextStep);
   }
 
-  function goBack() {
-    if (isTransitioning) return;
-
-    track("back_clicked", { step: state.currentStep });
-
-    const activeSteps = getActiveSteps();
-    const currentIndex = activeSteps.indexOf(state.currentStep);
-
-    if (currentIndex <= 0) return;
-
-    enterStep(activeSteps[currentIndex - 1]);
-  }
 
   /* =========================================================
-     STATE RESET FOR CONDITIONAL ROUTING
+     BACK
      ========================================================= */
 
-  function clearHouseSpecificState() {
-    state.houseType = null;
-  }
+  function goBack() {
 
-  function clearHeirsState() {
-    state.heirs.count = null;
-    state.heirs.agreement = null;
-    state.heirs.familyTakeover = null;
-  }
+    track("back_clicked", {
 
-  function clearRentalState() {
-    state.property.rentalIncome = "";
-    state.property.monthlyColdRent = "";
-  }
+      step: state.currentStep
 
-  function clearUnusedPropertyState() {
-    const t = state.propertyType;
-
-    if (t !== "apartment") state.property.floor = "";
-
-    if (t !== "house" && t !== "multi_family" && t !== "land") {
-      state.property.plotSize = "";
-    }
-
-    if (t !== "commercial" && t !== "multi_family") {
-      state.property.numberOfUnits = "";
-      state.property.units = "";
-    }
-
-    if (state.property.usage !== "rented") {
-      clearRentalState();
-    }
-  }
-
-  function selectOption(step, value) {
-    if (isTransitioning) return;
-
-    if (step === "propertyType") {
-      state.propertyType = value;
-      clearHouseSpecificState();
-      clearUnusedPropertyState();
-    } else if (step === "houseType") {
-      state.houseType = value;
-    } else if (step === "situation") {
-      state.situation = value;
-    } else if (step === "timing") {
-      state.timing = value;
-    } else if (step === "inheritance") {
-      state.inheritance = value;
-      if (value !== "multiple_heirs") clearHeirsState();
-    } else if (step === "intention") {
-      state.intention = value;
-    } else {
-      state[step] = value;
-    }
-
-    track("option_selected", {
-      step: step,
-      answer: value
     });
 
+
+    const activeSteps = getActiveSteps();
+
+    const currentIndex =
+      activeSteps.indexOf(state.currentStep);
+
+
+    if (currentIndex <= 0) {
+      return;
+    }
+
+
+    const previousStep =
+      activeSteps[currentIndex - 1];
+
+
+    enterStep(previousStep);
+  }
+
+
+  /* =========================================================
+     OPTION SELECTION
+     ========================================================= */
+
+  function selectOption(
+    step,
+    value
+  ) {
+
+    if (isTransitioning) {
+      return;
+    }
+
+    isTransitioning = true;
+
+    state[step] = value;
+
+    /* Zurück + Wechsel Haus -> Wohnung/MFH: der alte Haustyp darf nicht
+       im Lead-Payload hängen bleiben. */
     if (step === "propertyType" && value !== "house") {
       state.houseType = null;
     }
 
-    if (step === "inheritance" && value !== "multiple_heirs") {
-      clearHeirsState();
-    }
 
+    track("option_selected", {
+
+      step: step,
+
+      answer: value
+
+    });
+
+
+    /* Show the selected state for a beat, then advance. */
     suppressEnterAnimation = true;
     render();
     suppressEnterAnimation = false;
 
-    isTransitioning = true;
     window.setTimeout(function () {
+
       isTransitioning = false;
-      goNext({ answer: value });
+
+      goNext({
+
+        answer: value
+
+      });
+
     }, 180);
   }
+
 
   /* =========================================================
      RENDER ROOT
      ========================================================= */
 
   function render() {
-    const root = document.getElementById("bw-property-funnel");
-    if (!root) return;
 
-    root.innerHTML =
-      '<div class="bw-app ' +
-      (state.currentStep === "situation"
-        ? "bw-app--situation"
-        : state.currentStep === "contact"
-          ? "bw-app--report"
-          : "") +
-      '">' +
-      renderTopBack() +
-      renderProgress() +
-      '<main class="bw-screen' +
-      (suppressEnterAnimation ? " bw-screen--no-anim" : "") +
-      '">' +
-      renderCurrentScreen() +
-      "</main></div>";
+    const root =
+      document.getElementById(
+        "bw-property-funnel"
+      );
 
+
+    if (!root) {
+      return;
+    }
+
+
+    root.innerHTML = `
+
+      <div class="bw-app ${state.currentStep === "situation" ? "bw-app--situation" : state.currentStep === "contact" ? "bw-app--report" : ""}">
+
+        ${renderTopBack()}
+
+        ${renderProgress()}
+
+        <main class="bw-screen${suppressEnterAnimation ? " bw-screen--no-anim" : ""}">
+
+          ${renderCurrentScreen()}
+
+        </main>
+
+      </div>
+
+    `;
+
+    /* Der Balken startet auf dem alten Stand und gleitet dann zum neuen —
+       innerHTML allein würde die width-Transition nie auslösen. */
     const bar = root.querySelector(".bw-progress__bar");
     if (bar) {
       const target = bar.getAttribute("data-target") || "0";
@@ -1925,365 +2061,308 @@
     }
   }
 
+  let lastProgressPct = 0;
+
+
+  /* =========================================================
+     PROGRESS
+     ========================================================= */
+
   function renderProgress() {
-    const current = getStepNumber(state.currentStep);
-    const total = getTotalSteps();
-    const percentage = total > 0 ? (current / total) * 100 : 0;
+
+    const current =
+      getStepNumber(state.currentStep);
+
+    const total =
+      getTotalSteps();
+
+    const percentage =
+      total > 0
+        ? (current / total) * 100
+        : 0;
+
 
     return `
-      <div class="bw-progress" aria-label="Funnel-Fortschritt">
+
+      <div class="bw-progress">
+
         <div class="bw-progress__meta">
-          <span>Schritt ${current} von ${total}</span>
-          <span>${Math.round(percentage)} %</span>
+
+          <span>
+            Schritt ${current} von ${total}
+          </span>
+
+          <span>
+            ${Math.round(percentage)} %
+          </span>
+
         </div>
+
+
         <div class="bw-progress__track">
-          <div class="bw-progress__bar"
-               style="width:${lastProgressPct}%"
-               data-target="${percentage}"></div>
+
+          <div
+            class="bw-progress__bar"
+            style="width: ${lastProgressPct}%"
+            data-target="${percentage}"
+          ></div>
+
         </div>
+
       </div>
+
     `;
   }
+
+
+  /* =========================================================
+     CURRENT SCREEN ROUTER
+     ========================================================= */
 
   function renderCurrentScreen() {
+
     switch (state.currentStep) {
-      case "situation": return renderSituationScreen();
-      case "timing": return renderTimingScreen();
-      case "property_type": return renderPropertyTypeScreen();
-      case "house_type": return renderHouseTypeScreen();
-      case "location": return renderLocationScreen();
-      case "property_details": return renderPropertyDetailsScreen();
-      case "inheritance": return renderInheritanceScreen();
-      case "heirs": return renderHeirsScreen();
-      case "financing": return renderFinancingScreen();
-      case "intention": return renderIntentionScreen();
-      case "priority": return renderPriorityScreen();
-      case "contact": return renderContactScreen();
-      default: return renderSituationScreen();
+
+      case "situation":
+        return renderSituationScreen();
+
+      case "property_type":
+        return renderPropertyTypeScreen();
+
+      case "house_type":
+        return renderHouseTypeScreen();
+
+      case "location":
+        return renderLocationScreen();
+
+      case "property_details":
+        return renderPropertyDetailsScreen();
+
+      case "timing":
+        return renderTimingScreen();
+
+      case "inheritance":
+        return renderInheritanceScreen();
+
+      case "heirs":
+        return renderHeirsScreen();
+
+      case "financing":
+        return renderFinancingScreen();
+
+      case "intention":
+        return renderIntentionScreen();
+
+      case "priority":
+        return renderPriorityScreen();
+
+      case "contact":
+        return renderContactScreen();
+
+      default:
+        return renderSituationScreen();
     }
   }
+
 
   /* =========================================================
-     FORM HELPERS
-     ========================================================= */
-
-  function esc(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/"/g, "&quot;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
-
-  function updateField(path, value) {
-    const parts = path.split(".");
-    let target = state;
-
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!target[parts[i]]) target[parts[i]] = {};
-      target = target[parts[i]];
-    }
-
-    target[parts[parts.length - 1]] = value;
-
-    if (path === "property.usage" && value !== "rented") {
-      clearRentalState();
-    }
-
-    if (path === "property.livingSpace" ||
-        path === "property.plotSize" ||
-        path === "property.yearBuilt" ||
-        path === "property.floor" ||
-        path === "property.rentalIncome" ||
-        path === "property.monthlyColdRent" ||
-        path === "property.numberOfUnits" ||
-        path === "property.units" ||
-        path === "address.postalCode" ||
-        path === "address.city") {
-      trackField(path, value);
-    }
-  }
-
-  function trackField(field, value) {
-    track("field_updated", {
-      field: field,
-      has_value: Boolean(String(value || "").trim())
-    });
-  }
-
-  function renderTopBack() {
-    if (getStepNumber(state.currentStep) <= 1) return "";
-
-    return `
-      <div class="bw-topnav">
-        <button type="button" class="bw-back"
-          onclick="window.BWPropertyFunnel.back()"
-          aria-label="Zum vorherigen Schritt zurück">
-          ← Zurück
-        </button>
-      </div>
-    `;
-  }
-
-  function renderContinueButton(label = "Weiter") {
-    return `
-      <div class="bw-navigation">
-        <div class="bw-navigation__right">
-          <button type="button" class="bw-button"
-            onclick="window.BWPropertyFunnel.continueCurrent()">
-            ${label}
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  function choiceTarget(field) {
-    switch (field) {
-      case "condition": return [state.property, "condition"];
-      case "usage": return [state.property, "usage"];
-      case "heirsCount": return [state.heirs, "count"];
-      case "heirsAgreement": return [state.heirs, "agreement"];
-      case "familyTakeover": return [state.heirs, "familyTakeover"];
-      case "financing": return [state.finance, "financing"];
-      case "remainingDebt": return [state.finance, "remainingDebt"];
-      case "encumbrance": return [state.finance, "encumbrance"];
-      default: return null;
-    }
-  }
-
-  function getChoiceValue(field) {
-    const target = choiceTarget(field);
-    return target ? target[0][target[1]] : state[field];
-  }
-
-  function setChoice(field, value) {
-    if (field === "priority") {
-      const list = state.priority;
-
-      if (value === "unknown") {
-        state.priority = list.includes("unknown") ? [] : ["unknown"];
-      } else {
-        const index = list.indexOf(value);
-
-        if (index >= 0) {
-          list.splice(index, 1);
-        } else {
-          list.push(value);
-          const unknownIndex = list.indexOf("unknown");
-          if (unknownIndex >= 0) list.splice(unknownIndex, 1);
-        }
-      }
-
-      track("option_selected", {
-        step: state.currentStep,
-        answer: value,
-        multi_select: true
-      });
-
-      suppressEnterAnimation = true;
-      render();
-      suppressEnterAnimation = false;
-      return;
-    }
-
-    const target = choiceTarget(field);
-
-    if (!target) {
-      setNestedChoice(field, value);
-      return;
-    }
-
-    target[0][target[1]] = value;
-
-    if (field === "financing" && value !== "yes") {
-      state.finance.remainingDebt = null;
-    }
-
-    if (field === "usage" && value !== "rented") {
-      clearRentalState();
-    }
-
-    track("option_selected", {
-      step: state.currentStep,
-      answer: value
-    });
-
-    suppressEnterAnimation = true;
-    render();
-    suppressEnterAnimation = false;
-  }
-
-  function setNestedChoice(field, value) {
-    if (field === "timing") state.timing = value;
-    else if (field === "propertyType") state.propertyType = value;
-    else if (field === "intention") state.intention = value;
-  }
-
-  /* =========================================================
-     SITUATION
-     ========================================================= */
-
-  function renderSituationScreen() {
-    const heroImage = window.BW_FUNNEL_COMPACT ? "" : CONFIG.assets.hero;
-    const selected = state.situation;
-
-    return `
-      <div class="bw-situation-layout${heroImage ? "" : " bw-situation-layout--no-hero"}">
-        ${heroImage ? `
-          <div class="bw-situation-hero" aria-hidden="true">
-            <img src="${esc(heroImage)}" alt="">
-          </div>
-        ` : ""}
-
-        <section class="bw-situation-content">
-          <h1>Wobei können wir Ihnen gerade helfen?</h1>
-
-          <div class="bw-situation-options"
-               role="group"
-               aria-label="Wobei können wir Ihnen helfen?"
-               style="margin-top:18px">
-
-            ${renderSituationCard(
-              "value",
-              "↗ Wert der Immobilie",
-              "Was ist sie wert?",
-              selected === "value"
-            )}
-
-            ${renderSituationCard(
-              "together",
-              "⚖ Gemeinsam geerbt",
-              "Was ist jetzt sinnvoll?",
-              selected === "together"
-            )}
-
-            ${renderSituationCard(
-              "undecided",
-              "◇ Noch keine Entscheidung",
-              "Verkaufen · behalten · vermieten",
-              selected === "undecided"
-            )}
-          </div>
-
-          <div class="bw-situation-helper">
-            ${SITUATION_ICONS.lock}
-            <span>Ihre Angaben werden vertraulich behandelt.</span>
-          </div>
-        </section>
-      </div>
-    `;
-  }
-
-  function renderSituationCard(value, title, description, isSelected) {
-    const icons = {
-      value: SITUATION_ICONS.value,
-      together: SITUATION_ICONS.sell_or_keep,
-      undecided: SITUATION_ICONS.unsure
-    };
-
-    return `
-      <button type="button"
-        class="bw-situation-card ${isSelected ? "bw-situation-card--selected" : ""}"
-        aria-pressed="${isSelected}"
-        onclick="window.BWPropertyFunnel.selectOption('situation','${value}')">
-
-        <span class="bw-situation-card__number" aria-hidden="true">
-          ${icons[value]}
-        </span>
-
-        <span>
-          <span class="bw-situation-card__title">${esc(title)}</span>
-          <span class="bw-situation-card__description">${esc(description)}</span>
-        </span>
-
-        <span class="bw-situation-card__arrow" aria-hidden="true">›</span>
-      </button>
-    `;
-  }
-
-  /* =========================================================
-     TIMING
-     ========================================================= */
-
-  function renderTimingScreen() {
-    return `
-      <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre Situation</div>
-        <h1 class="bw-header__title">Wie lange ist der Erbfall ungefähr her?</h1>
-      </div>
-
-      <div class="bw-choice-grid" role="group" aria-label="Zeitpunkt des Erbfalls">
-        ${renderChoice("timing", "lt_6w", "Weniger als 6 Wochen")}
-        ${renderChoice("timing", "w6_m6", "6 Wochen bis 6 Monate")}
-        ${renderChoice("timing", "m6_y2", "6 Monate bis 2 Jahre")}
-        ${renderChoice("timing", "gt_2y", "Mehr als 2 Jahre")}
-        ${renderChoice("timing", "unknown", "Ich weiß es nicht genau")}
-      </div>
-    `;
-  }
-
-  /* =========================================================
-     PROPERTY TYPE / HOUSE TYPE
+     SCREEN 2 — PROPERTY TYPE
      ========================================================= */
 
   function renderPropertyTypeScreen() {
+
     const selected = state.propertyType;
 
     return `
+
       <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre Immobilie</div>
-        <h1 class="bw-header__title">Um welche Immobilie geht es?</h1>
+
+        <div class="bw-header__eyebrow">
+          Ihre Immobilie
+        </div>
+
+        <h1 class="bw-header__title">
+          Um welche Immobilie geht es?
+        </h1>
+
       </div>
 
-      <div class="bw-property-options" role="group" aria-label="Immobilientyp">
-        ${renderPropertyCard("house", "Haus", "Ein- oder Mehrfamilienhaus", selected === "house")}
-        ${renderPropertyCard("apartment", "Eigentumswohnung", "", selected === "apartment")}
-        ${renderPropertyCard("multi_family", "Mehrfamilienhaus", "", selected === "multi_family")}
-        ${renderPropertyCard("commercial", "Gewerbeimmobilie", "", selected === "commercial")}
-        ${renderPropertyCard("land", "Grundstück", "", selected === "land")}
+      <div class="bw-property-options" role="group" aria-label="Art der Immobilie">
+
+        ${renderPropertyCard("house", "Haus", "Ein- oder Zweifamilienhaus", renderHouseIllustration(), selected === "house")}
+
+        ${renderPropertyCard("apartment", "Eigentumswohnung", "", renderApartmentIllustration(), selected === "apartment")}
+
+        ${renderPropertyCard("multi_family", "Mehrfamilienhaus", "Haus mit mehreren Wohneinheiten", renderMultiFamilyIllustration(), selected === "multi_family")}
+
+        ${renderPropertyCard("commercial", "Gewerbeimmobilie", "Büro-, Handels- oder Gewerbeobjekt", renderOfficeIllustration(), selected === "commercial")}
+
+        ${renderPropertyCard("land", "Grundstück", "Bauland oder unbebautes Grundstück", renderLandIllustration(), selected === "land")}
+
       </div>
+
     `;
   }
 
-  const PROPERTY_VISUALS = {
-    house: function () {
-      return bwIcon('<path d="m3 11 9-7 9 7v9H3z"/><path d="M9 20v-5h6v5"/>', "0 0 24 24", "1.5");
-    },
-    apartment: function () {
-      return bwIcon('<path d="M5 21V4h14v17M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/>', "0 0 24 24", "1.5");
-    },
-    multi_family: function () {
-      return bwIcon('<path d="M4 21V5h8v16M12 21V3h8v18M7 8h2M15 7h2M7 12h2M15 11h2M7 16h2M15 15h2"/>', "0 0 24 24", "1.5");
-    },
-    commercial: function () {
-      return bwIcon('<path d="M3 21h18M5 21V8l7-4 7 4v13M8 12h2M14 12h2M8 16h2M14 16h2"/>', "0 0 24 24", "1.5");
-    },
-    land: function () {
-      return bwIcon('<path d="M4 19 9 7l5 7 3-5 3 10M3 20h18"/>', "0 0 24 24", "1.5");
-    }
-  };
 
-  function renderPropertyCard(value, title, description, isSelected) {
+  function renderPropertyCard(value, title, description, illustration, isSelected) {
+
     return `
-      <button type="button"
+      <button
         class="bw-property-card ${isSelected ? "bw-property-card--selected" : ""}"
+        type="button"
         aria-pressed="${isSelected}"
-        onclick="window.BWPropertyFunnel.selectOption('propertyType','${value}')">
-
+        onclick="window.BWPropertyFunnel.selectOption('propertyType', '${value}')"
+      >
         <span class="bw-property-card__visual" aria-hidden="true">
-          ${PROPERTY_VISUALS[value]()}
+          ${illustration}
         </span>
 
         <span class="bw-property-card__body">
-          <span class="bw-property-card__title">${esc(title)}</span>
-          ${description ? `<span class="bw-property-card__description">${esc(description)}</span>` : ""}
+          <span class="bw-property-card__title">${title}</span>
+          ${description ? `<span class="bw-property-card__description">${description}</span>` : ""}
+          <span class="bw-property-card__arrow" aria-hidden="true">›</span>
         </span>
-
-        <span class="bw-property-card__arrow" aria-hidden="true">›</span>
       </button>
     `;
   }
+
+
+  /* =========================================================
+     2D HOUSE ILLUSTRATIONS — INLINE SVG
+     ========================================================= */
+
+  /* Gemeinsamer Rahmen (viewBox, Strichfarbe, Bodenlinie) und ein
+     Fenster-Helfer — die drei Motive teilen sich fast die ganze Hülle.
+     Kein aria-label nötig: die Illustrationen stehen in aria-hidden-Spans. */
+  function bwScene(body, groundD) {
+    return '<svg viewBox="0 0 220 165"><g fill="none" stroke="#051B4C" stroke-width="3" stroke-linejoin="round">' +
+      body + '</g><path d="' + groundD +
+      '" fill="none" stroke="#C3CCDC" stroke-width="3" stroke-linecap="round"/></svg>';
+  }
+
+  function bwWin(x, y, w) {
+    return '<rect x="' + x + '" y="' + y + '" width="' + (w || 22) +
+      '" height="22" rx="1" fill="#E9EEF6"/>';
+  }
+
+  function renderHouseIllustration() {
+    return bwScene(
+      '<path d="M35 78 L110 25 L185 78" fill="#DCE3EF"/>' +
+      '<path d="M51 68 V142 H169 V68" fill="#FFFFFF"/>' +
+      '<path d="M91 142 V102 H129 V142" fill="#DCE3EF"/>' +
+      bwWin(65, 88) + bwWin(133, 88) +
+      '<path d="M35 78 H185"/><path d="M110 25 V14"/><path d="M104 14 H116"/>',
+      "M28 142 H192");
+  }
+
+
+  function renderApartmentIllustration() {
+    return bwScene(
+      '<rect x="57" y="20" width="106" height="122" rx="2" fill="#FFFFFF"/>' +
+      '<path d="M75 42 H145"/>' +
+      bwWin(74, 56) + bwWin(124, 56) + bwWin(74, 91) + bwWin(124, 91) +
+      '<rect x="98" y="112" width="24" height="30" fill="#DCE3EF"/>' +
+      '<path d="M49 142 H171"/><path d="M68 20 V12 H152 V20"/>',
+      "M35 142 H185");
+  }
+
+
+  function renderMultiFamilyIllustration() {
+    return bwScene(
+      '<path d="M45 142 V42 H175 V142" fill="#FFFFFF"/>' +
+      '<path d="M45 42 L65 25 H155 L175 42" fill="#DCE3EF"/>' +
+      bwWin(61, 57, 24) + bwWin(99, 57, 24) + bwWin(137, 57, 24) +
+      bwWin(61, 91, 24) + bwWin(99, 91, 24) + bwWin(137, 91, 24) +
+      '<rect x="95" y="113" width="30" height="29" fill="#DCE3EF"/>' +
+      '<path d="M35 142 H185"/>',
+      "M28 142 H192");
+  }
+
+
+  function renderOfficeIllustration() {
+    return bwScene(
+      '<rect x="49" y="26" width="122" height="116" rx="2" fill="#FFFFFF"/>' +
+      '<path d="M61 26 V15 H85 V26" fill="#DCE3EF"/>' +
+      bwWin(61, 44, 24) + bwWin(98, 44, 24) + bwWin(135, 44, 24) +
+      bwWin(61, 76, 24) + bwWin(98, 76, 24) + bwWin(135, 76, 24) +
+      '<rect x="98" y="108" width="24" height="34" fill="#DCE3EF"/>' +
+      '<path d="M40 142 H180"/>',
+      "M28 142 H192");
+  }
+
+
+  function renderTwoFamilyIllustration() {
+    return bwScene(
+      '<path d="M35 70 L110 22 L185 70" fill="#DCE3EF"/>' +
+      '<path d="M49 62 V142 H171 V62" fill="#FFFFFF"/>' +
+      '<path d="M49 100 H171"/>' +
+      bwWin(63, 74) + bwWin(135, 74) + bwWin(63, 110) + bwWin(135, 110) +
+      '<rect x="98" y="108" width="24" height="34" fill="#DCE3EF"/>' +
+      '<path d="M35 70 H185"/>',
+      "M28 142 H192");
+  }
+
+
+  function renderLandIllustration() {
+    return bwScene(
+      '<rect x="55" y="38" width="110" height="38" rx="3" fill="#FFFFFF"/>' +
+      '<rect x="67" y="50" width="66" height="6" rx="3" fill="#DCE3EF"/>' +
+      '<rect x="67" y="61" width="42" height="6" rx="3" fill="#E9EEF6"/>' +
+      '<path d="M106 76 V142"/>' +
+      '<path d="M62 142c6-11 14-13 21-8"/>' +
+      '<path d="M152 142c-5-10-13-12-19-7"/>',
+      "M40 142 H180");
+  }
+
+
+  /* =========================================================
+     SCREEN 2B — HOUSE TYPE
+     ========================================================= */
+
+  function renderHouseTypeScreen() {
+
+    const selected = state.houseType;
+
+    return `
+
+      <div class="bw-header">
+
+        <div class="bw-header__eyebrow">
+          Ihre Immobilie
+        </div>
+
+        <h1 class="bw-header__title">
+          Welcher Haustyp ist es?
+        </h1>
+
+      </div>
+
+      <div class="bw-house-type-options" role="group" aria-label="Haustyp">
+
+        ${renderHouseTypeCard("detached", "Einfamilienhaus", "Freistehendes Einfamilienhaus", selected === "detached")}
+
+        ${renderHouseTypeCard("terraced", "Reihenhaus", "Haus innerhalb einer Reihenhauszeile", selected === "terraced")}
+
+        ${renderHouseTypeCard("semi_detached", "Doppelhaushälfte", "Eine von zwei verbundenen Haushälften", selected === "semi_detached")}
+
+        ${renderHouseTypeCard("two_family", "Zweifamilienhaus", "Haus mit zwei getrennten Wohnungen", selected === "two_family")}
+
+        ${renderHouseTypeCard("multi_family", "Mehrfamilienhaus", "Haus mit drei oder mehr Wohneinheiten", selected === "multi_family")}
+
+      </div>
+
+      <button
+        type="button"
+        class="bw-house-type-unknown"
+        onclick="window.BWPropertyFunnel.selectOption('houseType', 'unknown')"
+      >
+        Weiß ich nicht
+      </button>
+
+    `;
+  }
+
 
   const HOUSE_TYPE_IMAGES = {
     detached: CONFIG.assets.houseDetached,
@@ -2293,276 +2372,269 @@
     multi_family: CONFIG.assets.houseMultiFamily
   };
 
-  function renderHouseIllustration() {
-    return bwIcon(
-      '<path d="m3 11 9-7 9 7v9H3z"/><path d="M9 20v-5h6v5"/><path d="M7 11h2M15 11h2"/>',
-      "0 0 24 24",
-      "1.5"
-    );
-  }
-
-  function renderHouseTypeScreen() {
-    return `
-      <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre Immobilie</div>
-        <h1 class="bw-header__title">Welcher Haustyp ist es?</h1>
-      </div>
-
-      <div class="bw-house-type-options" role="group" aria-label="Haustyp">
-        ${renderHouseTypeCard("detached", "Einfamilienhaus", "Freistehendes Haus", state.houseType === "detached")}
-        ${renderHouseTypeCard("terraced", "Reihenhaus", "Haus in einer Reihenhauszeile", state.houseType === "terraced")}
-        ${renderHouseTypeCard("semi_detached", "Doppelhaushälfte", "Eine von zwei verbundenen Haushälften", state.houseType === "semi_detached")}
-        ${renderHouseTypeCard("two_family", "Zweifamilienhaus", "Haus mit zwei Wohneinheiten", state.houseType === "two_family")}
-        ${renderHouseTypeCard("multi_family", "Mehrfamilienhaus", "Haus mit mehreren Wohneinheiten", state.houseType === "multi_family")}
-      </div>
-
-      <button type="button"
-        class="bw-house-type-unknown"
-        onclick="window.BWPropertyFunnel.selectOption('houseType','unknown')">
-        Weiß ich nicht
-      </button>
-    `;
-  }
+  /* Ohne konfiguriertes Foto zeigt die Karte eine passende
+     SVG-Illustration — jede Karte hat damit immer ein Bild. */
+  const HOUSE_TYPE_FALLBACK = {
+    two_family: renderTwoFamilyIllustration,
+    multi_family: renderMultiFamilyIllustration
+  };
 
   function renderHouseTypeCard(value, title, description, isSelected) {
+
     const visual = HOUSE_TYPE_IMAGES[value]
-      ? `<img src="${esc(HOUSE_TYPE_IMAGES[value])}" alt="">`
-      : renderHouseIllustration();
+      ? `<img src="${HOUSE_TYPE_IMAGES[value]}" alt="">`
+      : (HOUSE_TYPE_FALLBACK[value] || renderHouseIllustration)();
 
     return `
-      <button type="button"
+      <button
         class="bw-house-type-card ${isSelected ? "bw-house-type-card--selected" : ""}"
+        type="button"
         aria-pressed="${isSelected}"
-        onclick="window.BWPropertyFunnel.selectOption('houseType','${value}')">
-
-        <span class="bw-house-type-card__visual" aria-hidden="true">${visual}</span>
-
-        <span class="bw-house-type-card__body">
-          <span class="bw-house-type-card__title">${esc(title)}</span>
-          <span class="bw-property-card__description">${esc(description)}</span>
+        onclick="window.BWPropertyFunnel.selectOption('houseType', '${value}')"
+      >
+        <span class="bw-house-type-card__visual" aria-hidden="true">
+          ${visual}
         </span>
-
+        <span class="bw-house-type-card__body">
+          <span class="bw-house-type-card__title">${title}</span>
+          <span class="bw-property-card__description">${description}</span>
+        </span>
         <span class="bw-house-type-card__arrow" aria-hidden="true">›</span>
       </button>
     `;
   }
 
+
   /* =========================================================
-     LOCATION
+     SCREEN 1 — SITUATION
      ========================================================= */
+
+  function renderSituationScreen() {
+
+    const selected = state.situation;
+
+    /* Im Kompakt-Modus (schmale Hero-Karte) kein Einstiegsbild:
+       Die drei Optionen sollen ohne Scrollen sichtbar sein. */
+    const heroImage = window.BW_FUNNEL_COMPACT ? "" : CONFIG.assets.hero;
+
+    return `
+      <div class="bw-situation-layout${heroImage ? "" : " bw-situation-layout--no-hero"}">
+        ${heroImage ? `
+        <div class="bw-situation-hero" aria-hidden="true">
+          <img src="${heroImage}" alt="Typisches Haus in Rheinhessen" />
+        </div>` : ""}
+
+        <section class="bw-situation-content">
+          <h1>Wobei können wir Ihnen gerade helfen?</h1>
+
+          <div class="bw-situation-options" role="group" aria-label="Ihre Situation" style="margin-top:18px">
+            ${renderSituationCard("value", "Wert der Immobilie", "Was ist sie wert?", selected === "value")}
+            ${renderSituationCard("sell_or_keep", "Gemeinsam geerbt", "Was ist jetzt sinnvoll?", selected === "sell_or_keep")}
+            ${renderSituationCard("unsure", "Noch keine Entscheidung", "Verkaufen · behalten · vermieten", selected === "unsure")}
+          </div>
+
+          <div class="bw-situation-helper">
+            ${SITUATION_ICONS.lock}
+            Ihre Angaben werden vertraulich behandelt.
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+
+  function renderSituationCard(value, title, description, isSelected) {
+    return `
+      <button
+        class="bw-situation-card ${isSelected ? "bw-situation-card--selected" : ""}"
+        type="button"
+        aria-pressed="${isSelected}"
+        onclick="window.BWPropertyFunnel.selectOption('situation', '${value}')"
+      >
+        <span class="bw-situation-card__number" aria-hidden="true">${SITUATION_ICONS[value] || ""}</span>
+        <span>
+          <span class="bw-situation-card__title">${title}</span>
+          ${description ? `<span class="bw-situation-card__description">${description}</span>` : ""}
+        </span>
+        <span class="bw-situation-card__arrow" aria-hidden="true">›</span>
+      </button>
+    `;
+  }
+
+
+  /* =========================================================
+     FORM HELPERS
+     ========================================================= */
+
+  function esc(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/\x22/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function updateField(path, value) {
+    const parts = path.split(".");
+    let target = state;
+    for (let i = 0; i < parts.length - 1; i++) target = target[parts[i]];
+    target[parts[parts.length - 1]] = value;
+  }
+
+  function trackField(field, value) {
+    track("field_updated", { field, has_value: Boolean(String(value || "").trim()) });
+  }
+
+  /* Zurück steht zentral oben im Funnel (nicht pro Screen): So hat
+     JEDER Schritt ab dem zweiten die Möglichkeit zurückzugehen, ohne
+     scrollen zu müssen — und kein neuer Screen kann sie vergessen. */
+  function renderTopBack() {
+    if (getStepNumber(state.currentStep) <= 1) return "";
+    return `
+      <div class="bw-topnav">
+        <button type="button" class="bw-back" onclick="window.BWPropertyFunnel.back()">← Zurück</button>
+      </div>
+    `;
+  }
+
+  function renderContinueButton(label = "Weiter") {
+    return `
+      <div class="bw-navigation">
+        <div class="bw-navigation__right">
+          <button type="button" class="bw-button" onclick="window.BWPropertyFunnel.continueCurrent()">${label}</button>
+        </div>
+      </div>
+    `;
+  }
 
   function renderLocationScreen() {
     const a = state.address;
-
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Die Lage</div>
         <h1 class="bw-header__title">Wo befindet sich die Immobilie?</h1>
-        <p class="bw-header__description">Damit können wir Ihre Immobilie genauer einschätzen.</p>
       </div>
 
       <div class="bw-form-card">
         <div class="bw-field bw-address-autocomplete">
           <label class="bw-field__label" for="bw-street">Straße + Hausnummer</label>
-          <input id="bw-street"
-            class="bw-field__input"
-            autocomplete="street-address"
-            value="${esc(a.street)}"
-            placeholder="z. B. Goethestraße 12"
+          <input id="bw-street" class="bw-field__input" autocomplete="street-address"
+            value="${esc(a.street)}" placeholder="z. B. Goethestraße 12"
             oninput="window.BWPropertyFunnel.handleStreetInput(this.value)"
             onblur="window.BWPropertyFunnel.trackField('address.street', this.value)">
-
-          <div id="bw-address-suggestions"
-               class="bw-address-suggestions"
-               hidden
-               role="listbox"
-               aria-label="Adressvorschläge"></div>
-
-          <div id="bw-address-status" class="bw-address-status" aria-live="polite"></div>
+          <div id="bw-address-suggestions" class="bw-address-suggestions" hidden></div>
+          <div id="bw-address-status" class="bw-address-status"></div>
         </div>
 
         <div class="bw-location-row--city">
           <div class="bw-field">
             <label class="bw-field__label" for="bw-postal">PLZ</label>
-            <input id="bw-postal"
-              class="bw-field__input"
-              inputmode="numeric"
-              maxlength="5"
-              autocomplete="postal-code"
-              value="${esc(a.postalCode)}"
-              placeholder="z. B. 55218"
-              oninput="window.BWPropertyFunnel.updateField('address.postalCode', this.value.replace(/[^0-9]/g,'').slice(0,5))"
+            <input id="bw-postal" class="bw-field__input" inputmode="numeric" maxlength="5"
+              autocomplete="postal-code" value="${esc(a.postalCode)}" placeholder="z. B. 55218"
+              oninput="window.BWPropertyFunnel.updateField('address.postalCode', this.value = this.value.replace(/[^0-9]/g,''))"
               onblur="window.BWPropertyFunnel.trackField('address.postalCode', this.value)">
           </div>
-
           <div class="bw-field">
             <label class="bw-field__label" for="bw-city">Ort</label>
-            <input id="bw-city"
-              class="bw-field__input"
-              autocomplete="address-level2"
-              value="${esc(a.city)}"
-              placeholder="z. B. Mainz"
+            <input id="bw-city" class="bw-field__input" autocomplete="address-level2"
+              value="${esc(a.city)}" placeholder="z. B. Mainz"
               oninput="window.BWPropertyFunnel.updateField('address.city', this.value)"
               onblur="window.BWPropertyFunnel.trackField('address.city', this.value)">
           </div>
         </div>
-
-        <div class="bw-required-note">
-          Je genauer die Adresse, desto genauer können wir die Immobilie einschätzen.
-        </div>
-
-        <div id="bw-validation-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
+        <div class="bw-required-note">Tipp: Je genauer Sie Straße und Hausnummer eingeben, desto genauer können wir PLZ und Ort ergänzen.</div>
       </div>
-
       ${renderContinueButton()}
     `;
   }
 
-  /* =========================================================
-     PROPERTY DETAILS
-     ========================================================= */
-
   function renderPropertyDetailsScreen() {
     const p = state.property;
     const t = state.propertyType;
-    const isLand = t === "land";
     const isApartment = t === "apartment";
-    const isCommercial = t === "commercial";
-    const isMultiFamily = t === "multi_family" || (t === "house" && state.houseType === "multi_family");
-
+    const isLand = t === "land";
+    const isMultiFamily = t === "multi_family";
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Immobilie</div>
-        <h1 class="bw-header__title">Ein paar Angaben zu Ihrer Immobilie</h1>
-        <p class="bw-header__description">Damit können wir Ihre Immobilie genauer einschätzen.</p>
+        <h1 class="bw-header__title">${isLand ? "Wie groß ist das Grundstück?" : "Ein paar Angaben zu Ihrer Immobilie"}</h1>
       </div>
 
       <div class="bw-form-card">
         <div class="bw-form-grid--three">
-          ${!isLand ? `
+          ${isLand ? "" : `
+          <div class="bw-field">
+            <label class="bw-field__label" for="bw-living">${t === "commercial" ? "Nutzfläche" : "Wohnfläche"}</label>
+            <input id="bw-living" class="bw-field__input" inputmode="decimal" placeholder="${t === "commercial" ? "400 m²" : "150 m²"}"
+              value="${esc(p.livingSpace)}"
+              oninput="window.BWPropertyFunnel.updateField('property.livingSpace', this.value)"
+              onblur="window.BWPropertyFunnel.trackField('property.livingSpace', this.value)">
+          </div>`}
+
+          ${isApartment ? `
             <div class="bw-field">
-              <label class="bw-field__label" for="bw-living">${isCommercial ? "Nutzfläche" : "Wohnfläche / Nutzfläche"}</label>
-              <input id="bw-living"
-                class="bw-field__input"
-                inputmode="decimal"
-                placeholder="${isCommercial ? "z. B. 400 m²" : "z. B. 150 m²"}"
-                value="${esc(p.livingSpace)}"
-                oninput="window.BWPropertyFunnel.updateField('property.livingSpace', this.value)"
-                onblur="window.BWPropertyFunnel.trackField('property.livingSpace', this.value)">
+              <label class="bw-field__label" for="bw-floor">Etage</label>
+              <input id="bw-floor" class="bw-field__input" inputmode="numeric" placeholder="2"
+                value="${esc(p.floor)}"
+                oninput="window.BWPropertyFunnel.updateField('property.floor', this.value)"
+                onblur="window.BWPropertyFunnel.trackField('property.floor', this.value)">
             </div>
           ` : `
             <div class="bw-field">
-              <label class="bw-field__label" for="bw-plot">Grundstücksgröße</label>
-              <input id="bw-plot"
-                class="bw-field__input"
-                inputmode="decimal"
-                placeholder="z. B. 600 m²"
+              <label class="bw-field__label" for="bw-plot">Grundstück</label>
+              <input id="bw-plot" class="bw-field__input" inputmode="decimal" placeholder="600 m²"
                 value="${esc(p.plotSize)}"
                 oninput="window.BWPropertyFunnel.updateField('property.plotSize', this.value)"
                 onblur="window.BWPropertyFunnel.trackField('property.plotSize', this.value)">
             </div>
           `}
 
-          ${isApartment ? `
-            <div class="bw-field">
-              <label class="bw-field__label" for="bw-floor">Etage</label>
-              <input id="bw-floor"
-                class="bw-field__input"
-                inputmode="text"
-                placeholder="z. B. 2. OG"
-                value="${esc(p.floor)}"
-                oninput="window.BWPropertyFunnel.updateField('property.floor', this.value)"
-                onblur="window.BWPropertyFunnel.trackField('property.floor', this.value)">
-            </div>
-          ` : ""}
-
-          ${!isLand ? `
-            <div class="bw-field">
-              <label class="bw-field__label" for="bw-year">Baujahr</label>
-              <input id="bw-year"
-                class="bw-field__input"
-                inputmode="numeric"
-                maxlength="4"
-                placeholder="z. B. 1980"
-                value="${esc(p.yearBuilt)}"
-                oninput="window.BWPropertyFunnel.updateField('property.yearBuilt', this.value.replace(/[^0-9]/g,'').slice(0,4))"
-                onblur="window.BWPropertyFunnel.trackField('property.yearBuilt', this.value)">
-            </div>
-          ` : ""}
-
-          ${(t === "house" || t === "multi_family") && !isLand ? `
-            <div class="bw-field">
-              <label class="bw-field__label" for="bw-plot">Grundstücksgröße</label>
-              <input id="bw-plot"
-                class="bw-field__input"
-                inputmode="decimal"
-                placeholder="z. B. 600 m²"
-                value="${esc(p.plotSize)}"
-                oninput="window.BWPropertyFunnel.updateField('property.plotSize', this.value)"
-                onblur="window.BWPropertyFunnel.trackField('property.plotSize', this.value)">
-            </div>
-          ` : ""}
-
-          ${isCommercial ? `
-            <div class="bw-field">
-              <label class="bw-field__label" for="bw-plot-commercial">Grundstücksgröße <span class="bw-field__optional">(optional)</span></label>
-              <input id="bw-plot-commercial"
-                class="bw-field__input"
-                inputmode="decimal"
-                placeholder="z. B. 800 m²"
-                value="${esc(p.plotSize)}"
-                oninput="window.BWPropertyFunnel.updateField('property.plotSize', this.value)"
-                onblur="window.BWPropertyFunnel.trackField('property.plotSize', this.value)">
-            </div>
-          ` : ""}
+          ${isLand ? "" : `
+          <div class="bw-field">
+            <label class="bw-field__label" for="bw-year">Baujahr</label>
+            <input id="bw-year" class="bw-field__input" inputmode="numeric" maxlength="4" placeholder="1980"
+              value="${esc(p.yearBuilt)}"
+              oninput="window.BWPropertyFunnel.updateField('property.yearBuilt', this.value = this.value.replace(/[^0-9]/g,''))"
+              onblur="window.BWPropertyFunnel.trackField('property.yearBuilt', this.value)">
+          </div>`}
         </div>
 
-        ${isLand ? "" : `
-          <div class="bw-section-label">Wie ist der Zustand?</div>
-          <div class="bw-choice-grid" role="group" aria-label="Zustand">
-            ${renderChoice("condition", "very_good", "Sehr gut")}
-            ${renderChoice("condition", "good", "Gut")}
-            ${renderChoice("condition", "renovation_needed", "Renovierungsbedürftig")}
-            ${renderChoice("condition", "refurbishment_needed", "Sanierungsbedürftig")}
-          </div>
-        `}
+        ${isMultiFamily ? `
+        <div class="bw-field">
+          <label class="bw-field__label" for="bw-units">Wie viele Wohneinheiten hat das Gebäude?</label>
+          <input id="bw-units" class="bw-field__input" inputmode="numeric" placeholder="z. B. 4"
+            value="${esc(p.units)}"
+            oninput="window.BWPropertyFunnel.updateField('property.units', this.value = this.value.replace(/[^0-9]/g,''))"
+            onblur="window.BWPropertyFunnel.trackField('property.units', this.value)">
+        </div>` : ""}
 
+        ${isLand ? "" : `
+        <div class="bw-section-label">Wie ist der Zustand?</div>
+        <div class="bw-choice-grid">
+          ${renderChoice("condition","very_good","Sehr gut")}
+          ${renderChoice("condition","good","Gut")}
+          ${renderChoice("condition","renovation_needed","Renovierungsbedürftig")}
+          ${renderChoice("condition","refurbishment_needed","Sanierungsbedürftig")}
+        </div>`}
+
+        ${isLand ? "" : `
         <div class="bw-section-label">Wie wird die Immobilie aktuell genutzt?</div>
-        <div class="bw-choice-grid" role="group" aria-label="Aktuelle Nutzung">
-          ${renderChoice("usage", "self_used", "Selbst genutzt")}
-          ${renderChoice("usage", "family_used", "Von einem Familienmitglied bewohnt")}
-          ${renderChoice("usage", "rented", "Vermietet")}
-          ${renderChoice("usage", "vacant", "Leerstehend")}
-          ${renderChoice("usage", "unknown", "Weiß ich nicht")}
+        <div class="bw-choice-grid">
+          ${renderChoice("usage","owner_occupied","Selbst genutzt")}
+          ${renderChoice("usage","family_occupied","Von einem Familienmitglied bewohnt")}
+          ${renderChoice("usage","rented","Vermietet")}
+          ${renderChoice("usage","vacant","Leerstehend")}
+          ${renderChoice("usage","unknown","Weiß ich nicht")}
         </div>
 
         ${p.usage === "rented" ? `
-          <div class="bw-field" style="margin-top:18px">
-            <label class="bw-field__label" for="bw-rent">Wie hoch ist die monatliche Kaltmiete ungefähr?</label>
-            <input id="bw-rent"
-              class="bw-field__input"
-              inputmode="decimal"
-              placeholder="z. B. 1.500 €"
-              value="${esc(p.rentalIncome || p.monthlyColdRent)}"
-              oninput="window.BWPropertyFunnel.updateField('property.rentalIncome', this.value);window.BWPropertyFunnel.updateField('property.monthlyColdRent', this.value)"
-              onblur="window.BWPropertyFunnel.trackField('property.rentalIncome', this.value)">
-          </div>
-        ` : ""}
-
-        ${isMultiFamily ? `
-          <div class="bw-field" style="margin-top:18px">
-            <label class="bw-field__label" for="bw-units">Wie viele Wohneinheiten hat das Gebäude?</label>
-            <input id="bw-units"
-              class="bw-field__input"
-              inputmode="numeric"
-              placeholder="z. B. 6"
-              value="${esc(p.numberOfUnits || p.units)}"
-              oninput="window.BWPropertyFunnel.updateField('property.numberOfUnits', this.value.replace(/[^0-9]/g,'').slice(0,3));window.BWPropertyFunnel.updateField('property.units', this.value.replace(/[^0-9]/g,'').slice(0,3))"
-              onblur="window.BWPropertyFunnel.trackField('property.numberOfUnits', this.value)">
-          </div>
-        ` : ""}
-
-        <div id="bw-validation-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
+        <div class="bw-field" style="margin-top:12px">
+          <label class="bw-field__label" for="bw-rent">Monatliche Kaltmiete <span class="bw-field__optional">(ca.)</span></label>
+          <input id="bw-rent" class="bw-field__input" inputmode="numeric" placeholder="z. B. 850 €"
+            value="${esc(p.rentIncome)}"
+            oninput="window.BWPropertyFunnel.updateField('property.rentIncome', this.value)"
+            onblur="window.BWPropertyFunnel.trackField('property.rentIncome', this.value)">
+        </div>` : ""}`}
       </div>
 
       ${renderContinueButton()}
@@ -2571,120 +2643,142 @@
 
   function renderChoice(field, value, label) {
     const current = getChoiceValue(field);
-    const selected = Array.isArray(current)
-      ? current.includes(value)
-      : current === value;
-
+    const selected = Array.isArray(current) ? current.includes(value) : current === value;
     return `
-      <button type="button"
-        class="bw-choice ${selected ? "bw-choice--selected" : ""}"
+      <button type="button" class="bw-choice ${selected ? "bw-choice--selected" : ""}"
         aria-pressed="${selected}"
         onclick="window.BWPropertyFunnel.setChoice('${field}','${value}')">
-        <span class="bw-choice__label">${esc(label)}</span>
+        <span class="bw-choice__label">${label}</span>
         <span class="bw-choice__check" aria-hidden="true">${BW_ICONS.check}</span>
       </button>
     `;
   }
 
-  /* =========================================================
-     INHERITANCE
-     ========================================================= */
+  function renderIntentionScreen() {
+    return `
+      <div class="bw-header">
+        <div class="bw-header__eyebrow">Ihre Situation</div>
+        <h1 class="bw-header__title">Was möchten Sie aktuell mit der Immobilie machen?</h1>
+      </div>
+
+      <div class="bw-choice-grid">
+        ${renderSimpleChoice("intention","sell","tag","Verkaufen")}
+        ${renderSimpleChoice("intention","keep","key","Behalten")}
+        ${renderSimpleChoice("intention","rent","banknote","Vermieten")}
+        ${renderSimpleChoice("intention","family_takeover","people","Innerhalb der Familie übernehmen")}
+        ${renderSimpleChoice("intention","undecided","help","Noch nicht entschieden")}
+      </div>
+    `;
+  }
+
+  function renderSimpleChoice(field, value, icon, label) {
+    const selected = state[field] === value;
+    return `
+      <button type="button" class="bw-choice ${selected ? "bw-choice--selected" : ""}"
+        aria-pressed="${selected}"
+        onclick="window.BWPropertyFunnel.setChoice('${field}','${value}')">
+        <span class="bw-choice__icon" aria-hidden="true">${BW_ICONS[icon] || ""}</span>
+        <span class="bw-choice__label">${label}</span>
+        <span class="bw-choice__chevron" aria-hidden="true">›</span>
+      </button>
+    `;
+  }
 
   function renderInheritanceScreen() {
     return `
       <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre Situation</div>
+        <div class="bw-header__eyebrow">Erbensituation</div>
         <h1 class="bw-header__title">Wie ist die Erbsituation aktuell?</h1>
       </div>
 
-      <div class="bw-choice-grid" role="group" aria-label="Erbsituation">
-        ${renderIconChoice("inheritance", "sole_heir", "person", "Ich bin alleiniger Erbe")}
-        ${renderIconChoice("inheritance", "multiple_heirs", "people", "Wir sind mehrere Erben")}
-        ${renderIconChoice("inheritance", "unclear", "help", "Noch nicht vollständig geklärt")}
+      <div class="bw-choice-grid">
+        ${renderSimpleChoice("inheritance","sole_heir","person","Ich bin alleiniger Erbe")}
+        ${renderSimpleChoice("inheritance","multiple_heirs","people","Wir sind mehrere Erben")}
+        ${renderSimpleChoice("inheritance","unclear","help","Noch nicht vollständig geklärt")}
       </div>
     `;
   }
 
+  function renderTimingScreen() {
+    return `
+      <div class="bw-header">
+        <div class="bw-header__eyebrow">Erbfall</div>
+        <h1 class="bw-header__title">Wie lange ist der Erbfall ungefähr her?</h1>
+      </div>
+
+      <div class="bw-choice-grid">
+        ${renderChoice("timing","lt_6w","Vor weniger als 6 Wochen")}
+        ${renderChoice("timing","w6_m6","Vor 6 Wochen bis 6 Monaten")}
+        ${renderChoice("timing","m6_y2","Vor 6 bis 24 Monaten")}
+        ${renderChoice("timing","gt_2y","Vor mehr als 2 Jahren")}
+        ${renderChoice("timing","unknown","Weiß ich nicht genau")}
+      </div>
+    `;
+  }
+
+  /* Formular-Auswahl mit Icon-Kreis links (gleiche Optik wie die
+     Icon-Karten der Auswahl-Schritte) und Haken-Kreis rechts. */
   function renderIconChoice(field, value, icon, label) {
     const current = getChoiceValue(field);
-    const selected = current === value;
-
+    const selected = Array.isArray(current) ? current.includes(value) : current === value;
     return `
-      <button type="button"
-        class="bw-choice ${selected ? "bw-choice--selected" : ""}"
+      <button type="button" class="bw-choice ${selected ? "bw-choice--selected" : ""}"
         aria-pressed="${selected}"
-        onclick="window.BWPropertyFunnel.selectOption('${field}','${value}')">
+        onclick="window.BWPropertyFunnel.setChoice('${field}','${value}')">
         <span class="bw-choice__icon" aria-hidden="true">${BW_ICONS[icon] || ""}</span>
-        <span class="bw-choice__label">${esc(label)}</span>
+        <span class="bw-choice__label">${label}</span>
         <span class="bw-choice__check" aria-hidden="true">${BW_ICONS.check}</span>
       </button>
     `;
   }
 
-  /* =========================================================
-     HEIRS
-     ========================================================= */
+  function renderCountChoice(value, label, ariaLabel) {
+    const selected = state.heirs.count === value;
+    return `
+      <button type="button" class="bw-count ${selected ? "bw-count--selected" : ""}"
+        aria-pressed="${selected}" aria-label="${ariaLabel}"
+        onclick="window.BWPropertyFunnel.setChoice('heirsCount','${value}')">${label}</button>
+    `;
+  }
 
   function renderHeirsScreen() {
     return `
       <div class="bw-header">
-        <div class="bw-header__eyebrow">Erbengemeinschaft</div>
-        <h1 class="bw-header__title">Erbengemeinschaft</h1>
+        <div class="bw-header__eyebrow">Erbensituation</div>
+        <h1 class="bw-header__title">Ihre Erbengemeinschaft</h1>
       </div>
 
       <div class="bw-form-card">
-        <div class="bw-section-label" style="margin-top:0">Wie viele Erben gibt es ungefähr?</div>
-
-        <div class="bw-count-row" role="group" aria-label="Anzahl der Erben">
-          ${renderCountChoice("2", "2", "2 Erben")}
-          ${renderCountChoice("3", "3", "3 Erben")}
-          ${renderCountChoice("4", "4", "4 Erben")}
-          ${renderCountChoice("5plus", "5+", "5 oder mehr Erben")}
+        <div class="bw-section-label" style="margin-top:0">Wie viele Personen sind beteiligt?</div>
+        <div class="bw-count-row">
+          ${renderCountChoice("2","2","2 Erben")}
+          ${renderCountChoice("3","3","3 Erben")}
+          ${renderCountChoice("4","4","4 Erben")}
+          ${renderCountChoice("5plus","5+","5 oder mehr Erben")}
         </div>
 
         <div class="bw-section-label">Wie sind sich die Erben aktuell einig?</div>
-        <div class="bw-choice-grid" role="group" aria-label="Einigkeit der Erben">
-          ${renderChoice("heirsAgreement", "agreed", "Wir sind uns grundsätzlich einig")}
-          ${renderChoice("heirsAgreement", "undecided", "Wir haben noch keine Entscheidung getroffen")}
-          ${renderChoice("heirsAgreement", "different", "Wir haben unterschiedliche Vorstellungen")}
-          ${renderChoice("heirsAgreement", "dispute", "Es gibt bereits Streit")}
+        <div class="bw-choice-grid">
+          ${renderIconChoice("heirsAgreement","agreed","agree","Wir sind uns grundsätzlich einig")}
+          ${renderIconChoice("heirsAgreement","undecided","help","Wir haben noch keine Entscheidung getroffen")}
+          ${renderIconChoice("heirsAgreement","different","split","Wir haben unterschiedliche Vorstellungen")}
+          ${renderIconChoice("heirsAgreement","dispute","conflict","Es gibt bereits Streit")}
         </div>
 
         <div class="bw-section-label">Möchte jemand aus der Familie die Immobilie möglicherweise selbst übernehmen?</div>
-        <div class="bw-choice-grid" role="group" aria-label="Familienübernahme">
-          ${renderChoice("familyTakeover", "yes", "Ja")}
-          ${renderChoice("familyTakeover", "no", "Nein")}
-          ${renderChoice("familyTakeover", "unknown", "Noch unklar")}
+        <div class="bw-choice-grid">
+          ${renderChoice("heirsTakeover","yes","Ja")}
+          ${renderChoice("heirsTakeover","no","Nein")}
+          ${renderChoice("heirsTakeover","unclear","Noch unklar")}
         </div>
-
-        <div id="bw-validation-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
       </div>
 
       ${renderContinueButton()}
     `;
   }
 
-  function renderCountChoice(value, label, ariaLabel) {
-    const selected = state.heirs.count === value;
-
-    return `
-      <button type="button"
-        class="bw-count ${selected ? "bw-count--selected" : ""}"
-        aria-pressed="${selected}"
-        aria-label="${esc(ariaLabel)}"
-        onclick="window.BWPropertyFunnel.setChoice('heirsCount','${value}')">
-        ${esc(label)}
-      </button>
-    `;
-  }
-
-  /* =========================================================
-     FINANCING
-     ========================================================= */
-
   function renderFinancingScreen() {
     const f = state.finance;
-
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Finanzierung</div>
@@ -2692,269 +2786,153 @@
       </div>
 
       <div class="bw-form-card">
-        <div class="bw-section-label" style="margin-top:0">
-          Gibt es noch eine Finanzierung für die Immobilie?
-        </div>
-
-        <div class="bw-choice-grid" role="group" aria-label="Finanzierung">
-          ${renderChoice("financing", "no", "Nein")}
-          ${renderChoice("financing", "yes", "Ja")}
-          ${renderChoice("financing", "unknown", "Weiß ich nicht")}
+        <div class="bw-section-label" style="margin-top:0">Besteht noch eine Finanzierung für die Immobilie?</div>
+        <div class="bw-choice-grid">
+          ${renderChoice("financing","no","Nein")}
+          ${renderChoice("financing","yes","Ja")}
+          ${renderChoice("financing","unknown","Weiß ich nicht")}
         </div>
 
         ${f.financing === "yes" ? `
-          <div class="bw-section-label">Wie hoch ist die ungefähre Restschuld?</div>
-          <div class="bw-choice-grid" role="group" aria-label="Restschuld">
-            ${renderChoice("remainingDebt", "lt_100k", "Unter 100.000 €")}
-            ${renderChoice("remainingDebt", "k100_250", "100.000–250.000 €")}
-            ${renderChoice("remainingDebt", "k250_500", "250.000–500.000 €")}
-            ${renderChoice("remainingDebt", "gt_500k", "Über 500.000 €")}
-            ${renderChoice("remainingDebt", "unknown", "Weiß ich nicht")}
-          </div>
-        ` : ""}
+        <div class="bw-section-label">Wie hoch ist die ungefähre Restschuld?</div>
+        <div class="bw-choice-grid">
+          ${renderChoice("remainingDebt","lt_100k","Unter 100.000 €")}
+          ${renderChoice("remainingDebt","k100_250","100.000–250.000 €")}
+          ${renderChoice("remainingDebt","k250_500","250.000–500.000 €")}
+          ${renderChoice("remainingDebt","gt_500k","Über 500.000 €")}
+          ${renderChoice("remainingDebt","unknown","Weiß ich nicht")}
+        </div>` : ""}
 
-        <div class="bw-section-label">Gibt es besondere Belastungen oder Rechte?</div>
-        <div class="bw-choice-grid" role="group" aria-label="Belastungen oder Rechte">
-          ${renderChoice("encumbrance", "none", "Keine")}
-          ${renderChoice("encumbrance", "grundschuld", "Grundschuld")}
-          ${renderChoice("encumbrance", "wohnrecht", "Wohnrecht")}
-          ${renderChoice("encumbrance", "niessbrauch", "Nießbrauch")}
-          ${renderChoice("encumbrance", "other", "Sonstige")}
-          ${renderChoice("encumbrance", "unknown", "Weiß ich nicht")}
+        <div class="bw-section-label">Sind Ihnen weitere Belastungen bekannt?</div>
+        <div class="bw-choice-grid">
+          ${renderChoice("encumbrance","none","Keine")}
+          ${renderChoice("encumbrance","grundschuld","Grundschuld")}
+          ${renderChoice("encumbrance","wohnrecht","Wohnrecht")}
+          ${renderChoice("encumbrance","niessbrauch","Nießbrauch")}
+          ${renderChoice("encumbrance","other","Sonstige")}
+          ${renderChoice("encumbrance","unknown","Weiß ich nicht")}
         </div>
-
-        <div id="bw-validation-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
       </div>
 
       ${renderContinueButton()}
     `;
   }
-
-  /* =========================================================
-     INTENTION
-     ========================================================= */
-
-  function renderIntentionScreen() {
-    return `
-      <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre Entscheidung</div>
-        <h1 class="bw-header__title">Was möchten Sie aktuell mit der Immobilie machen?</h1>
-      </div>
-
-      <div class="bw-choice-grid" role="group" aria-label="Aktuelle Absicht">
-        ${renderSimpleChoice("intention", "sell", "tag", "Verkaufen")}
-        ${renderSimpleChoice("intention", "keep", "key", "Behalten")}
-        ${renderSimpleChoice("intention", "rent", "banknote", "Vermieten")}
-        ${renderSimpleChoice("intention", "family_transfer", "people", "Innerhalb der Familie übernehmen")}
-        ${renderSimpleChoice("intention", "undecided", "help", "Noch nicht entschieden")}
-      </div>
-    `;
-  }
-
-  function renderSimpleChoice(field, value, icon, label) {
-    const selected = state[field] === value;
-
-    return `
-      <button type="button"
-        class="bw-choice ${selected ? "bw-choice--selected" : ""}"
-        aria-pressed="${selected}"
-        onclick="window.BWPropertyFunnel.selectOption('${field}','${value}')">
-        <span class="bw-choice__icon" aria-hidden="true">${BW_ICONS[icon] || ""}</span>
-        <span class="bw-choice__label">${esc(label)}</span>
-        <span class="bw-choice__chevron" aria-hidden="true">›</span>
-      </button>
-    `;
-  }
-
-  /* =========================================================
-     PRIORITY
-     ========================================================= */
 
   function renderPriorityScreen() {
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Prioritäten</div>
-        <h1 class="bw-header__title">Was ist Ihnen bei der Entscheidung besonders wichtig?</h1>
-        <p class="bw-header__description">Sie können mehrere Punkte auswählen.</p>
+        <h1 class="bw-header__title">Wenn Sie an die Entscheidung denken – was ist Ihnen am wichtigsten?</h1>
       </div>
 
-      <div class="bw-choice-grid" role="group" aria-label="Prioritäten">
-        ${renderChoice("priority", "price", "Einen möglichst guten Preis erzielen")}
-        ${renderChoice("priority", "speed", "Schnell eine Lösung finden")}
-        ${renderChoice("priority", "effort", "Möglichst wenig Aufwand haben")}
-        ${renderChoice("priority", "family", "Die Immobilie in der Familie behalten")}
-        ${renderChoice("priority", "costs", "Laufende Kosten vermeiden")}
-        ${renderChoice("priority", "wealth", "Langfristig Vermögen aufbauen")}
-        ${renderChoice("priority", "fairness", "Eine faire Lösung für alle Erben finden")}
-        ${renderChoice("priority", "unknown", "Ich weiß es noch nicht")}
+      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich</div>
+
+      <div class="bw-choice-grid">
+        ${renderChoice("priority","price","Einen möglichst guten Preis erzielen")}
+        ${renderChoice("priority","speed","Schnell eine Lösung finden")}
+        ${renderChoice("priority","effort","Möglichst wenig Aufwand haben")}
+        ${renderChoice("priority","family","Die Immobilie in der Familie behalten")}
+        ${renderChoice("priority","costs","Laufende Kosten vermeiden")}
+        ${renderChoice("priority","wealth","Langfristig Vermögen aufbauen")}
+        ${renderChoice("priority","fair","Eine faire Lösung für alle Erben finden")}
+        ${renderChoice("priority","unknown","Ich weiß es noch nicht")}
       </div>
 
-      <div id="bw-validation-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
       ${renderContinueButton()}
     `;
   }
-
-  /* =========================================================
-     REPORT / CONTACT
-     ========================================================= */
 
   function renderContactScreen() {
     const c = state.contact;
     const a = state.address;
     const assessment = computeAssessment();
-
     return `
       <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihre persönliche Einschätzung</div>
-        <h1 class="bw-header__title">Ihre persönliche Einschätzung ist jetzt vorbereitet.</h1>
-        <p class="bw-header__description">
-          Wir haben Ihre Angaben ausgewertet. Ergänzen Sie noch Ihre Kontaktdaten, um den persönlichen Report kostenlos zu erhalten.
-        </p>
+        <div class="bw-header__eyebrow">Ihr Ergebnis</div>
+        <h1 class="bw-header__title">Ihr persönlicher Erbfall-Report ist fertig.</h1>
       </div>
 
       <div class="bw-lead-layout">
         <div>
           <div class="bw-report" aria-hidden="true">
             <div class="bw-report__page">
-              <div class="bw-report__eyebrow">Persönlicher Report</div>
-              <div class="bw-report__name">Immobilien &amp; Erbfall</div>
-              <div class="bw-report__address">
-                ${esc([a.street, a.city].filter(Boolean).join(", ") || "Ihre Immobilie")}
-              </div>
-
+              <div class="bw-report__eyebrow">Persönliche Auswertung</div>
+              <div class="bw-report__name">Erbfall-Report</div>
+              <div class="bw-report__address">${esc([a.street, a.city].filter(Boolean).join(", ") || "Ihre Immobilie")}</div>
               <div class="bw-report__summary">${esc(bwSummary())}</div>
-
               <div class="bw-report__badges">
-                <span class="bw-report__badge">Entscheidungsdruck: ${esc(assessment.pressure)}</span>
-                <span class="bw-report__badge">Komplexität: ${esc(assessment.complexity)}</span>
+                <span class="bw-report__badge">Entscheidungsdruck: ${assessment.pressure}</span>
+                <span class="bw-report__badge">Komplexität: ${assessment.complexity}</span>
               </div>
-
               <div class="bw-report__divider"></div>
-
-              <div class="bw-report__row">
-                <span>Immobilienwert</span>
-                <span class="bw-report__value"></span>
-              </div>
-
-              <div class="bw-report__row">
-                <span>Ihre Situation</span>
-                <span class="bw-report__value"></span>
-              </div>
-
-              <div class="bw-report__row">
-                <span>Finanzielle Faktoren</span>
-                <span class="bw-report__value"></span>
-              </div>
-
-              ${state.inheritance === "multiple_heirs" ? `
-                <div class="bw-report__row">
-                  <span>Erbengemeinschaft</span>
-                  <span class="bw-report__value"></span>
-                </div>
-              ` : ""}
-
-              <div class="bw-report__row">
-                <span>Nächste sinnvolle Schritte</span>
-                <span class="bw-report__value"></span>
-              </div>
-
-              <div class="bw-report__note">
-                Erste Empfehlung: ${esc(assessment.recommendedNextStep)}
-              </div>
+              <div class="bw-report__row"><span>Geschätzter Marktwert</span><span class="bw-report__value"></span></div>
+              <div class="bw-report__row"><span>Preisspanne</span></div>
+              <div class="bw-report__range"></div>
+              <div class="bw-report__row"><span>Verkaufen · Behalten · Vermieten</span><span class="bw-report__value"></span></div>
+              <div class="bw-report__row"><span>Ihre 3 nächsten Schritte</span><span class="bw-report__value"></span></div>
+              <div class="bw-report__note">Wichtigster Punkt: ${esc(assessment.risks[0])}</div>
             </div>
           </div>
 
           <div class="bw-trust bw-trust--stack">
-            <span>Immobilienwert &amp; erste Wertspanne</span>
-            <span>Ihre Situation &amp; finanzielle Faktoren</span>
-            <span>Nächste sinnvolle Schritte</span>
+            <span>Marktwert &amp; Preisspanne</span>
+            <span>Erbschaftsrelevante Werte</span>
+            <span>Orientierung für die nächsten Schritte</span>
           </div>
         </div>
 
         <div class="bw-form-card">
-          <div class="bw-section-label" style="margin-top:0">
-            Wohin dürfen wir Ihren persönlichen Report senden?
-          </div>
+          <div class="bw-section-label" style="margin-top:0">Wohin dürfen wir Ihren Report senden?</div>
 
           <div class="bw-field">
-            <label class="bw-field__label" for="bw-email">E-Mail-Adresse</label>
-            <input id="bw-email"
-              class="bw-field__input"
-              type="email"
-              autocomplete="email"
-              placeholder="max@beispiel.de"
+            <label class="bw-field__label" for="bw-email">E-Mail</label>
+            <input id="bw-email" class="bw-field__input" type="email" autocomplete="email" placeholder="max@beispiel.de"
               value="${esc(c.email)}"
               oninput="window.BWPropertyFunnel.updateField('contact.email', this.value)"
               onblur="window.BWPropertyFunnel.trackField('contact.email', this.value)">
           </div>
 
           <div class="bw-field">
-            <label class="bw-field__label" for="bw-phone">Telefonnummer</label>
-            <input id="bw-phone"
-              class="bw-field__input"
-              type="tel"
-              autocomplete="tel"
-              placeholder="0176 12345678"
+            <label class="bw-field__label" for="bw-phone">Telefon</label>
+            <input id="bw-phone" class="bw-field__input" type="tel" autocomplete="tel" placeholder="0176 12345678"
               value="${esc(c.phone)}"
               oninput="window.BWPropertyFunnel.updateField('contact.phone', this.value)"
               onblur="window.BWPropertyFunnel.trackField('contact.phone', this.value)">
           </div>
 
           <div class="bw-field">
-            <label class="bw-field__label" for="bw-first-name">Vorname <span class="bw-field__optional">(optional)</span></label>
-            <input id="bw-first-name"
-              class="bw-field__input"
-              autocomplete="given-name"
-              placeholder="Max"
+            <label class="bw-field__label" for="bw-name">Name <span class="bw-field__optional">(optional)</span></label>
+            <input id="bw-name" class="bw-field__input" autocomplete="name" placeholder="Max Mustermann"
               value="${esc(c.firstName)}"
-              oninput="window.BWPropertyFunnel.updateField('contact.firstName', this.value)"
-              onblur="window.BWPropertyFunnel.trackField('contact.firstName', this.value)">
+              oninput="window.BWPropertyFunnel.updateField('contact.firstName', this.value)">
           </div>
 
-          <div class="bw-field">
-            <label class="bw-field__label" for="bw-last-name">Nachname <span class="bw-field__optional">(optional)</span></label>
-            <input id="bw-last-name"
-              class="bw-field__input"
-              autocomplete="family-name"
-              placeholder="Mustermann"
-              value="${esc(c.lastName)}"
-              oninput="window.BWPropertyFunnel.updateField('contact.lastName', this.value)"
-              onblur="window.BWPropertyFunnel.trackField('contact.lastName', this.value)">
-          </div>
+          <div id="bw-contact-error" class="bw-field__error" style="display:none"></div>
 
-          <div id="bw-contact-error" class="bw-field__error" style="display:none" aria-live="polite"></div>
-
-          <div style="position:absolute;left:-9999px;top:auto;height:1px;width:1px;overflow:hidden"
-               aria-hidden="true">
+          <div style="position:absolute;left:-9999px;top:auto;height:1px;width:1px;overflow:hidden" aria-hidden="true">
             <label for="bw-extra-field">Dieses Feld bitte leer lassen</label>
             <input id="bw-extra-field" type="text" tabindex="-1" autocomplete="off">
           </div>
 
-          <button id="bw-submit-lead"
-            type="button"
-            class="bw-button"
-            style="width:100%;margin-top:8px"
+          <button id="bw-submit-lead" type="button" class="bw-button" style="width:100%;margin-top:8px"
             onclick="window.BWPropertyFunnel.submitLead()">
-            Persönlichen Report kostenlos erhalten
+            Kostenlosen Erbfall-Report erhalten
           </button>
 
           <div class="bw-trust">
-            <span>Kostenlos</span>
-            <span>Unverbindlich</span>
-            <span>Vertraulich</span>
+            <span>Kostenlos &amp; unverbindlich</span>
+            <span>Neutral &amp; unabhängig</span>
+            <span>Vertrauliche Behandlung Ihrer Daten</span>
           </div>
 
           <div class="bw-privacy">
-            Ihr Report dient als persönliche Orientierung. Rechtliche oder steuerliche Fragen sollten bei Bedarf professionell geklärt werden.
+            Auf Wunsch bespricht Immobilienexperte Jörg von Bierbrauer (Rhein-Main) die Ergebnisse persönlich mit Ihnen.
+            Mit dem Absenden stimmen Sie der Kontaktaufnahme zum Erbfall-Report zu.
           </div>
         </div>
       </div>
     `;
   }
-
-  /* =========================================================
-     ADDRESS AUTOCOMPLETE
-     ========================================================= */
 
   let addressSearchTimer = null;
   let addressSearchController = null;
@@ -2966,53 +2944,39 @@
 
     const status = document.getElementById("bw-address-status");
     const list = document.getElementById("bw-address-suggestions");
+    if (status) status.textContent = "";
 
-    if (status) {
-      status.className = "bw-address-status";
-      status.textContent = "";
-    }
-
+    // Once the user changes the address, don't keep an old auto-filled PLZ/Ort.
     if (state.address.postalCode || state.address.city) {
       state.address.postalCode = "";
       state.address.city = "";
-
       const postal = document.getElementById("bw-postal");
       const city = document.getElementById("bw-city");
-
       if (postal) postal.value = "";
       if (city) city.value = "";
     }
 
     clearTimeout(addressSearchTimer);
-
-    if (addressSearchController) {
-      addressSearchController.abort();
-    }
-
+    if (addressSearchController) addressSearchController.abort();
     if (!list) return;
 
     const query = value.trim();
-
     if (query.length < 4) {
       list.hidden = true;
       list.innerHTML = "";
       return;
     }
 
-    addressSearchTimer = setTimeout(function () {
-      searchAddresses(query);
-    }, 300);
+    addressSearchTimer = setTimeout(() => searchAddresses(query), 300);
   }
 
   async function searchAddresses(query) {
     const list = document.getElementById("bw-address-suggestions");
     const status = document.getElementById("bw-address-status");
-
     if (!list) return;
 
     const sequence = ++addressSearchSequence;
     addressSearchController = new AbortController();
-
     list.innerHTML = `
       <div class="bw-address-state">
         <span class="bw-address-state__spinner" aria-hidden="true"></span>
@@ -3021,108 +2985,100 @@
     `;
     list.hidden = false;
 
-    track("address_search", {
-      query_length: query.length
-    });
+    track("address_search", { query_length: query.length });
 
     try {
-      const url = "https://photon.komoot.io/api/?" +
-        new URLSearchParams({
-          q: query,
-          lang: "de",
-          limit: "5",
-          lat: "51.1657",
-          lon: "10.4515",
-          zoom: "12",
-          bbox: "5.87,47.27,15.04,55.06"
-        }).toString();
+      /* bbox begrenzt auf Deutschland; lat/lon/zoom bevorzugen Treffer
+         im Rhein-Main-Gebiet (Zielregion), ohne andere auszuschließen. */
+      const url = "https://photon.komoot.io/api/?" + new URLSearchParams({
+        q: query,
+        lang: "de",
+        limit: "5",
+        lat: "50.0",
+        lon: "8.27",
+        zoom: "12",
+        bbox: "5.87,47.27,15.04,55.06"
+      }).toString();
 
       const response = await fetch(url, {
         signal: addressSearchController.signal,
         headers: { "Accept": "application/json" }
       });
-
       if (!response.ok) throw new Error("Address search failed");
       const data = await response.json();
-
       if (sequence !== addressSearchSequence) return;
 
-      const features = (data.features || [])
-        .filter(function (feature) {
-          const p = feature.properties || {};
-          return p.countrycode === "DE" ||
-            p.country === "Germany" ||
-            p.country === "Deutschland";
-        })
-        .slice(0, 5);
+      const features = (data.features || []).filter(f => {
+        const p = f.properties || {};
+        return p.countrycode === "DE" || p.country === "Germany" || p.country === "Deutschland";
+      }).slice(0, 5);
 
       if (!features.length) {
         list.innerHTML = `
-          <div class="bw-address-state bw-address-state--empty">
-            <span>Keine passende Adresse gefunden.</span>
-            <small>Bitte Straße und Hausnummer genauer eingeben.</small>
-          </div>
-        `;
+      <div class="bw-address-state bw-address-state--empty">
+        <span>Keine passende Adresse gefunden.</span>
+        <small>Bitte Straße und Hausnummer genauer eingeben.</small>
+      </div>
+    `;
         if (status) status.textContent = "";
         return;
       }
 
-      list.innerHTML = features.map(function (feature) {
+      list.innerHTML = features.map((feature) => {
         const p = feature.properties || {};
 
+        // Photon can occasionally return postcode/city as part of "street".
+        // Normalize this before displaying the suggestion.
         let streetName = String(p.street || p.name || query).trim();
         let postalCode = String(p.postcode || "").trim();
         let city = String(
           p.city || p.town || p.village || p.municipality || p.district || ""
         ).trim();
 
-        const trailingPostcode =
-          streetName.match(/(?:\s|^)(\d{5})(?:\s+(.+))?$/);
-
+        const trailingPostcode = streetName.match(/(?:\s|^)(\d{5})(?:\s+(.+))?$/);
         if (!postalCode && trailingPostcode) {
           postalCode = trailingPostcode[1];
           if (!city && trailingPostcode[2]) city = trailingPostcode[2].trim();
           streetName = streetName.slice(0, trailingPostcode.index).trim();
         }
 
+        // Remove accidental duplicated postcode/city fragments.
         streetName = streetName.replace(/\s{2,}/g, " ").trim();
 
         const street = [streetName, p.housenumber].filter(Boolean).join(" ");
         const locality = [postalCode, city].filter(Boolean).join(" ");
 
         const payload = encodeURIComponent(JSON.stringify({
-          street: street,
-          postalCode: postalCode,
-          city: city,
+          street,
+          postalCode,
+          city,
           lat: feature.geometry?.coordinates?.[1] || null,
           lon: feature.geometry?.coordinates?.[0] || null,
           display: street
         }));
 
-        return `
-          <button type="button"
-            class="bw-address-suggestion"
-            data-address="${payload}"
-            onclick="window.BWPropertyFunnel.selectAddress(this.dataset.address)">
-            <span class="bw-address-suggestion__icon" aria-hidden="true">
-              ${bwIcon('<path d="M12 21s6-5.15 6-11a6 6 0 1 0-12 0c0 5.85 6 11 6 11Z"/><circle cx="12" cy="10" r="2.1"/>', "0 0 24 24", "1.7")}
-            </span>
-            <span class="bw-address-suggestion__copy">
-              <span class="bw-address-suggestion__main">${esc(street)}</span>
-              <span class="bw-address-suggestion__meta">${esc(locality || "Deutschland")}</span>
-            </span>
-            <span class="bw-address-suggestion__chevron" aria-hidden="true">›</span>
-          </button>
-        `;
+        return `<button type="button"
+          class="bw-address-suggestion"
+          data-address="${payload}"
+          onclick="window.BWPropertyFunnel.selectAddress(this.dataset.address)">
+          <span class="bw-address-suggestion__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M12 21s6-5.15 6-11a6 6 0 1 0-12 0c0 5.85 6 11 6 11Z"/>
+              <circle cx="12" cy="10" r="2.1"/>
+            </svg>
+          </span>
+          <span class="bw-address-suggestion__copy">
+            <span class="bw-address-suggestion__main">${esc(street)}</span>
+            <span class="bw-address-suggestion__meta">${esc(locality || "Deutschland")}</span>
+          </span>
+          <span class="bw-address-suggestion__chevron" aria-hidden="true">›</span>
+        </button>`;
       }).join("");
 
-      track("address_suggestions_shown", {
-        count: features.length
-      });
+      track("address_suggestions_shown", { count: features.length });
     } catch (error) {
-      if (error && error.name === "AbortError") return;
-
-      console.warn("[BW Funnel] Address autocomplete unavailable", error);
+      if (error.name === "AbortError") return;
+      console.warn("Address autocomplete unavailable", error);
       list.hidden = true;
       list.innerHTML = "";
     }
@@ -3130,12 +3086,7 @@
 
   function selectAddress(encodedAddress) {
     let selected;
-
-    try {
-      selected = JSON.parse(decodeURIComponent(encodedAddress));
-    } catch (e) {
-      return;
-    }
+    try { selected = JSON.parse(decodeURIComponent(encodedAddress)); } catch (e) { return; }
 
     state.address.street = selected.street || state.address.street;
     state.address.postalCode = selected.postalCode || "";
@@ -3151,18 +3102,10 @@
     if (street) street.value = state.address.street;
     if (postal) postal.value = state.address.postalCode;
     if (city) city.value = state.address.city;
-
-    if (list) {
-      list.hidden = true;
-      list.innerHTML = "";
-    }
-
+    if (list) { list.hidden = true; list.innerHTML = ""; }
     if (status) {
       status.className = "bw-address-status bw-address-status--success";
-      status.textContent =
-        state.address.postalCode && state.address.city
-          ? "✓ Adresse gefunden"
-          : "Adresse erkannt – bitte PLZ und Ort prüfen";
+      status.textContent = state.address.postalCode && state.address.city ? "✓ Adresse erkannt" : "Adresse erkannt – bitte PLZ und Ort prüfen";
     }
 
     track("address_selected", {
@@ -3173,129 +3116,88 @@
     });
   }
 
-  /* =========================================================
-     VALIDATION
-     ========================================================= */
-
-  function syncVisibleFields() {
-    const root = document.getElementById("bw-property-funnel");
-    if (!root) return;
-
-    const streetEl = root.querySelector("#bw-street");
-    const postalEl = root.querySelector("#bw-postal");
-    const cityEl = root.querySelector("#bw-city");
-
-    if (streetEl) state.address.street = streetEl.value.trim();
-    if (postalEl) {
-      state.address.postalCode = String(postalEl.value || "")
-        .replace(/[^0-9]/g, "")
-        .slice(0, 5);
-    }
-    if (cityEl) state.address.city = cityEl.value.trim();
-
-    const livingEl = root.querySelector("#bw-living");
-    const plotEl = root.querySelector("#bw-plot, #bw-plot-commercial");
-    const floorEl = root.querySelector("#bw-floor");
-    const yearEl = root.querySelector("#bw-year");
-    const rentEl = root.querySelector("#bw-rent");
-    const unitsEl = root.querySelector("#bw-units");
-
-    if (livingEl) state.property.livingSpace = livingEl.value.trim();
-    if (plotEl) state.property.plotSize = plotEl.value.trim();
-    if (floorEl) state.property.floor = floorEl.value.trim();
-    if (yearEl) state.property.yearBuilt = yearEl.value.trim();
-    if (rentEl) {
-      state.property.rentalIncome = rentEl.value.trim();
-      state.property.monthlyColdRent = rentEl.value.trim();
-    }
-    if (unitsEl) {
-      state.property.numberOfUnits = unitsEl.value.trim();
-      state.property.units = unitsEl.value.trim();
-    }
-  }
-
-  function validNumericText(value) {
-    const normalized = String(value || "").replace(",", ".").replace(/[^\d.]/g, "");
-    return normalized && Number(normalized) > 0;
-  }
-
   function validateCurrentStep() {
-    syncVisibleFields();
 
     if (state.currentStep === "location") {
+      /*
+       * IMPORTANT:
+       * Always sync the live DOM values before validating.
+       * This prevents a stale validation state after the user first enters
+       * an invalid address and then corrects it.
+       */
+      const streetEl = document.getElementById("bw-street");
+      const postalEl = document.getElementById("bw-postal");
+      const cityEl = document.getElementById("bw-city");
+
+      if (streetEl) state.address.street = streetEl.value.trim();
+      if (postalEl) state.address.postalCode = String(postalEl.value || "").replace(/[^0-9]/g, "").slice(0, 5);
+      if (cityEl) state.address.city = cityEl.value.trim();
+
       const a = state.address;
-      const missing = [];
 
-      if (!String(a.street || "").trim()) missing.push("Straße + Hausnummer");
-      if (!/^\d{5}$/.test(String(a.postalCode || "").trim())) missing.push("5-stellige PLZ");
-      if (!String(a.city || "").trim()) missing.push("Ort");
+      const street = String(a.street || "").trim();
+      const postalCode = String(a.postalCode || "").trim();
+      const city = String(a.city || "").trim();
 
-      if (missing.length) {
-        return "Bitte " + missing.join(", ") + " ergänzen.";
+      if (!street || postalCode.length !== 5 || !/^[0-9]{5}$/.test(postalCode) || !city) {
+        return "Bitte Straße, 5-stellige PLZ und Ort angeben.";
       }
+
+      // Keep state normalized to exactly what was validated.
+      state.address.street = street;
+      state.address.postalCode = postalCode;
+      state.address.city = city;
+
+      /*
+       * The user may manually correct PLZ or city after selecting an
+       * autocomplete result. That is valid as long as the final fields
+       * contain a complete address. The old selectedAddress must therefore
+       * never be required for validation.
+       */
     }
 
     if (state.currentStep === "property_details") {
       const p = state.property;
       const t = state.propertyType;
-      const errors = [];
 
+      /* Grundstück: nur die Fläche. Gewerbe: Nutzfläche/Baujahr/Zustand,
+         Grundstück optional. Wohnung: Etage statt Grundstück. */
       if (t === "land") {
-        if (!validNumericText(p.plotSize)) {
-          errors.push("Grundstücksgröße");
+        if (!p.plotSize.trim()) {
+          return "Bitte die Grundstücksgröße angeben.";
         }
       } else {
-        if (!validNumericText(p.livingSpace)) errors.push("Wohnfläche / Nutzfläche");
-        if (!/^\d{4}$/.test(String(p.yearBuilt || ""))) errors.push("Baujahr");
-        if (!p.condition) errors.push("Zustand");
-
-        if (t === "apartment" && !String(p.floor || "").trim()) {
-          errors.push("Etage");
+        if (!p.livingSpace.trim() || !p.yearBuilt.trim() || !p.condition) {
+          return "Bitte die drei Angaben ausfüllen und den Zustand auswählen.";
         }
-
-        if ((t === "house" || t === "multi_family") && !validNumericText(p.plotSize)) {
-          errors.push("Grundstücksgröße");
+        if (t === "apartment" && !p.floor.trim()) {
+          return "Bitte die Etage angeben.";
         }
-      }
-
-      if (!p.usage) errors.push("Nutzung");
-
-      if (p.usage === "rented" && !validNumericText(p.rentalIncome || p.monthlyColdRent)) {
-        errors.push("monatliche Kaltmiete");
-      }
-
-      const isMultiFamily =
-        t === "multi_family" ||
-        (t === "house" && state.houseType === "multi_family");
-
-      if (isMultiFamily && !validNumericText(p.numberOfUnits || p.units)) {
-        errors.push("Anzahl der Wohneinheiten");
-      }
-
-      if (errors.length) {
-        return "Bitte " + errors.join(", ") + " ergänzen.";
+        if (t !== "apartment" && t !== "commercial" && !p.plotSize.trim()) {
+          return "Bitte die Grundstücksgröße angeben.";
+        }
+        if (!p.usage) {
+          return "Bitte angeben, wie die Immobilie aktuell genutzt wird.";
+        }
       }
     }
 
     if (state.currentStep === "heirs") {
-      if (!state.heirs.count || !state.heirs.agreement || !state.heirs.familyTakeover) {
-        return "Bitte alle drei Fragen zur Erbengemeinschaft beantworten.";
+      if (!state.heirs.count || !state.heirs.agreement || !state.heirs.takeover) {
+        return "Bitte alle drei Fragen beantworten.";
       }
     }
 
     if (state.currentStep === "financing") {
       const f = state.finance;
-
       if (!f.financing) {
         return "Bitte angeben, ob noch eine Finanzierung besteht.";
       }
-
       if (f.financing === "yes" && !f.remainingDebt) {
         return "Bitte die ungefähre Restschuld auswählen.";
       }
-
       if (!f.encumbrance) {
-        return "Bitte die Frage zu besonderen Belastungen oder Rechten beantworten.";
+        return "Bitte die Frage zu weiteren Belastungen beantworten.";
       }
     }
 
@@ -3308,48 +3210,107 @@
     return null;
   }
 
-  function showValidationError(message, elementId = "bw-validation-error") {
-    const validationEl = document.getElementById(elementId);
+  /* =========================================================
+     AUTOMATISCHE EINSCHÄTZUNG
+     Regelbasiert aus den Antworten: Entscheidungsdruck,
+     Komplexität und die wichtigsten offenen Punkte.
+     ========================================================= */
 
-    if (validationEl) {
-      validationEl.textContent = message;
-      validationEl.style.display = "";
-      return;
-    }
+  function computeAssessment() {
+    const t = state.timing;
+    const f = state.finance;
+    const agr = state.heirs.agreement;
+    let pressure = 0;
+    let cx = 0;
 
-    const nav = document.querySelector(".bw-navigation");
-    if (nav) {
-      const div = document.createElement("div");
-      div.id = elementId;
-      div.className = "bw-field__error";
-      div.textContent = message;
-      div.setAttribute("aria-live", "polite");
-      nav.parentNode.insertBefore(div, nav);
+    if (t === "lt_6w") pressure += 2;
+    else if (t === "w6_m6") pressure += 1;
+    if (f.financing === "yes") { pressure += 1; cx += 1; }
+    if (f.financing === "unknown") cx += 1;
+    if (agr === "dispute") { pressure += 2; cx += 2; }
+    else if (agr === "different") { pressure += 1; cx += 1; }
+    else if (agr === "undecided") pressure += 1;
+    if (state.priority.includes("speed")) pressure += 2;
+    if (state.priority.includes("costs")) pressure += 1;
+
+    if (state.inheritance === "multiple_heirs") {
+      cx += state.heirs.count === "5plus" ? 3 : state.heirs.count === "2" ? 1 : 2;
     }
+    if (f.encumbrance === "wohnrecht" || f.encumbrance === "niessbrauch") cx += 2;
+    else if (f.encumbrance === "grundschuld" || f.encumbrance === "other" || f.encumbrance === "unknown") cx += 1;
+    if (state.propertyType === "commercial" || state.propertyType === "multi_family" || state.propertyType === "land") cx += 1;
+
+    /* Leerstand erzeugt laufende Kosten und Handlungsdruck. */
+    if (state.property.usage === "vacant") pressure += 1;
+    /* Interne Familienübernahme heißt: Wert + Ausgleich unter den Erben klären. */
+    if (state.heirs.takeover === "yes") cx += 1;
+    else if (state.heirs.takeover === "unclear") cx += 1;
+
+    const level = s => s >= 4 ? "Hoch" : s >= 2 ? "Mittel" : "Niedrig";
+
+    const risks = [];
+    if (t === "lt_6w") risks.push("Ausschlagungsfrist (6 Wochen) im Blick behalten");
+    if (agr === "dispute") risks.push("Konflikt in der Erbengemeinschaft moderieren");
+    else if (agr === "different" || agr === "undecided") risks.push("Gemeinsame Entscheidung der Erben herbeiführen");
+    if (f.financing === "yes") risks.push("Laufende Finanzierung und Ablösung klären");
+    else if (f.financing === "unknown") risks.push("Finanzierungsstatus beim Kreditinstitut klären");
+    if (f.encumbrance === "wohnrecht" || f.encumbrance === "niessbrauch") risks.push("Wohnrecht/Nießbrauch wirkt wertmindernd – bewerten lassen");
+    else if (f.encumbrance === "unknown") risks.push("Grundbuch auf Belastungen prüfen");
+    else if (f.encumbrance === "grundschuld") risks.push("Eingetragene Grundschuld prüfen");
+    if (state.property.condition === "refurbishment_needed") risks.push("Sanierungsbedarf realistisch einpreisen");
+    if (state.property.usage === "vacant") risks.push("Leerstand verursacht laufende Kosten – zeitnah eine Nutzung klären");
+    if (state.heirs.takeover === "yes") risks.push("Interne Übernahme sauber bewerten (fairer Ausgleich unter den Erben)");
+    if (!risks.length) risks.push("Unterlagen (Grundbuch, Flurkarte, Energieausweis) zusammenstellen");
+
+    return { pressure: level(pressure), complexity: level(cx), risks: risks.slice(0, 3) };
   }
 
-  function clearValidationError() {
-    const validationEl = document.getElementById("bw-validation-error");
-    if (validationEl) {
-      validationEl.textContent = "";
-      validationEl.style.display = "none";
+  function bwSummary() {
+    const names = { house: "Haus", apartment: "Wohnung", multi_family: "Mehrfamilienhaus", commercial: "Gewerbe", land: "Grundstück" };
+    const parts = [names[state.propertyType] || "Immobilie"];
+    if (state.inheritance === "multiple_heirs") {
+      parts.push("Erbengemeinschaft" + (state.heirs.count ? " (" + (state.heirs.count === "5plus" ? "5+" : state.heirs.count) + " Erben)" : ""));
+    } else if (state.inheritance === "sole_heir") {
+      parts.push("Alleinerbe");
     }
+    if (state.finance.financing === "yes") parts.push("laufende Finanzierung");
+    if (state.property.usage === "vacant") parts.push("leerstehend");
+    return parts.join(" · ");
   }
 
   function continueCurrent() {
     const error = validateCurrentStep();
+    const validationEl = document.getElementById("bw-validation-error");
 
     if (error) {
-      track("validation_failed", {
-        step: state.currentStep,
-        reason: error
-      });
+      track("validation_failed", { step: state.currentStep, reason: error });
 
-      showValidationError(error);
+      if (validationEl) {
+        validationEl.textContent = error;
+        validationEl.style.display = "";
+      } else {
+        const nav = document.querySelector(".bw-navigation");
+        if (nav) {
+          const div = document.createElement("div");
+          div.id = "bw-validation-error";
+          div.className = "bw-field__error";
+          div.textContent = error;
+          nav.parentNode.insertBefore(div, nav);
+        }
+      }
+
       return;
     }
 
-    clearValidationError();
+    /*
+     * Clear any previous error before proceeding.
+     * Previously an error message could remain visible after the user fixed
+     * the fields, creating the impression that the step was still invalid.
+     */
+    if (validationEl) {
+      validationEl.textContent = "";
+      validationEl.style.display = "none";
+    }
 
     if (state.currentStep === "location") {
       const status = document.getElementById("bw-address-status");
@@ -3362,236 +3323,103 @@
     goNext();
   }
 
-  /* =========================================================
-     ASSESSMENT
-     ========================================================= */
-
-  function computeAssessment() {
-    const t = state.timing;
-    const f = state.finance;
-    const p = state.property;
-    const h = state.heirs;
-
-    let pressureScore = 0;
-    let complexityScore = 0;
-
-    /* Decision pressure */
-    if (t === "lt_6w") pressureScore += 3;
-    else if (t === "w6_m6") pressureScore += 2;
-    else if (t === "m6_y2") pressureScore += 1;
-
-    if (f.financing === "yes") pressureScore += 1;
-    if (p.usage === "vacant") pressureScore += 2;
-    if (p.usage === "rented" && state.priority.includes("costs")) pressureScore += 1;
-
-    if (state.inheritance === "multiple_heirs") {
-      if (h.agreement === "dispute") pressureScore += 3;
-      else if (h.agreement === "different") pressureScore += 2;
-      else if (h.agreement === "undecided") pressureScore += 1;
+  /* Formular-Auswahlen (zeigen ihre Selektion, springen NICHT weiter —
+     der Weiter-Button validiert). Alles andere ist Auto-Advance. */
+  function choiceTarget(field) {
+    switch (field) {
+      case "condition": return [state.property, "condition"];
+      case "usage": return [state.property, "usage"];
+      case "heirsCount": return [state.heirs, "count"];
+      case "heirsAgreement": return [state.heirs, "agreement"];
+      case "heirsTakeover": return [state.heirs, "takeover"];
+      case "financing": return [state.finance, "financing"];
+      case "remainingDebt": return [state.finance, "remainingDebt"];
+      case "encumbrance": return [state.finance, "encumbrance"];
+      default: return null;
     }
-
-    if (state.priority.includes("speed")) pressureScore += 2;
-    if (state.priority.includes("costs")) pressureScore += 1;
-
-    /* Decision complexity */
-    if (state.inheritance === "multiple_heirs") {
-      if (h.count === "5plus") complexityScore += 3;
-      else if (h.count === "4") complexityScore += 2;
-      else complexityScore += 1;
-
-      if (h.agreement === "dispute") complexityScore += 3;
-      else if (h.agreement === "different") complexityScore += 2;
-      else if (h.agreement === "undecided") complexityScore += 1;
-
-      if (h.familyTakeover === "yes") complexityScore += 1;
-    }
-
-    if (f.financing === "yes") complexityScore += 1;
-    if (f.financing === "unknown") complexityScore += 1;
-
-    if (f.encumbrance === "wohnrecht" || f.encumbrance === "niessbrauch") {
-      complexityScore += 2;
-    } else if (
-      f.encumbrance === "grundschuld" ||
-      f.encumbrance === "other" ||
-      f.encumbrance === "unknown"
-    ) {
-      complexityScore += 1;
-    }
-
-    if (state.propertyType === "commercial" ||
-        state.propertyType === "multi_family" ||
-        state.propertyType === "land") {
-      complexityScore += 1;
-    }
-
-    if (state.propertyType === "house" && state.houseType === "multi_family") {
-      complexityScore += 1;
-    }
-
-    const level = function (score) {
-      return score >= 5 ? "Hoch" : score >= 2 ? "Mittel" : "Niedrig";
-    };
-
-    const risks = [];
-
-    if (t === "lt_6w") {
-      risks.push("Früher Erbfall – zeitnahe Klärung der nächsten Schritte kann sinnvoll sein");
-    }
-
-    if (p.usage === "vacant") {
-      risks.push("Leerstand kann laufende Kosten und Entscheidungsdruck erhöhen");
-    }
-
-    if (state.inheritance === "multiple_heirs") {
-      if (h.agreement === "dispute") {
-        risks.push("Bereits bestehender Streit erschwert eine gemeinsame Entscheidung");
-      } else if (h.agreement === "different") {
-        risks.push("Unterschiedliche Vorstellungen der Erben müssen zusammengeführt werden");
-      } else if (h.agreement === "undecided") {
-        risks.push("Eine gemeinsame Entscheidungsrichtung ist noch offen");
-      }
-
-      if (h.familyTakeover === "yes") {
-        risks.push("Eine mögliche Familienübernahme sollte finanziell und fair geprüft werden");
-      }
-    }
-
-    if (f.financing === "yes") {
-      risks.push("Restschuld und Finanzierung sollten bei der Entscheidung berücksichtigt werden");
-    } else if (f.financing === "unknown") {
-      risks.push("Finanzierungsstatus sollte bei Bedarf geklärt werden");
-    }
-
-    if (f.encumbrance === "wohnrecht" || f.encumbrance === "niessbrauch") {
-      risks.push("Wohnrecht oder Nießbrauch kann die Bewertung und Verwertung beeinflussen");
-    } else if (f.encumbrance === "grundschuld") {
-      risks.push("Eingetragene Grundschuld separat prüfen – sie ist nicht automatisch gleichbedeutend mit Restschuld");
-    } else if (f.encumbrance === "other") {
-      risks.push("Sonstige Belastungen oder Rechte sollten vor einer Entscheidung geprüft werden");
-    } else if (f.encumbrance === "unknown") {
-      risks.push("Belastungen oder Rechte sollten bei Bedarf geprüft werden");
-    }
-
-    if (p.condition === "refurbishment_needed") {
-      risks.push("Sanierungsbedarf kann den erzielbaren Wert und Aufwand deutlich beeinflussen");
-    }
-
-    if (!risks.length) {
-      risks.push("Immobilienwert und Optionen anhand der vorhandenen Angaben vergleichen");
-    }
-
-    let recommendedNextStep = "valuation first";
-
-    if (state.intention === "sell") {
-      recommendedNextStep =
-        state.priority.includes("price")
-          ? "sale preparation"
-          : "valuation first";
-    } else if (state.intention === "family_transfer" ||
-               (state.inheritance === "multiple_heirs" && h.familyTakeover === "yes")) {
-      recommendedNextStep = "internal family transfer assessment";
-    } else if (state.intention === "rent") {
-      recommendedNextStep = "rental assessment";
-    } else if (
-      state.inheritance === "multiple_heirs" &&
-      (h.agreement === "dispute" || h.agreement === "different" || h.agreement === "undecided")
-    ) {
-      recommendedNextStep = "family alignment";
-    } else if (f.encumbrance === "wohnrecht" ||
-               f.encumbrance === "niessbrauch" ||
-               f.encumbrance === "other" ||
-               f.encumbrance === "unknown" ||
-               state.inheritance === "unclear") {
-      recommendedNextStep = "professional legal/tax clarification";
-    } else if (state.intention === "keep") {
-      recommendedNextStep = "hold / no immediate action";
-    }
-
-    const translatedNextSteps = {
-      "valuation first": "Immobilienwert zuerst genauer einschätzen",
-      "sale preparation": "Verkauf vorbereiten",
-      "internal family transfer assessment": "Familienübernahme finanziell und fair prüfen",
-      "rental assessment": "Vermietung prüfen",
-      "family alignment": "Gemeinsame Linie der Erben finden",
-      "professional legal/tax clarification": "Rechtliche oder steuerliche Fragen professionell klären",
-      "hold / no immediate action": "Vorerst halten und keine übereilte Entscheidung treffen"
-    };
-
-    return {
-      propertyValue: "erste Einschätzung / Wertspanne",
-      pressure: level(pressureScore),
-      complexity: level(complexityScore),
-      recommendedNextStep: translatedNextSteps[recommendedNextStep],
-      risks: risks.slice(0, 4)
-    };
   }
 
-  function bwSummary() {
-    const names = {
-      house: "Haus",
-      apartment: "Eigentumswohnung",
-      multi_family: "Mehrfamilienhaus",
-      commercial: "Gewerbeimmobilie",
-      land: "Grundstück"
-    };
-
-    const parts = [names[state.propertyType] || "Immobilie"];
-
-    if (state.inheritance === "multiple_heirs") {
-      parts.push(
-        "Erbengemeinschaft" +
-        (state.heirs.count
-          ? " (" + (state.heirs.count === "5plus" ? "5+" : state.heirs.count) + " Erben)"
-          : "")
-      );
-    } else if (state.inheritance === "sole_heir") {
-      parts.push("Alleinerbe");
-    }
-
-    if (state.finance.financing === "yes") {
-      parts.push("laufende Finanzierung");
-    }
-
-    if (state.property.usage === "rented") {
-      parts.push("vermietet");
-    } else if (state.property.usage === "vacant") {
-      parts.push("leerstehend");
-    }
-
-    return parts.join(" · ");
+  function getChoiceValue(field) {
+    const target = choiceTarget(field);
+    return target ? target[0][target[1]] : state[field];
   }
 
-  /* =========================================================
-     LEAD SUBMISSION
-     ========================================================= */
+  function setChoice(field, value) {
+
+    /* Prioritäten: Mehrfachauswahl ohne Auto-Weiter.
+       "unknown" ist exklusiv zu allen anderen Optionen. */
+    if (field === "priority") {
+      const list = state.priority;
+      if (value === "unknown") {
+        state.priority = list.includes("unknown") ? [] : ["unknown"];
+      } else {
+        const i = list.indexOf(value);
+        if (i >= 0) {
+          list.splice(i, 1);
+        } else {
+          list.push(value);
+          const u = list.indexOf("unknown");
+          if (u >= 0) list.splice(u, 1);
+        }
+      }
+      track("option_selected", { step: state.currentStep, answer: value });
+      suppressEnterAnimation = true;
+      render();
+      suppressEnterAnimation = false;
+      return;
+    }
+
+    const target = choiceTarget(field);
+
+    if (target) {
+      target[0][target[1]] = value;
+
+      /* Ohne laufende Finanzierung gibt es keine Restschuld. */
+      if (field === "financing" && value !== "yes") {
+        state.finance.remainingDebt = null;
+      }
+
+      track("option_selected", { step: state.currentStep, answer: value });
+      suppressEnterAnimation = true;
+      render();
+      suppressEnterAnimation = false;
+      return;
+    }
+
+    if (isTransitioning) {
+      return;
+    }
+
+    isTransitioning = true;
+
+    state[field] = value;
+    track("option_selected", { step: state.currentStep, answer: value });
+
+    suppressEnterAnimation = true;
+    render();
+    suppressEnterAnimation = false;
+
+    window.setTimeout(function () {
+      isTransitioning = false;
+      goNext({ answer: value });
+    }, 180);
+  }
 
   async function submitLead() {
     const c = state.contact;
-
-    const validEmail =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(c.email || "").trim());
-
-    const normalizedPhone =
-      String(c.phone || "").replace(/[^\d+]/g, "");
-
-    const validPhone =
-      normalizedPhone.replace(/\D/g, "").length >= 7;
+    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email.trim());
+    const validPhone = c.phone.trim().length >= 6;
 
     const errorEl = document.getElementById("bw-contact-error");
 
+    /* Pflicht sind nur E-Mail (Zustellung) und Telefon (Rückfragen) —
+       der Name ist bewusst optional. */
     if (!validEmail || !validPhone) {
-      track("validation_failed", {
-        step: "contact",
-        reason: "valid email and phone required"
-      });
-
+      track("lead_validation_failed", { step: "contact" });
       if (errorEl) {
         errorEl.style.display = "block";
-        errorEl.textContent =
-          "Bitte eine gültige E-Mail-Adresse und Telefonnummer angeben.";
+        errorEl.textContent = "Bitte gültige E-Mail-Adresse und Telefonnummer angeben.";
       }
-
       return;
     }
 
@@ -3599,6 +3427,8 @@
       errorEl.style.display = "none";
     }
 
+    /* Honeypot: ein für Menschen unsichtbares Feld. Ist es ausgefüllt,
+       war ein Bot am Werk – Erfolgsseite zeigen, aber nichts senden. */
     const honeypot = document.getElementById("bw-extra-field");
     const isBot = Boolean(honeypot && honeypot.value.trim());
 
@@ -3606,72 +3436,47 @@
 
     const payload = {
       submitted_at: new Date().toISOString(),
-
       first_name: c.firstName.trim(),
       last_name: c.lastName.trim(),
       phone: c.phone.trim(),
       email: c.email.trim(),
-
       situation: state.situation || "",
-      timing: state.timing || "",
-      erbfall_timing: state.timing || "",
-
       property_type: state.propertyType || "",
       house_type: state.houseType || "",
-
-      address: {
-        street: state.address.street || "",
-        postalCode: state.address.postalCode || "",
-        city: state.address.city || "",
-        selectedAddress: state.address.selectedAddress || null
-      },
-
       street: state.address.street || "",
       postal_code: state.address.postalCode || "",
       city: state.address.city || "",
-
       living_space: state.property.livingSpace || "",
       plot_size: state.property.plotSize || "",
       floor: state.property.floor || "",
       year_built: state.property.yearBuilt || "",
       condition: state.property.condition || "",
       usage: state.property.usage || "",
-      rental_income: state.property.rentalIncome || state.property.monthlyColdRent || "",
-      monthly_cold_rent: state.property.monthlyColdRent || state.property.rentalIncome || "",
-      units: state.property.units || state.property.numberOfUnits || "",
-      number_of_units: state.property.numberOfUnits || state.property.units || "",
-
-      inheritance: state.inheritance || "",
+      rent_income: state.property.rentIncome || "",
+      units: state.property.units || "",
+      erbfall_timing: state.timing || "",
       heirs_count: state.heirs.count || "",
       heirs_agreement: state.heirs.agreement || "",
-      family_takeover: state.heirs.familyTakeover || "",
-
+      heirs_takeover: state.heirs.takeover || "",
       financing: state.finance.financing || "",
       remaining_debt: state.finance.remainingDebt || "",
       encumbrances: state.finance.encumbrance || "",
-
       intention: state.intention || "",
-      priorities: state.priority.join(" | "),
       priority: state.priority.join(" | "),
-
       assessment_pressure: assessment.pressure,
       assessment_complexity: assessment.complexity,
-      assessment_recommended_next_step: assessment.recommendedNextStep,
       assessment_risks: assessment.risks.join(" | "),
-
+      inheritance: state.inheritance || "",
       utm_source: state.attribution.utmSource,
       utm_medium: state.attribution.utmMedium,
       utm_campaign: state.attribution.utmCampaign,
-      utm_content: state.attribution.utmContent,
-      utm_term: state.attribution.utmTerm,
       gclid: state.attribution.gclid,
       fbclid: state.attribution.fbclid,
-
       session_id: state.sessionId
     };
 
-    /* Keep the webhook contract: one URL-encoded "payload" field. */
     if (CONFIG.leadWebhookUrl && !isBot) {
+
       const button = document.getElementById("bw-submit-lead");
       const buttonLabel = button ? button.textContent : "";
 
@@ -3704,35 +3509,30 @@
 
         if (errorEl) {
           errorEl.style.display = "block";
-          errorEl.textContent =
-            "Ihre Anfrage konnte gerade nicht übertragen werden. Bitte versuchen Sie es in einem Moment noch einmal.";
+          errorEl.textContent = "Ihre Anfrage konnte gerade nicht übertragen werden. Bitte versuchen Sie es in einem Moment noch einmal.";
         }
 
         return;
       }
     } else if (!CONFIG.leadWebhookUrl) {
-      console.warn(
-        "[BW Funnel] leadWebhookUrl ist nicht gesetzt – der Lead wurde NICHT übertragen."
-      );
+      console.warn("[BW Funnel] leadWebhookUrl ist nicht gesetzt – der Lead wurde NICHT übertragen.");
     }
 
+    /* Erst nach erfolgreicher Übertragung als Conversion zählen. */
     track("lead_submitted", {
       situation: state.situation,
-      timing: state.timing,
       property_type: state.propertyType,
       house_type: state.houseType,
       address_complete: true,
       intention: state.intention,
       inheritance: state.inheritance,
-      family_takeover: state.heirs.familyTakeover,
       contact_captured: true
     });
 
     exitStep({ lead_submitted: true });
 
     track("funnel_completed", {
-      total_duration_seconds:
-        Math.round((Date.now() - state.startedAt) / 1000)
+      total_duration_seconds: Math.round((Date.now() - state.startedAt) / 1000)
     });
 
     renderSuccess();
@@ -3741,7 +3541,6 @@
   function renderSuccess() {
     state.currentStep = "success";
     state.stepStartedAt = null;
-
     const root = document.getElementById("bw-property-funnel");
     if (!root) return;
 
@@ -3751,9 +3550,7 @@
           <div class="bw-success">
             <div class="bw-success__icon" aria-hidden="true">${BW_ICONS.check}</div>
             <h1>Ihr Report ist unterwegs.</h1>
-            <p>
-              Ihre persönliche Einschätzung wird an ${esc(state.contact.email)} gesendet.
-            </p>
+            <p>Wir erstellen Ihren Erbfall-Report und senden ihn an ${esc(state.contact.email)}. Auf Wunsch besprechen wir die Ergebnisse persönlich mit Ihnen.</p>
           </div>
         </main>
       </div>
@@ -3765,47 +3562,54 @@
      ========================================================= */
 
   window.BWPropertyFunnel = {
-    state: state,
-    track: track,
+
+    state,
+
+    track,
+
     next: goNext,
+
     back: goBack,
-    selectOption: selectOption,
-    continueCurrent: continueCurrent,
-    setChoice: setChoice,
-    updateField: updateField,
-    handleStreetInput: handleStreetInput,
-    selectAddress: selectAddress,
-    trackField: trackField,
-    submitLead: submitLead,
-    computeAssessment: computeAssessment,
-    getActiveSteps: getActiveSteps
+
+    selectOption,
+
+    continueCurrent,
+
+    setChoice,
+
+    updateField,
+
+    handleStreetInput,
+
+    selectAddress,
+
+    trackField,
+
+    submitLead
+
   };
 
-  /* =========================================================
-     GLOBAL INTERACTION HANDLERS
-     ========================================================= */
+
 
   document.addEventListener("click", function (event) {
     const field = document.querySelector(".bw-address-autocomplete");
     const list = document.getElementById("bw-address-suggestions");
-
-    if (field && list && !field.contains(event.target)) {
-      list.hidden = true;
-    }
+    if (field && list && !field.contains(event.target)) { list.hidden = true; }
   });
 
+  /* Tastatur: Enter führt den Schritt fort (im Straßenfeld wählt es den
+     ersten Vorschlag), Escape schließt die Vorschlagsliste. */
   document.addEventListener("keydown", function (event) {
     const root = document.getElementById("bw-property-funnel");
     if (!root || !root.contains(event.target)) return;
 
     if (event.key === "Escape") {
       const list = document.getElementById("bw-address-suggestions");
-      if (list && !list.hidden) list.hidden = true;
+      if (list && !list.hidden) { list.hidden = true; }
       return;
     }
 
     if (event.key !== "Enter" || event.target.tagName !== "INPUT") return;
-
     event.preventDefault();
 
     if (state.currentStep === "contact") {
@@ -3815,19 +3619,11 @@
 
     if (state.currentStep === "location" && event.target.id === "bw-street") {
       const list = document.getElementById("bw-address-suggestions");
-      const first =
-        list &&
-        !list.hidden &&
-        list.querySelector(".bw-address-suggestion");
-
-      if (first) {
-        first.click();
-        return;
-      }
+      const first = list && !list.hidden && list.querySelector(".bw-address-suggestion");
+      if (first) { first.click(); return; }
     }
 
-    if (state.currentStep === "location" ||
-        state.currentStep === "property_details") {
+    if (state.currentStep === "location" || state.currentStep === "property_details") {
       continueCurrent();
     }
   });
@@ -3837,9 +3633,13 @@
      ========================================================= */
 
   track("funnel_started", {
+
     attribution: state.attribution
+
   });
 
+
+  /* Kompakt-Modus per Konfigurations-Flag (Hero-Spalte) */
   if (window.BW_FUNNEL_COMPACT) {
     const compactRoot = document.getElementById("bw-property-funnel");
     if (compactRoot) compactRoot.classList.add("bw-compact");
@@ -3848,15 +3648,10 @@
   enterStep("situation");
 
   window.addEventListener("beforeunload", function () {
-    if (
-      state.currentStep &&
-      state.stepStartedAt &&
-      state.currentStep !== "success"
-    ) {
+    if (state.currentStep && state.stepStartedAt && state.currentStep !== "success") {
       track("funnel_abandoned", {
         step: state.currentStep,
-        duration_seconds:
-          Math.round((Date.now() - state.stepStartedAt) / 1000)
+        duration_seconds: Math.round((Date.now() - state.stepStartedAt) / 1000)
       });
     }
   });
