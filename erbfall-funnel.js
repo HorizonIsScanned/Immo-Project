@@ -385,17 +385,7 @@
   min-width: 0;
 }
 
-#bw-property-funnel .bw-situation-banner__eyebrow {
-  font-family: var(--bw-sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--bw-muted);
-}
-
 #bw-property-funnel .bw-situation-banner__title {
-  margin-top: 3px;
   font-family: var(--bw-serif);
   font-size: 20px;
   line-height: 1.15;
@@ -1472,7 +1462,7 @@
       houseTerraced: SCRIPT_BASE + "haus-reihenhaus.png",
       houseTwoFamily: "",
       houseMultiFamily: "",
-      report: SCRIPT_BASE + "erbfall_report.png"
+      report: SCRIPT_BASE + "erbfall%20report.png"
     },
 
     steps: [
@@ -2325,8 +2315,8 @@
     const reportImg =
       CONFIG.assets.report ||
       (CONFIG.assets.hero
-        ? CONFIG.assets.hero.replace(/[^/]+$/, "erbfall_report.png")
-        : SCRIPT_BASE + "erbfall_report.png");
+        ? CONFIG.assets.hero.replace(/[^/]+$/, "erbfall%20report.png")
+        : SCRIPT_BASE + "erbfall%20report.png");
 
     return `
       <div class="bw-situation-banner">
@@ -2335,7 +2325,6 @@
             onerror="this.closest('.bw-situation-banner__thumb').style.display='none'">
         </div>
         <div class="bw-situation-banner__text">
-          <div class="bw-situation-banner__eyebrow">Ihr Ergebnis</div>
           <div class="bw-situation-banner__title">Erhalten Sie Ihren persönlichen Report</div>
           <div class="bw-situation-banner__sub">Individuell auf Ihre Situation zugeschnitten</div>
         </div>
@@ -2754,12 +2743,16 @@
 
   /* =========================================================
      REPORT COVER (Step 12)
-     Statische Report-Vorschau (erbfall_report.png), kleiner
+     Statische Report-Vorschau ("erbfall report.png"), kleiner
      dargestellt. Dekorativ; der echte Report kommt per E-Mail.
      ========================================================= */
 
   function renderReportCover() {
-    const src = CONFIG.assets.report || (SCRIPT_BASE + "erbfall_report.png");
+    const src =
+      CONFIG.assets.report ||
+      (CONFIG.assets.hero
+        ? CONFIG.assets.hero.replace(/[^/]+$/, "erbfall%20report.png")
+        : SCRIPT_BASE + "erbfall%20report.png");
     return `
       <div class="bw-report-image">
         <img src="${src}" alt="Beispiel: persönlicher Erbfall-Report" loading="lazy">
