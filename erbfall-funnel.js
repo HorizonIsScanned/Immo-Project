@@ -358,7 +358,7 @@
 /* Report-Banner oben — visueller Blickfang über den Optionen */
 #bw-property-funnel .bw-situation-banner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 18px;
   padding: 18px 20px;
@@ -382,6 +382,8 @@
 }
 
 #bw-property-funnel .bw-situation-banner__text {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
 
@@ -403,7 +405,8 @@
 }
 
 #bw-property-funnel .bw-situation-banner__badge {
-  justify-self: end;
+  align-self: flex-end;
+  margin-top: 12px;
   padding: 8px 16px;
   border: 1px solid var(--bw-line-strong);
   border-radius: 999px;
@@ -415,18 +418,6 @@
   text-transform: uppercase;
   color: var(--bw-navy);
   white-space: nowrap;
-}
-
-/* Schmale Ansicht: Badge unter den Text, Thumbnail + Text bleiben eine Reihe */
-@container (max-width: 520px) {
-  #bw-property-funnel .bw-situation-banner {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 14px 16px;
-  }
-  #bw-property-funnel .bw-situation-banner__badge {
-    grid-column: 1 / -1;
-    justify-self: start;
-  }
 }
 
 #bw-property-funnel .bw-situation-content {
@@ -2327,8 +2318,8 @@
         <div class="bw-situation-banner__text">
           <div class="bw-situation-banner__title">Erhalten Sie Ihren persönlichen Report</div>
           <div class="bw-situation-banner__sub">Individuell auf Ihre Situation zugeschnitten</div>
+          <span class="bw-situation-banner__badge">Kostenlos</span>
         </div>
-        <div class="bw-situation-banner__badge">Kostenlos</div>
       </div>
 
       <section class="bw-situation-content">
