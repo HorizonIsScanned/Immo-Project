@@ -6,13 +6,9 @@
  */
 (function () {
   'use strict';
-  var CSS = `.ipd{--ipd-navy:#001C4E;--ipd-muted:#5C677D;--ipd-line:#DCE1EA;--ipd-line-strong:#B9C2D2;--ipd-panel:#F5F7FA;--ipd-track:#E3E8F0;--ipd-radius:14px;--ipd-shadow:0 5px 35px rgba(30,34,40,.07);--ipd-shadow-hover:0 8px 24px rgba(5,27,76,.1);--ipd-ease:cubic-bezier(.22,1,.36,1);--ipd-gap:24px;--ipd-gap-o:20px;box-sizing:border-box;width:100%;padding:clamp(60px,7vw,100px) 20px;background:#fff;color:var(--ipd-navy);font-family:Georgia,"Times New Roman",serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  var CSS = `.ipd{--ipd-navy:#001C4E;--ipd-muted:#5C677D;--ipd-line:#DCE1EA;--ipd-line-strong:#B9C2D2;--ipd-panel:#F5F7FA;--ipd-track:#E3E8F0;--ipd-radius:14px;--ipd-shadow:0 5px 35px rgba(30,34,40,.07);--ipd-shadow-hover:0 8px 24px rgba(5,27,76,.1);--ipd-ease:cubic-bezier(.22,1,.36,1);--ipd-gap:24px;--ipd-gap-o:20px;box-sizing:border-box;width:100%;padding:0 20px;background:#fff;color:var(--ipd-navy);font-family:Georgia,"Times New Roman",serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 .ipd *,.ipd *::before,.ipd *::after{box-sizing:border-box}
 .ipd-inner{width:100%;max-width:1100px;margin:0 auto}
-.ipd-head{max-width:720px;margin:0 auto clamp(40px,5vw,60px);text-align:center}
-.ipd-eyebrow{margin:0 0 14px;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-muted)}
-.ipd-title{margin:0;font-size:clamp(28px,1.5vw + 20px,40px);line-height:1.2;font-weight:700;letter-spacing:-.01em;color:var(--ipd-navy)}
-.ipd-lead{max-width:640px;margin:18px auto 0;font-size:clamp(15px,.4vw + 13px,17px);line-height:1.65;color:var(--ipd-navy)}
 .ipd-pill{display:inline-flex;align-items:center;height:28px;padding:0 14px;border:1px solid var(--ipd-line-strong);border-radius:999px;background:#fff;font-size:11px;line-height:1;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ipd-navy);white-space:nowrap}
 .ipd-card{border:1px solid var(--ipd-line);border-radius:var(--ipd-radius);background:#fff;box-shadow:var(--ipd-shadow)}
 .ipd-card__title{margin:0;font-size:20px;line-height:1.3;font-weight:700;color:var(--ipd-navy)}
@@ -22,7 +18,7 @@
 .ipd-factors{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:16px}
 .ipd-factor{display:flex;align-items:flex-start;gap:14px}
 .ipd-icon{flex:0 0 40px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--ipd-panel);color:var(--ipd-navy)}
-.ipd-icon svg,.ipd-option__icon svg,.ipd-result__check svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ipd-icon svg,.ipd-option__icon svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ipd-factor__title{margin:0;font-size:15px;line-height:1.35;font-weight:700;color:var(--ipd-navy)}
 .ipd-factor__text{margin:3px 0 0;font-size:13px;line-height:1.5;color:var(--ipd-muted)}
 .ipd-property{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px 28px 26px}
@@ -56,8 +52,6 @@
 .ipd-option__list li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--ipd-navy)}
 .ipd-flow{display:flex;flex-direction:column;align-items:center}
 .ipd-flow__line{display:block;width:1px;height:20px;background:var(--ipd-line-strong)}
-.ipd-flow--arrow .ipd-flow__line{position:relative;height:34px}
-.ipd-flow--arrow .ipd-flow__line::after{content:"";position:absolute;bottom:0;left:-3.5px;width:7px;height:7px;border-right:1px solid var(--ipd-navy);border-bottom:1px solid var(--ipd-navy);transform:rotate(45deg)}
 .ipd-compare{overflow:hidden}
 .ipd-compare__head{padding:26px 28px 20px;text-align:center}
 .ipd-compare__sub{max-width:560px;margin-left:auto;margin-right:auto}
@@ -69,10 +63,6 @@
 .ipd-cell{display:flex;justify-content:center;padding:12px 8px}
 .ipd-track{display:block;width:32px;height:5px;border-radius:99px;background:var(--ipd-track)}
 .ipd-compare__note{margin:0;padding:16px 28px 20px;border-top:1px solid var(--ipd-line);font-size:13px;line-height:1.5;text-align:center;color:var(--ipd-muted)}
-.ipd-result{width:100%;max-width:580px;display:flex;align-items:center;gap:16px;margin:0 auto;padding:16px 26px 16px 18px;border-radius:999px}
-.ipd-result__check{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--ipd-navy);color:#fff}
-.ipd-result__title{margin:0;font-size:18px;line-height:1.25;font-weight:700;color:var(--ipd-navy)}
-.ipd-result__text{margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--ipd-muted)}
 @media(min-width:768px){.ipd{padding-left:32px;padding-right:32px}}
 @media(max-width:900px){
 .ipd-start{grid-template-columns:minmax(0,1fr)}
@@ -91,15 +81,11 @@
 .ipd-option__list{grid-column:2;grid-row:1/span 3;align-self:center;padding-left:28px;border-left:1px solid var(--ipd-line)}
 }
 @media(max-width:600px){
-.ipd{padding-top:56px;padding-bottom:60px}
-.ipd-head{margin-bottom:36px}
-.ipd-lead{margin-top:14px}
 .ipd-situation{padding:22px 20px}
 .ipd-property{padding:16px 20px 22px}
 .ipd-property__visual{max-width:340px}
 .ipd-factors{margin-top:18px;gap:14px}
 .ipd-merge::before,.ipd-merge::after,.ipd-flow__line{height:18px}
-.ipd-flow--arrow .ipd-flow__line{height:30px}
 .ipd-option{display:flex;flex-direction:column;padding:22px 20px 20px}
 .ipd-option__lead{padding-bottom:16px}
 .ipd-option__divider{display:block}
@@ -114,20 +100,10 @@
 .ipd-cell{padding:12px 0}
 .ipd-track{width:26px;height:4px}
 .ipd-compare__note{padding:14px 18px 18px;font-size:12px}
-.ipd-result{gap:14px;padding:14px 18px 14px 14px;border-radius:18px}
-.ipd-result__check{flex-basis:40px;width:40px;height:40px}
-.ipd-result__title{font-size:17px}
 }
-@media(max-width:400px){.ipd-title{font-size:26px}}
-@media(max-width:360px){.ipd{padding-left:16px;padding-right:16px}.ipd-title{font-size:25px}.ipd-row{grid-template-columns:minmax(0,1fr) repeat(3,58px);padding:0 12px}.ipd-row__opt{font-size:9.5px;letter-spacing:-.01em}.ipd-row__label{font-size:12px}.ipd-track{width:22px}}`;
-  var HTML = `<section class="ipd" aria-labelledby="ipd-title">
+@media(max-width:400px){@media(max-width:360px){.ipd{padding-left:16px;padding-right:16px}`;
+  var HTML = `<section class="ipd" aria-label="Entscheidungsweg für eine geerbte Immobilie">
   <div class="ipd-inner">
-
-    <div class="ipd-head">
-      <p class="ipd-eyebrow">Ihre Möglichkeiten im Vergleich</p>
-      <h2 class="ipd-title" id="ipd-title">Für eine geerbte Immobilie gibt es nicht die eine richtige Lösung.</h2>
-      <p class="ipd-lead">Ob Behalten, Vermieten oder Verkaufen sinnvoll ist, hängt von Ihrer persönlichen Situation und von der Immobilie selbst ab. Deshalb betrachten wir beides gemeinsam und vergleichen die möglichen Wege – damit Sie auf einer klaren Grundlage entscheiden.</p>
-    </div>
 
     <div class="ipd-start">
       <div class="ipd-card ipd-situation">
@@ -244,17 +220,6 @@
       <p class="ipd-compare__note">Wie die drei Wege bei diesen Faktoren abschneiden, ergibt sich aus Ihren Angaben – nicht aus einer vorgefertigten Antwort.</p>
     </div>
 
-    <div class="ipd-flow ipd-flow--arrow">
-      <span class="ipd-flow__line"></span>
-    </div>
-
-    <div class="ipd-card ipd-result">
-      <span class="ipd-result__check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4 4L19 7"/></svg></span>
-      <div>
-        <p class="ipd-result__title">Eine klare Entscheidungsgrundlage</p>
-        <p class="ipd-result__text">Sie sehen, welcher Weg zu Ihrer Situation passt und was er für Sie bedeutet. Die Entscheidung bleibt bei Ihnen.</p>
-      </div>
-    </div>
 
   </div>
 </section>`;
