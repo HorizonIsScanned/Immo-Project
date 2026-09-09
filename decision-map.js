@@ -8,6 +8,7 @@
   'use strict';
   var CSS = `.ipd{--ipd-navy:#001C4E;--ipd-muted:#5C677D;--ipd-line:#DCE1EA;--ipd-line-strong:#B9C2D2;--ipd-panel:#F5F7FA;--ipd-track:#E3E8F0;--ipd-radius:14px;--ipd-shadow:0 5px 35px rgba(30,34,40,.07);--ipd-shadow-hover:0 8px 24px rgba(5,27,76,.1);--ipd-ease:cubic-bezier(.22,1,.36,1);--ipd-gap:24px;--ipd-gap-o:20px;box-sizing:border-box;width:100%;padding:0 20px;background:#fff;color:var(--ipd-navy);font-family:Georgia,"Times New Roman",serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 .ipd *,.ipd *::before,.ipd *::after{box-sizing:border-box}
+.ipd,.ipd *,.ipd h3,.ipd p,.ipd ul,.ipd li,.ipd span{font-family:Georgia,"Times New Roman",serif}
 .ipd-inner{width:100%;max-width:1100px;margin:0 auto}
 .ipd-pill{display:inline-flex;align-items:center;height:28px;padding:0 14px;border:1px solid var(--ipd-line-strong);border-radius:999px;background:#fff;font-size:11px;line-height:1;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ipd-navy);white-space:nowrap}
 .ipd-card{border:1px solid var(--ipd-line);border-radius:var(--ipd-radius);background:#fff;box-shadow:var(--ipd-shadow)}
@@ -101,7 +102,7 @@
 .ipd-track{width:26px;height:4px}
 .ipd-compare__note{padding:14px 18px 18px;font-size:12px}
 }
-@media(max-width:400px){@media(max-width:360px){.ipd{padding-left:16px;padding-right:16px}`;
+@media(max-width:360px){.ipd{padding-left:16px;padding-right:16px}.ipd-row{grid-template-columns:minmax(0,1fr) repeat(3,58px);padding:0 12px}.ipd-row__opt{font-size:9.5px;letter-spacing:-.01em}.ipd-row__label{font-size:12px}.ipd-track{width:22px}}`;
   var HTML = `<section class="ipd" aria-label="Entscheidungsweg für eine geerbte Immobilie">
   <div class="ipd-inner">
 
