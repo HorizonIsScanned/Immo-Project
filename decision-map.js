@@ -3,6 +3,8 @@
  *   <div id="ipd-decision-map"></div>
  *   <script src="https://…/decision-map.js" defer></script>
  * Ohne Mount-Div wird die Section direkt an der Script-Position eingefügt.
+ * Expertenfoto: Datei joerg-von-bierbrauer.png neben dieser JS-Datei im Repo,
+ * optional überschreibbar per window.IPD_EXPERT_PHOTO = 'https://…'.
  */
 (function () {
   'use strict';
@@ -11,8 +13,6 @@
 .ipd,.ipd *,.ipd h3,.ipd p,.ipd ul,.ipd li,.ipd span{font-family:Georgia,"Times New Roman",serif}
 .ipd-inner{width:100%;max-width:1100px;margin:0 auto}
 .ipd-card{border:0;border-radius:var(--ipd-radius);background:var(--ipd-fill);box-shadow:none}
-.ipd-factor .ipd-icon{flex-basis:44px;width:44px;height:44px}
-.ipd-factor .ipd-icon svg{width:20px;height:20px}
 .ipd-card__title{margin:0;font-size:22px;line-height:1.25;font-weight:700;color:var(--ipd-navy)}
 .ipd-card__sub{margin:8px 0 0;font-size:15px;line-height:1.55;color:var(--ipd-muted)}
 .ipd-start{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--ipd-gap)}
@@ -38,44 +38,51 @@
 .ipd-join__l8{top:82px;left:50%;height:14px}
 .ipd-join__l9{top:82px;left:var(--ipd-c3r);height:14px}
 .ipd-pill{position:absolute;top:38px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;height:32px;padding:0 18px;border-radius:999px;background:var(--ipd-fill);font-size:11px;line-height:1;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-navy);white-space:nowrap}
-.ipd-ways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ipd-gap)}
-.ipd-way{display:flex;flex-direction:column;padding:28px 28px 26px;border-radius:var(--ipd-radius);background:var(--ipd-fill)}
-.ipd-way__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.ipd-icon{flex:0 0 56px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:var(--ipd-navy)}
-.ipd-icon svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.ipd-tag{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:999px;background:#fff;font-size:13px;line-height:1;color:var(--ipd-muted);white-space:nowrap}
-.ipd-way__name{margin:22px 0 0;font-size:30px;line-height:1.1;font-weight:700;color:var(--ipd-navy)}
-.ipd-way__meaning{margin:8px 0 0;font-size:15px;line-height:1.5;color:var(--ipd-muted)}
-.ipd-way__visual{width:100%;max-width:280px;margin:22px auto 0;color:var(--ipd-navy)}
-.ipd-way__visual svg{display:block;width:100%;height:auto}
-.ipd-facts{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:14px}
-.ipd-fact{display:flex;align-items:center;gap:14px;margin:0}
-.ipd-fact__ic{flex:0 0 36px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:var(--ipd-navy)}
-.ipd-fact__ic svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.ipd-fact__label{margin:0;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-navy)}
-.ipd-fact__value{margin:3px 0 0;font-size:15px;line-height:1.35;color:var(--ipd-muted)}
-.ipd-way__quote{position:relative;margin:24px 0 0;padding:20px 22px 20px 54px;border-radius:16px;background:#fff}
-.ipd-way__quote::before{content:"“";position:absolute;left:18px;top:6px;font-size:44px;line-height:1;color:var(--ipd-line-strong)}
-.ipd-way__quote p{margin:0;font-size:17px;line-height:1.45;font-style:italic;color:var(--ipd-navy)}
-.ipd-way__quote{display:flex;align-items:center;min-height:114px;margin-top:auto}
-.ipd-way__facts-wrap{padding-bottom:24px;border-bottom:1px solid var(--ipd-line);margin-bottom:0}
+.ipd-eyebrow{margin:0;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-muted)}
+.ipd-icon{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:var(--ipd-navy)}
+.ipd-icon svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ipd-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ipd-gap)}
+.ipd-option{display:flex;flex-direction:column;padding:30px 28px 28px;border-radius:var(--ipd-radius);background:var(--ipd-fill)}
+.ipd-option__title{margin:20px 0 0;font-size:24px;line-height:1.2;font-weight:700;color:var(--ipd-navy)}
+.ipd-option__lead{min-height:66px;margin:8px 0 0;padding-bottom:20px;font-size:15px;line-height:1.55;color:var(--ipd-muted)}
+.ipd-option__list{margin:0;padding:20px 0 0;list-style:none;display:grid;gap:10px;border-top:1px solid var(--ipd-line)}
+.ipd-option__list li{position:relative;margin:0;padding-left:16px;font-size:15px;line-height:1.45;color:var(--ipd-navy)}
+.ipd-option__list li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--ipd-navy)}
+.ipd-merge{position:relative;height:104px;--ipd-c3l:calc(16.6667% - var(--ipd-gap)/3);--ipd-c3r:calc(83.3333% + var(--ipd-gap)/3)}
+.ipd-merge__l{position:absolute;display:block;width:1px;background:var(--ipd-line-strong)}
+.ipd-merge__l1{top:0;left:var(--ipd-c3l);height:22px}
+.ipd-merge__l2{top:0;left:50%;height:22px}
+.ipd-merge__l3{top:0;left:var(--ipd-c3r);height:22px}
+.ipd-merge__l4{top:22px;left:var(--ipd-c3l);right:calc(100% - var(--ipd-c3r));width:auto;height:1px}
+.ipd-merge__l5{top:22px;left:50%;height:16px}
+.ipd-merge__l6{top:70px;left:50%;height:34px}
+.ipd-expert{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:36px;align-items:center;padding:0 56px 0 0;overflow:hidden}
+.ipd-expert__photo{align-self:stretch;display:flex;align-items:flex-end;justify-content:center;min-height:300px;padding:28px 24px 0}
+.ipd-expert__photo img{display:block;width:100%;max-width:260px;height:auto;border-radius:18px 18px 0 0}
+.ipd-expert__body{padding:36px 0}
+.ipd-expert__title{margin:12px 0 0;font-size:28px;line-height:1.2;font-weight:700;color:var(--ipd-navy)}
+.ipd-expert__text{margin:14px 0 0;font-size:16px;line-height:1.6;color:var(--ipd-navy)}
+.ipd-expert__name{margin:20px 0 0;font-size:14px;line-height:1.4;color:var(--ipd-muted)}
+.ipd-expert__name strong{font-weight:700;color:var(--ipd-navy)}
 @media(min-width:768px){.ipd{padding-left:32px;padding-right:32px}}
 @media(max-width:900px){
 .ipd-start{grid-template-columns:minmax(0,1fr)}
 .ipd-situation{padding:30px 30px 28px}
 .ipd-property{padding:24px 30px 28px}
-.ipd-join{height:auto;display:flex;flex-direction:column;align-items:center}
-.ipd-join::before,.ipd-join::after{content:"";display:block;width:1px;height:22px;background:var(--ipd-line-strong)}
-.ipd-join__l{display:none}
+.ipd-join,.ipd-merge{height:auto;display:flex;flex-direction:column;align-items:center}
+.ipd-join::before,.ipd-join::after,.ipd-merge::before,.ipd-merge::after{content:"";display:block;width:1px;height:22px;background:var(--ipd-line-strong)}
+.ipd-join__l,.ipd-merge__l{display:none}
 .ipd-pill{position:static;transform:none}
-.ipd-ways{grid-template-columns:minmax(0,1fr);gap:16px}
-.ipd-way{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px;padding:26px 28px}
-.ipd-way__top{grid-column:1/-1}
-.ipd-way__name{grid-column:1}
-.ipd-way__meaning{grid-column:1}
-.ipd-way__visual{grid-column:2;grid-row:2/span 3;align-self:center;max-width:260px;margin:0 auto}
-.ipd-way__facts-wrap{grid-column:1;grid-row:4;border-bottom:0;padding-bottom:0}
-.ipd-way__quote{grid-column:1/-1;margin-top:22px}
+.ipd-options{grid-template-columns:minmax(0,1fr);gap:16px}
+.ipd-option{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px;align-items:start;padding:26px 28px}
+.ipd-option .ipd-icon{grid-column:1;grid-row:1}
+.ipd-option__title{grid-column:1;grid-row:2}
+.ipd-option__lead{grid-column:1;grid-row:3;min-height:0;padding-bottom:0}
+.ipd-option__list{grid-column:2;grid-row:1/span 3;align-self:center;margin:0;padding:0 0 0 28px;border-top:0;border-left:1px solid var(--ipd-line)}
+.ipd-expert{grid-template-columns:minmax(0,1fr);gap:0;padding:0}
+.ipd-expert__photo{min-height:0;padding:28px 28px 0}
+.ipd-expert__photo img{max-width:280px}
+.ipd-expert__body{padding:24px 30px 32px}
 }
 @media(max-width:600px){
 .ipd{--ipd-radius:20px}
@@ -87,18 +94,17 @@
 .ipd-factors{margin-top:20px;gap:14px}
 .ipd-factor__title{font-size:15px}
 .ipd-factor__text{font-size:13px}
-.ipd-join::before,.ipd-join::after{height:18px}
-.ipd-way{display:flex;flex-direction:column;padding:22px 20px 20px}
-.ipd-icon{flex-basis:50px;width:50px;height:50px}
-.ipd-tag{height:28px;padding:0 12px;font-size:12px}
-.ipd-way__name{font-size:26px;margin-top:18px}
-.ipd-way__meaning{font-size:14px}
-.ipd-way__visual{max-width:230px;margin-top:18px}
-.ipd-facts{margin-top:18px;gap:12px}
-.ipd-fact__value{font-size:14px}
-.ipd-way__quote{margin-top:20px;padding:16px 18px 16px 48px}
-.ipd-way__quote::before{left:14px;top:4px;font-size:40px}
-.ipd-way__quote p{font-size:16px}
+.ipd-join::before,.ipd-join::after,.ipd-merge::before,.ipd-merge::after{height:18px}
+.ipd-option{display:flex;flex-direction:column;padding:24px 22px 22px}
+.ipd-option__title{font-size:22px;margin-top:16px}
+.ipd-option__lead{font-size:14px;padding-bottom:16px}
+.ipd-option__list{margin:auto 0 0;padding:16px 0 0;border-left:0;border-top:1px solid var(--ipd-line)}
+.ipd-option__list li{font-size:14px}
+.ipd-expert__photo{padding:24px 20px 0}
+.ipd-expert__photo img{max-width:240px}
+.ipd-expert__body{padding:20px 22px 26px}
+.ipd-expert__title{font-size:23px}
+.ipd-expert__text{font-size:15px}
 }
 @media(max-width:360px){.ipd{padding-left:16px;padding-right:16px}}`;
   var HTML = `<section class="ipd" aria-label="Entscheidungsweg für eine geerbte Immobilie">
@@ -156,113 +162,63 @@
       <span class="ipd-join__l ipd-join__l5"></span><span class="ipd-join__l ipd-join__l6"></span><span class="ipd-join__l ipd-join__l7"></span><span class="ipd-join__l ipd-join__l8"></span><span class="ipd-join__l ipd-join__l9"></span>
     </div>
 
-    <div class="ipd-ways">
-
-      <div class="ipd-way">
-        <div class="ipd-way__top">
-          <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg></span>
-          <span class="ipd-tag">Langfristig denken</span>
-        </div>
-        <h3 class="ipd-way__name">Behalten</h3>
-        <p class="ipd-way__meaning">Die Immobilie in der Familie halten und selbst nutzen.</p>
-        <div class="ipd-way__visual">
-          <svg viewBox="0 0 280 150" role="img" aria-label="Einfamilienhaus">
-            <path d="M22 132C80 126 200 126 258 132" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".45"/>
-            <path d="M78 66L140 22L202 66V126H78V66Z" fill="#FFFFFF" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M62 68L140 14L218 68" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <rect x="94" y="76" width="26" height="24" rx="2" fill="#FFFFFF" stroke="currentColor" stroke-width="1.5"/><path d="M107 76V100M94 88H120" stroke="currentColor" stroke-width="1"/>
-            <rect x="160" y="76" width="26" height="24" rx="2" fill="#FFFFFF" stroke="currentColor" stroke-width="1.5"/><path d="M173 76V100M160 88H186" stroke="currentColor" stroke-width="1"/>
-            <rect x="129" y="90" width="22" height="36" rx="2" fill="#FFFFFF" stroke="currentColor" stroke-width="1.6"/><circle cx="146" cy="109" r="1.5" fill="currentColor"/>
-            <path d="M162 40V24H174V48" fill="#FFFFFF" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M44 106V128M236 104V128" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".65"/>
-            <circle cx="44" cy="96" r="15" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-            <circle cx="236" cy="93" r="16" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-          </svg>
-        </div>
-        <div class="ipd-way__facts-wrap">
-          <ul class="ipd-facts">
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg></span><div><p class="ipd-fact__label">Geld</p><p class="ipd-fact__value">Vermögen bleibt gebunden</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><p class="ipd-fact__label">Aufwand</p><p class="ipd-fact__value">Eher gering</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10"/><path d="M12 10c0-3 2.5-5 6-5"/><path d="M15 3l3 2-3 2"/><path d="M12 14c0-3-2.5-5-6-5"/><path d="M9 7 6 9l3 2"/></svg></span><div><p class="ipd-fact__label">Flexibilität</p><p class="ipd-fact__value">Hoch</p></div></li>
-          </ul>
-        </div>
-        <div class="ipd-way__quote"><p>Passt die Immobilie zu meinen Lebensplänen?</p></div>
+    <div class="ipd-options">
+      <div class="ipd-option">
+        <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg></span>
+        <h3 class="ipd-option__title">Behalten</h3>
+        <p class="ipd-option__lead">Die Immobilie bleibt in Ihrem Besitz – zum Wohnen oder als Wert für später.</p>
+        <ul class="ipd-option__list">
+          <li>Passt die Immobilie zu Ihren Plänen?</li>
+          <li>Was kostet der Unterhalt im Jahr?</li>
+          <li>Welche Arbeiten stehen an?</li>
+        </ul>
       </div>
-
-      <div class="ipd-way">
-        <div class="ipd-way__top">
-          <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="14.5" r="4"/><path d="M11 11.5 20 2.5"/><path d="M17 5.5 19.5 8M14.5 8l2.5 2.5"/></svg></span>
-          <span class="ipd-tag">Stetige Einnahmen</span>
-        </div>
-        <h3 class="ipd-way__name">Vermieten</h3>
-        <p class="ipd-way__meaning">Regelmäßige Mieteinnahmen erzielen und die Immobilie behalten.</p>
-        <div class="ipd-way__visual">
-          <svg viewBox="0 0 280 150" role="img" aria-label="Mehrfamilienhaus">
-            <path d="M22 132C80 126 200 126 258 132" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".45"/>
-            <rect x="84" y="30" width="112" height="96" rx="3" fill="#FFFFFF" stroke="currentColor" stroke-width="2"/>
-            <path d="M78 30H202" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-            <rect x="96" y="42" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="130" y="42" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="164" y="42" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="96" y="70" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="130" y="70" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="164" y="70" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <path d="M92 90H124M158 90H190" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            <rect x="96" y="98" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="164" y="98" width="20" height="16" rx="1.5" fill="#FFFFFF" stroke="currentColor" stroke-width="1.4"/>
-            <rect x="130" y="96" width="20" height="30" rx="2" fill="#FFFFFF" stroke="currentColor" stroke-width="1.6"/><circle cx="146" cy="112" r="1.5" fill="currentColor"/>
-            <path d="M44 106V128M236 104V128" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".65"/>
-            <circle cx="44" cy="96" r="15" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-            <circle cx="236" cy="93" r="16" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-          </svg>
-        </div>
-        <div class="ipd-way__facts-wrap">
-          <ul class="ipd-facts">
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg></span><div><p class="ipd-fact__label">Geld</p><p class="ipd-fact__value">Laufende Mieteinnahmen</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><p class="ipd-fact__label">Aufwand</p><p class="ipd-fact__value">Eher höher</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10"/><path d="M12 10c0-3 2.5-5 6-5"/><path d="M15 3l3 2-3 2"/><path d="M12 14c0-3-2.5-5-6-5"/><path d="M9 7 6 9l3 2"/></svg></span><div><p class="ipd-fact__label">Flexibilität</p><p class="ipd-fact__value">Mittel</p></div></li>
-          </ul>
-        </div>
-        <div class="ipd-way__quote"><p>Trägt sich die Vermietung für mich – heute und in Zukunft?</p></div>
+      <div class="ipd-option">
+        <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="14.5" r="4"/><path d="M11 11.5 20 2.5"/><path d="M17 5.5 19.5 8M14.5 8l2.5 2.5"/></svg></span>
+        <h3 class="ipd-option__title">Vermieten</h3>
+        <p class="ipd-option__lead">Die Immobilie bleibt Ihnen und bringt regelmäßige Einnahmen.</p>
+        <ul class="ipd-option__list">
+          <li>Welche Miete ist realistisch?</li>
+          <li>Wie hoch ist der laufende Aufwand?</li>
+          <li>Was bleibt nach Kosten übrig?</li>
+        </ul>
       </div>
-
-      <div class="ipd-way">
-        <div class="ipd-way__top">
-          <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 10 11l3.5 3.5L20 8"/><path d="M15 8h5v5"/></svg></span>
-          <span class="ipd-tag">Klarheit schaffen</span>
-        </div>
-        <h3 class="ipd-way__name">Verkaufen</h3>
-        <p class="ipd-way__meaning">Den Wert der Immobilie nutzen und neue Möglichkeiten eröffnen.</p>
-        <div class="ipd-way__visual">
-          <svg viewBox="0 0 280 150" role="img" aria-label="Verkaufsvertrag">
-            <path d="M22 132C80 126 200 126 258 132" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".45"/>
-            <path d="M100 18H164L186 40V126H100V18Z" fill="#FFFFFF" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M164 18V40H186" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-            <path d="M114 62H172M114 76H172M114 90H156" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>
-            <text x="114" y="48" font-family="Georgia,serif" font-size="22" font-weight="700" fill="currentColor">€</text>
-            <path d="M118 110c8-6 14-2 20 0s12 6 20 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M44 106V128M236 104V128" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".65"/>
-            <circle cx="44" cy="96" r="15" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-            <circle cx="236" cy="93" r="16" fill="#FFFFFF" stroke="currentColor" stroke-width="1.2" opacity=".9"/>
-          </svg>
-        </div>
-        <div class="ipd-way__facts-wrap">
-          <ul class="ipd-facts">
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg></span><div><p class="ipd-fact__label">Geld</p><p class="ipd-fact__value">Sofort verfügbar</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><p class="ipd-fact__label">Aufwand</p><p class="ipd-fact__value">Einmalig</p></div></li>
-            <li class="ipd-fact"><span class="ipd-fact__ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10"/><path d="M12 10c0-3 2.5-5 6-5"/><path d="M15 3l3 2-3 2"/><path d="M12 14c0-3-2.5-5-6-5"/><path d="M9 7 6 9l3 2"/></svg></span><div><p class="ipd-fact__label">Flexibilität</p><p class="ipd-fact__value">Gering</p></div></li>
-          </ul>
-        </div>
-        <div class="ipd-way__quote"><p>Was ist die Immobilie heute wert – und was kann ich damit erreichen?</p></div>
+      <div class="ipd-option">
+        <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l9 9-8 8-9-9Z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg></span>
+        <h3 class="ipd-option__title">Verkaufen</h3>
+        <p class="ipd-option__lead">Sie lösen den Wert der Immobilie aus und schaffen klare Verhältnisse.</p>
+        <ul class="ipd-option__list">
+          <li>Welchen Preis kann die Immobilie erzielen?</li>
+          <li>Wann ist ein guter Zeitpunkt?</li>
+          <li>Was ist bei mehreren Erben zu klären?</li>
+        </ul>
       </div>
-
     </div>
 
+    <div class="ipd-merge">
+      <span class="ipd-merge__l ipd-merge__l1"></span><span class="ipd-merge__l ipd-merge__l2"></span><span class="ipd-merge__l ipd-merge__l3"></span><span class="ipd-merge__l ipd-merge__l4"></span><span class="ipd-merge__l ipd-merge__l5"></span>
+      <span class="ipd-pill">Der Vergleich</span>
+      <span class="ipd-merge__l ipd-merge__l6"></span>
+    </div>
+
+    <div class="ipd-card ipd-expert">
+      <div class="ipd-expert__photo">
+        <img class="ipd-expert__img" src="" alt="Jörg von Bierbrauer zu Brennstein, Immobiliengutachter">
+      </div>
+      <div class="ipd-expert__body">
+        <p class="ipd-eyebrow">Gemeinsam bewerten</p>
+        <h3 class="ipd-expert__title">Welcher Weg zu Ihnen passt, klären wir im Gespräch.</h3>
+        <p class="ipd-expert__text">Jörg von Bierbrauer geht die drei Wege mit Ihnen durch – mit Blick auf Ihre Situation, Ihre Immobilie und die Faktoren, die für Sie den Unterschied machen.</p>
+        <p class="ipd-expert__name"><strong>Jörg von Bierbrauer zu Brennstein</strong> · DIA-zertifizierter Immobiliengutachter</p>
+      </div>
+    </div>
 
   </div>
 </section>`;
   var STYLE_ID = 'ipd-decision-map-styles';
   var MOUNT_ID = 'ipd-decision-map';
+  var PHOTO_FILE = 'joerg-von-bierbrauer.png';   /* liegt neben decision-map.js im Repo */
+  var FALLBACK_PHOTO = 'https://cdn.prod.website-files.com/6a44ebdb190d2f1ca6ddf4a7/6a53db2e9363359153fd42de_jvbl-p-1080.jpg';
   var script = document.currentScript;
 
   function injectStyles() {
@@ -285,6 +241,12 @@
     if (host.getAttribute('data-ipd-mounted')) return;
     host.innerHTML = HTML;
     host.setAttribute('data-ipd-mounted', '1');
+    var img = host.querySelector('.ipd-expert__img');
+    if (img) {
+      var base = script && script.src ? script.src.replace(/[^\/]*$/, '') : '';
+      img.onerror = function () { img.onerror = null; img.src = FALLBACK_PHOTO; };
+      img.src = window.IPD_EXPERT_PHOTO || (base + PHOTO_FILE);
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
