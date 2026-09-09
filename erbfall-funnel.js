@@ -184,7 +184,7 @@
 }
 
 /* =========================================================
-   CHOICE ROWS  (intention, inheritance, condition)
+   CHOICE ROWS  (options, barriers, priority, inheritance, condition)
    ========================================================= */
 
 #bw-property-funnel .bw-choice-grid {
@@ -1125,7 +1125,7 @@
 }
 
 /* =========================================================
-   REPORT-VORSCHAU (Step 12)
+   REPORT-VORSCHAU (Report-Schritt)
    Statisches Report-Bild, bewusst kleiner dargestellt.
    ========================================================= */
 
@@ -1140,6 +1140,279 @@
   width: 100%;
   height: auto;
   border-radius: var(--bw-radius);
+}
+
+/* =========================================================
+   DECISION ASSISTANT — OPTIONSVERGLEICH + ERSTE EINSCHÄTZUNG
+   Gleiche Kartensprache wie die Auswahl-Karten: 1px Linie,
+   14px Radius, Navy-Tint für die aktuell passendste Option.
+   ========================================================= */
+
+#bw-property-funnel .bw-option-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+#bw-property-funnel .bw-option-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 16px 16px 14px;
+  border: 1px solid var(--bw-line);
+  border-radius: var(--bw-radius);
+  background: var(--bw-white);
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card--recommended {
+  border-color: var(--bw-navy);
+  background: var(--bw-tint);
+}
+
+#bw-property-funnel .bw-option-card__tag {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bw-navy);
+  color: var(--bw-white);
+  font-family: var(--bw-sans);
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+#bw-property-funnel .bw-option-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#bw-property-funnel .bw-option-card__title {
+  min-width: 0;
+  font-family: var(--bw-serif);
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card__score {
+  flex: 0 0 auto;
+  font-family: var(--bw-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--bw-muted);
+  white-space: nowrap;
+}
+
+#bw-property-funnel .bw-option-card__score strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card__bar {
+  height: 4px;
+  margin: 10px 0 12px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--bw-track);
+}
+
+#bw-property-funnel .bw-option-card--recommended .bw-option-card__bar {
+  background: var(--bw-white);
+}
+
+#bw-property-funnel .bw-option-card__bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--bw-navy);
+  transform-origin: left center;
+  animation: bw-grow 700ms var(--bw-ease) both;
+}
+
+@keyframes bw-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+#bw-property-funnel .bw-option-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+#bw-property-funnel .bw-option-card__meta span {
+  padding: 4px 9px;
+  border: 1px solid var(--bw-line);
+  border-radius: 999px;
+  background: var(--bw-white);
+  font-family: var(--bw-sans);
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--bw-muted);
+  white-space: nowrap;
+}
+
+#bw-property-funnel .bw-option-card__meta span strong {
+  font-weight: 600;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#bw-property-funnel .bw-option-card__list li {
+  position: relative;
+  padding-left: 18px;
+  font-family: var(--bw-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card__list li + li {
+  margin-top: 4px;
+}
+
+#bw-property-funnel .bw-option-card__list li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+}
+
+#bw-property-funnel .bw-option-card__list li.bw-pro::before {
+  content: "+";
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-option-card__list li.bw-con {
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-option-card__list li.bw-con::before {
+  content: "−";
+  color: var(--bw-soft);
+}
+
+/* Erste Einschätzung: Tint-Panel wie das Report-Banner auf Schritt 1 */
+#bw-property-funnel .bw-verdict {
+  margin-top: 18px;
+  padding: 20px 18px;
+  border-radius: var(--bw-radius);
+  background: var(--bw-tint);
+}
+
+#bw-property-funnel .bw-verdict__title {
+  margin: 0;
+  font-family: var(--bw-serif);
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-verdict__lead {
+  margin: 8px 0 0;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-verdict__reasons {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#bw-property-funnel .bw-verdict__reasons li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--bw-line);
+  border-radius: var(--bw-radius-small);
+  background: var(--bw-white);
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-verdict__reasons li + li {
+  margin-top: 6px;
+}
+
+#bw-property-funnel .bw-verdict__reasons svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+#bw-property-funnel .bw-verdict__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 14px;
+  font-family: var(--bw-sans);
+  font-size: 12px;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-verdict__meta strong {
+  font-weight: 600;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-verdict__note {
+  margin: 12px 0 0;
+  font-family: var(--bw-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-disclaimer {
+  margin: 14px 0 0;
+  font-family: var(--bw-sans);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--bw-soft);
+}
+
+/* Report-Schritt: Brücke von der ersten Einschätzung zum Report */
+#bw-property-funnel .bw-report-recap {
+  max-width: 360px;
+  margin: 16px auto 0;
+  padding: 12px 14px;
+  border-radius: var(--bw-radius-small);
+  background: var(--bw-tint);
+  font-family: var(--bw-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-report-recap strong {
+  color: var(--bw-navy);
 }
 
 /* =========================================================
@@ -1302,6 +1575,22 @@
     grid-template-columns: 360px minmax(0, 1fr);
     gap: 36px;
   }
+
+  /* Mehrfachauswahl-Schritte (Möglichkeiten, Hürden, Prioritäten):
+     zweispaltig, damit lange Listen nicht endlos untereinander stehen */
+  #bw-property-funnel .bw-choice-grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Optionsvergleich: zwei Karten nebeneinander */
+  #bw-property-funnel .bw-option-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  #bw-property-funnel .bw-verdict {
+    padding: 24px;
+  }
 }
 
 /* Step 1 desktop: einspaltig, nur Typo-/Karten-Feinschliff */
@@ -1392,6 +1681,18 @@
   gap: 16px;
 }
 
+#bw-property-funnel.bw-compact .bw-option-grid {
+  gap: 8px;
+}
+
+#bw-property-funnel.bw-compact .bw-option-card {
+  padding: 14px 12px 12px;
+}
+
+#bw-property-funnel.bw-compact .bw-verdict {
+  padding: 16px 14px;
+}
+
 /* =========================================================
    REDUCED MOTION
    ========================================================= */
@@ -1399,7 +1700,8 @@
 @media (prefers-reduced-motion: reduce) {
 
   #bw-property-funnel .bw-screen,
-  #bw-property-funnel .bw-address-suggestions {
+  #bw-property-funnel .bw-address-suggestions,
+  #bw-property-funnel .bw-option-card__bar-fill {
     animation: none;
   }
 
@@ -1466,8 +1768,10 @@
       "inheritance",
       "heirs",
       "financing",
-      "intention",
+      "options",
+      "barriers",
       "priority",
+      "decision",
       "contact"
     ]
   };
@@ -1497,7 +1801,8 @@
     people: bwIcon('<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><path d="M16 5.9a3 3 0 0 1 0 5.2"/><path d="M17.5 14.6a5.5 5.5 0 0 1 3 4.9"/>'),
     agree: bwIcon('<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.4 2.4 4.6-5"/>'),
     split: bwIcon('<path d="M10 12H3"/><path d="M6 9l-3 3 3 3"/><path d="M14 12h7"/><path d="M18 9l3 3-3 3"/>'),
-    conflict: bwIcon('<path d="M13 3 6 13.5h4.5L9 21l8-10.5h-4.5L13 3z"/>')
+    conflict: bwIcon('<path d="M13 3 6 13.5h4.5L9 21l8-10.5h-4.5L13 3z"/>'),
+    develop: bwIcon('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>')
   };
 
   /* Icons der Situations-Karten (frueher CSS-Daten-URIs — inline spart
@@ -1506,6 +1811,8 @@
     value: bwIcon('<path d="M4 25h24"/><path d="M6 22l6-6 5 3 9-10"/><path d="M20 9h6v6"/>', "0 0 32 32", "1.8"),
     sell_or_keep: bwIcon('<path d="M16 5v22"/><path d="M8 9h16"/><path d="M5 9l-4 7h8l-4-7Z"/><path d="M27 9l-4 7h8l-4-7Z"/><path d="M11 27h10"/>', "0 0 32 32"),
     unsure: bwIcon('<circle cx="16" cy="16" r="11"/><path d="M20 12l-3 7-7 3 3-7 7-3Z"/>', "0 0 32 32"),
+    rent_or_sell: bwIcon('<path d="M7 13l9-7 9 7"/><rect x="5" y="14" width="22" height="12" rx="2"/><circle cx="16" cy="20" r="3"/>', "0 0 32 32"),
+    multiple_heirs: bwIcon('<circle cx="12" cy="11" r="4"/><path d="M4 26a8 8 0 0 1 16 0"/><path d="M21 7.5a4 4 0 0 1 0 7"/><path d="M23 18.5a8 8 0 0 1 5 7.5"/>', "0 0 32 32"),
     lock: bwIcon('<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>')
   };
 
@@ -1606,7 +1913,13 @@
       encumbrance: null
     },
 
-    intention: null,
+    /* Decision Assistant: welche Wege der Nutzer erwägt, was für ihn
+       gegen das Behalten spricht und was ihm wichtig ist. Zusammen mit
+       den Immobilien-/Erb-/Finanzangaben sind das die Inputs für
+       computeOptionScores(). */
+    options: [],
+
+    barriers: [],
 
     priority: [],
 
@@ -1725,6 +2038,10 @@
 
 
     render();
+
+    if (step === "decision") {
+      trackDecisionViewed();
+    }
 
     /* A new step must open at its headline. Without this, a tap
        near the bottom of a long screen lands the user mid-page. */
@@ -2038,8 +2355,14 @@
       case "financing":
         return renderFinancingScreen();
 
-      case "intention":
-        return renderIntentionScreen();
+      case "options":
+        return renderOptionsScreen();
+
+      case "barriers":
+        return renderBarriersScreen();
+
+      case "decision":
+        return renderDecisionScreen();
 
       case "priority":
         return renderPriorityScreen();
@@ -2316,19 +2639,21 @@
             onerror="this.closest('.bw-situation-banner__thumb').style.display='none'">
         </div>
         <div class="bw-situation-banner__text">
-          <div class="bw-situation-banner__title">Erhalten Sie Ihren persönlichen Report</div>
-          <div class="bw-situation-banner__sub">Individuell auf Ihre Situation zugeschnitten</div>
+          <div class="bw-situation-banner__title">Erste Einschätzung &amp; persönlicher Report</div>
+          <div class="bw-situation-banner__sub">Finden Sie heraus, welche Option zu Ihrer Situation passt</div>
           <span class="bw-situation-banner__badge">Kostenlos</span>
         </div>
       </div>
 
       <section class="bw-situation-content">
-        <h1>Was möchten Sie klären?</h1>
+        <h1>Was ist Ihre größte Frage zur geerbten Immobilie?</h1>
 
-        <div class="bw-situation-options" role="group" aria-label="Ihre Situation" style="margin-top:18px">
-          ${renderSituationCard("value", "Wert der Immobilie", "Was ist sie wert?", selected === "value")}
-          ${renderSituationCard("sell_or_keep", "Gemeinsam geerbt", "Was ist jetzt sinnvoll?", selected === "sell_or_keep")}
-          ${renderSituationCard("unsure", "Noch keine Entscheidung", "Verkaufen · behalten · vermieten", selected === "unsure")}
+        <div class="bw-situation-options" role="group" aria-label="Ihre größte Frage" style="margin-top:18px">
+          ${renderSituationCard("value", "Was ist die Immobilie wert?", "Marktwert und realistische Preisspanne", selected === "value")}
+          ${renderSituationCard("sell_or_keep", "Verkaufen oder behalten?", "Welche Option passt zu meiner Situation?", selected === "sell_or_keep")}
+          ${renderSituationCard("rent_or_sell", "Vermieten oder verkaufen?", "Laufende Einnahmen oder Kapital freisetzen", selected === "rent_or_sell")}
+          ${renderSituationCard("multiple_heirs", "Wir sind mehrere Erben", "Gemeinsam eine faire Lösung finden", selected === "multiple_heirs")}
+          ${renderSituationCard("unsure", "Ich weiß noch nicht, was sinnvoll ist", "Erst einmal Orientierung bekommen", selected === "unsure")}
         </div>
 
         <div class="bw-situation-helper">
@@ -2550,20 +2875,57 @@
     `;
   }
 
-  function renderIntentionScreen() {
+  /* Decision Assistant, Schritt „Möglichkeiten“: Mehrfachauswahl statt
+     einer einzelnen Absicht — die Auswahl fließt als Signal in
+     computeOptionScores() ein („Ich bin noch völlig offen“ ist exklusiv). */
+  function renderOptionsScreen() {
+    return `
+      <div class="bw-header">
+        <div class="bw-header__eyebrow">Ihre Möglichkeiten</div>
+        <h1 class="bw-header__title">Welche Möglichkeiten ziehen Sie aktuell in Betracht?</h1>
+      </div>
+
+      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich – wir vergleichen die Optionen am Ende für Sie</div>
+
+      <div class="bw-choice-grid bw-choice-grid--two">
+        ${renderIconChoice("options","sell","tag","Verkaufen")}
+        ${renderIconChoice("options","rent","banknote","Vermieten")}
+        ${renderIconChoice("options","keep","key","Selbst nutzen / behalten")}
+        ${renderIconChoice("options","develop","develop","Renovieren oder entwickeln")}
+        ${renderIconChoice("options","family_takeover","people","Innerhalb der Familie übernehmen")}
+        ${renderIconChoice("options","open","help","Ich bin noch völlig offen")}
+      </div>
+
+      ${renderContinueButton()}
+    `;
+  }
+
+  /* Schritt „Entscheidungsbarrieren“: was aus Sicht des Nutzers gegen
+     das Behalten spricht. „Nichts davon“ / „Ich weiß es noch nicht“
+     sind exklusiv zu den konkreten Hürden. */
+  function renderBarriersScreen() {
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Situation</div>
-        <h1 class="bw-header__title">Was möchten Sie aktuell mit der Immobilie machen?</h1>
+        <h1 class="bw-header__title">Was spricht für Sie aktuell gegen das Behalten der Immobilie?</h1>
       </div>
 
-      <div class="bw-choice-grid">
-        ${renderSimpleChoice("intention","sell","tag","Verkaufen")}
-        ${renderSimpleChoice("intention","keep","key","Behalten")}
-        ${renderSimpleChoice("intention","rent","banknote","Vermieten")}
-        ${renderSimpleChoice("intention","family_takeover","people","Innerhalb der Familie übernehmen")}
-        ${renderSimpleChoice("intention","undecided","help","Noch nicht entschieden")}
+      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich</div>
+
+      <div class="bw-choice-grid bw-choice-grid--two">
+        ${renderChoice("barriers","refurbishment","Hoher Sanierungsbedarf")}
+        ${renderChoice("barriers","low_rent","Zu wenig Mieteinnahmen")}
+        ${renderChoice("barriers","effort","Zu viel Aufwand")}
+        ${renderChoice("barriers","financing","Bestehende Finanzierung / Schulden")}
+        ${renderChoice("barriers","heirs","Erbengemeinschaft")}
+        ${renderChoice("barriers","liquidity","Ich benötige Liquidität")}
+        ${renderChoice("barriers","no_landlord","Ich möchte kein Vermieter sein")}
+        ${renderChoice("barriers","lifestyle","Die Immobilie passt nicht zu meiner Lebenssituation")}
+        ${renderChoice("barriers","none","Nichts davon")}
+        ${renderChoice("barriers","unknown","Ich weiß es noch nicht")}
       </div>
+
+      ${renderContinueButton()}
     `;
   }
 
@@ -2715,16 +3077,19 @@
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihre Prioritäten</div>
-        <h1 class="bw-header__title">Wenn Sie an die Entscheidung denken – was ist Ihnen am wichtigsten?</h1>
+        <h1 class="bw-header__title">Was ist Ihnen bei der Entscheidung am wichtigsten?</h1>
       </div>
 
-      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich</div>
+      <div class="bw-required-note" style="margin:0 0 10px">Mehrfachauswahl möglich – Ihre Prioritäten gewichten die Optionen</div>
 
-      <div class="bw-choice-grid">
-        ${renderChoice("priority","price","Einen möglichst guten Preis erzielen")}
+      <div class="bw-choice-grid bw-choice-grid--two">
+        ${renderChoice("priority","price","Möglichst guten Preis erzielen")}
         ${renderChoice("priority","speed","Schnell eine Lösung finden")}
-        ${renderChoice("priority","effort","Möglichst wenig Aufwand haben")}
-        ${renderChoice("priority","fair","Eine faire Lösung für alle Erben finden")}
+        ${renderChoice("priority","effort","Möglichst wenig Aufwand")}
+        ${renderChoice("priority","fair","Faire Lösung für alle Erben")}
+        ${renderChoice("priority","wealth","Langfristig Vermögen aufbauen")}
+        ${renderChoice("priority","own_use","Immobilie selbst nutzen")}
+        ${renderChoice("priority","income","Laufende Einnahmen erzielen")}
         ${renderChoice("priority","unknown","Ich weiß es noch nicht")}
       </div>
 
@@ -2733,7 +3098,7 @@
   }
 
   /* =========================================================
-     REPORT COVER (Step 12)
+     REPORT COVER (Report-Schritt)
      Statische Report-Vorschau ("erbfall report.png"), kleiner
      dargestellt. Dekorativ; der echte Report kommt per E-Mail.
      ========================================================= */
@@ -2751,22 +3116,41 @@
     `;
   }
 
+  /* Brücke zwischen Decision Assistant und Report: die erste Einschätzung
+     wird hier aufgegriffen — der Report vertieft sie. */
+  function renderReportRecap() {
+    const r = computeOptionScores();
+    if (r.isOpen) {
+      return `
+      <div class="bw-report-recap">
+        Ihre erste Einschätzung: <strong>mehrere Optionen liegen gleichauf</strong>. Im Report ordnen wir sie anhand von Marktwert, Lage und Erbsituation ein.
+      </div>`;
+    }
+    return `
+      <div class="bw-report-recap">
+        Ihre erste Einschätzung: <strong>${OPTION_DEFS[r.recommended].label}</strong> (${r.scores[r.recommended]} % passend). Im Report vergleichen wir alle Optionen mit Marktwert, Chancen und Risiken.
+      </div>`;
+  }
+
   function renderContactScreen() {
     const c = state.contact;
     return `
       <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihr Ergebnis</div>
-        <h1 class="bw-header__title">Ihre persönliche Einschätzung ist fertig.</h1>
+        <div class="bw-header__eyebrow">Ihr persönlicher Report</div>
+        <h1 class="bw-header__title">Vertiefen Sie Ihre erste Einschätzung mit dem persönlichen Erbfall-Report.</h1>
       </div>
 
       <div class="bw-lead-layout">
         <div>
           ${renderReportCover()}
 
+          ${renderReportRecap()}
+
           <div class="bw-trust bw-trust--stack">
-            <span>Marktwert &amp; Preisspanne</span>
-            <span>Erbschaftsrelevante Werte</span>
-            <span>Orientierung für die nächsten Schritte</span>
+            <span>Marktwert &amp; realistische Preisspanne</span>
+            <span>Erbschaftsrelevante Faktoren</span>
+            <span>Vergleich Ihrer Optionen: Chancen &amp; Risiken</span>
+            <span>Entscheidungsfaktoren &amp; nächste Schritte</span>
           </div>
         </div>
 
@@ -3090,6 +3474,18 @@
       }
     }
 
+    if (state.currentStep === "options") {
+      if (!state.options.length) {
+        return "Bitte mindestens eine Möglichkeit auswählen.";
+      }
+    }
+
+    if (state.currentStep === "barriers") {
+      if (!state.barriers.length) {
+        return "Bitte mindestens eine Antwort auswählen.";
+      }
+    }
+
     if (state.currentStep === "priority") {
       if (!state.priority.length) {
         return "Bitte mindestens eine Option auswählen.";
@@ -3151,6 +3547,551 @@
     return { pressure: level(pressure), complexity: level(cx), risks: risks.slice(0, 3) };
   }
 
+  /* =========================================================
+     DECISION ASSISTANT — OPTIONS-SCORING
+     Erweiterung des Assessments: Die vier Handlungsoptionen
+     werden heuristisch aus den Antworten bewertet. Jede
+     Punktvergabe hinterlegt einen lesbaren Grund — daraus
+     entstehen die Pro/Contra-Punkte im Vergleich und die
+     Begründung der Empfehlung. Ergebnis ist eine Orientierung
+     (Passung 0–100), keine Finanz-, Steuer- oder Rechtsberatung.
+     ========================================================= */
+
+  const OPTION_DEFS = {
+    sell: {
+      label: "Verkaufen",
+      phrase: "einen Verkauf",
+      pros: ["Schnellere Lösung", "Weniger laufender Aufwand", "Einfacher bei mehreren Erben"],
+      cons: ["Möglicher Verzicht auf langfristige Wertentwicklung"]
+    },
+    rent: {
+      label: "Vermieten",
+      phrase: "eine Vermietung",
+      pros: ["Laufende Einnahmen", "Langfristiges Vermögenspotenzial"],
+      cons: ["Laufender Verwaltungsaufwand", "Kapital bleibt gebunden"]
+    },
+    keep: {
+      label: "Behalten",
+      phrase: "das Behalten",
+      pros: ["Eigennutzung möglich", "Langfristiger Vermögensaufbau"],
+      cons: ["Kapitalbindung", "Laufende Kosten und Instandhaltung"]
+    },
+    develop: {
+      label: "Renovieren / Entwickeln",
+      phrase: "eine Sanierung oder Entwicklung",
+      pros: ["Mögliches Wertsteigerungspotenzial"],
+      cons: ["Hoher Aufwand", "Investitionsbedarf", "Höhere Komplexität"]
+    }
+  };
+
+  const OPTION_KEYS = ["sell", "rent", "keep", "develop"];
+
+  function computeOptionScores() {
+    const p = state.property;
+    const f = state.finance;
+    const h = state.heirs;
+    const opts = state.options;
+    const bars = state.barriers;
+    const prio = state.priority;
+    const type = state.propertyType;
+    const usage = p.usage;
+    const cond = p.condition;
+    const multi = state.inheritance === "multiple_heirs";
+    const agr = multi ? h.agreement : null;
+    const manyHeirs = multi && (h.count === "4" || h.count === "5plus");
+    const highDebt = f.financing === "yes" && (f.remainingDebt === "k250_500" || f.remainingDebt === "gt_500k");
+    const needsWork = cond === "renovation_needed" || cond === "refurbishment_needed";
+    const plot = parseFloat(String(p.plotSize || "").replace(/[^0-9,.]/g, "").replace(",", "."));
+    const units = parseInt(p.units, 10);
+    const year = parseInt(p.yearBuilt, 10);
+    const multiUnit = state.houseType === "two_family" || state.houseType === "multi_family";
+    const assessment = computeAssessment();
+
+    const score = { sell: 50, rent: 50, keep: 50, develop: 50 };
+    const factors = { sell: [], rent: [], keep: [], develop: [] };
+
+    /* Punkte und lesbaren Grund in einem Schritt vergeben */
+    function add(option, delta, text) {
+      score[option] += delta;
+      if (text) factors[option].push({ text: text, delta: delta });
+    }
+
+    /* ---- Erbsituation ---- */
+    if (agr === "dispute") {
+      add("sell", 12, "Es gibt bereits Streit in der Erbengemeinschaft");
+      add("rent", -10, "Streit unter den Erben erschwert eine gemeinsame Vermietung");
+      add("keep", -12, "Streit unter den Erben erschwert das gemeinsame Halten");
+      add("develop", -12, "Streit unter den Erben erschwert ein gemeinsames Projekt");
+    } else if (agr === "different") {
+      add("sell", 8, "Mehrere Erben mit unterschiedlichen Vorstellungen");
+      add("rent", -6, "Unterschiedliche Vorstellungen der Erben");
+      add("keep", -8, "Unterschiedliche Vorstellungen der Erben");
+      add("develop", -8, "Unterschiedliche Vorstellungen der Erben");
+    } else if (agr === "undecided") {
+      add("sell", 3, "Die Erben haben noch keine gemeinsame Entscheidung");
+      add("rent", -2, "Noch keine gemeinsame Entscheidung der Erben");
+      add("keep", -3, "Noch keine gemeinsame Entscheidung der Erben");
+      add("develop", -3, "Noch keine gemeinsame Entscheidung der Erben");
+    } else if (agr === "agreed") {
+      add("rent", 3, "Die Erben sind sich grundsätzlich einig");
+      add("keep", 3, "Die Erben sind sich grundsätzlich einig");
+      add("develop", 2, "Die Erben sind sich grundsätzlich einig");
+    }
+
+    if (multi) {
+      add("sell", 4, "Ein Verkaufserlös lässt sich unter mehreren Erben klar aufteilen");
+      add("rent", -2, "Gemeinsame Vermietung erfordert laufende Abstimmung");
+      add("keep", -4, "Bei mehreren Erben ist ein Ausgleich nötig");
+      add("develop", -4, "Ein gemeinsames Projekt mit mehreren Erben ist komplexer");
+    }
+    if (manyHeirs) {
+      add("sell", 3, "Große Erbengemeinschaft");
+      add("keep", -3, "Große Erbengemeinschaft");
+      add("develop", -3, "Große Erbengemeinschaft");
+    }
+    if (state.inheritance === "sole_heir") {
+      add("rent", 4, "Als alleiniger Erbe können Sie frei entscheiden");
+      add("keep", 5, "Als alleiniger Erbe können Sie frei entscheiden");
+      add("develop", 3, "Als alleiniger Erbe können Sie frei entscheiden");
+    }
+
+    if (multi && h.takeover === "yes") {
+      add("keep", 12, "Jemand aus der Familie möchte die Immobilie übernehmen");
+      add("sell", -8, "Ein Familienmitglied möchte die Immobilie übernehmen");
+      add("rent", -5, "Ein Familienmitglied möchte die Immobilie übernehmen");
+      add("develop", -2);
+    } else if (multi && h.takeover === "unclear") {
+      add("keep", 3, "Eine Übernahme in der Familie ist noch offen");
+    }
+
+    /* ---- Zustand ---- */
+    if (cond === "refurbishment_needed") {
+      add("sell", 10, "Hoher Sanierungsbedarf");
+      add("rent", -8, "Sanierungsbedarf vor einer Vermietung");
+      add("keep", -6, "Sanierungsbedarf beim Behalten");
+      add("develop", 12, "Sanierungsbedarf mit Potenzial zur Wertsteigerung");
+    } else if (cond === "renovation_needed") {
+      add("sell", 5, "Renovierungsbedarf");
+      add("rent", -4, "Renovierungsbedarf vor einer Vermietung");
+      add("keep", -3, "Renovierungsbedarf");
+      add("develop", 8, "Renovierungsbedarf mit Potenzial zur Wertsteigerung");
+    } else if (cond === "very_good") {
+      add("sell", 2, "Sehr guter Zustand");
+      add("rent", 8, "Sehr guter Zustand");
+      add("keep", 4, "Sehr guter Zustand");
+      add("develop", -12, "Kein Sanierungsbedarf, wenig Entwicklungshebel");
+    } else if (cond === "good") {
+      add("sell", 1);
+      add("rent", 5, "Guter Zustand");
+      add("keep", 3, "Guter Zustand");
+      add("develop", -6, "Geringer Sanierungsbedarf");
+    }
+    if (year && year < 1980 && needsWork) {
+      add("develop", 3, "Baujahr vor 1980: energetisches Sanierungspotenzial");
+    }
+
+    /* ---- Nutzung ---- */
+    if (usage === "rented") {
+      add("rent", 12, "Die Immobilie ist bereits vermietet");
+      add("sell", -2, "Verkauf mit bestehendem Mietverhältnis");
+      add("keep", -4, "Bestehendes Mietverhältnis steht einer Eigennutzung entgegen");
+      add("develop", -4, "Bestehendes Mietverhältnis");
+      if (String(p.rentIncome || "").trim()) {
+        add("rent", 4, "Laufende Mieteinnahmen vorhanden");
+      }
+    } else if (usage === "owner_occupied") {
+      add("keep", 12, "Die Immobilie wird bereits selbst genutzt");
+      add("sell", -6, "Bestehende Eigennutzung");
+      add("rent", -3, "Bestehende Eigennutzung");
+      add("develop", -3);
+    } else if (usage === "family_occupied") {
+      add("keep", 10, "Ein Familienmitglied wohnt in der Immobilie");
+      add("sell", -6, "Ein Familienmitglied wohnt in der Immobilie");
+      add("rent", -6, "Ein Familienmitglied wohnt in der Immobilie");
+      add("develop", -3);
+    } else if (usage === "vacant") {
+      add("sell", 5, "Leerstand verursacht laufende Kosten");
+      add("rent", 2, "Leerstand: Vermietung kurzfristig möglich");
+      add("keep", -2, "Leerstand verursacht laufende Kosten");
+      add("develop", 6, "Leerstand ermöglicht eine Sanierung ohne Mieterwechsel");
+    }
+
+    /* ---- Immobilientyp ---- */
+    if (type === "multi_family") {
+      add("rent", 6, "Mehrfamilienhaus mit mehreren Einheiten");
+      add("keep", -4, "Eigennutzung eines Mehrfamilienhauses nur teilweise möglich");
+      add("develop", 8, "Mehrfamilienhaus mit Entwicklungspotenzial");
+    } else if (type === "house" && multiUnit) {
+      add("rent", 3, "Mehrere Wohneinheiten");
+      add("develop", 4, "Mehrere Wohneinheiten");
+    } else if (type === "apartment") {
+      add("rent", 3, "Eigentumswohnung: überschaubarer Vermietungsaufwand");
+      add("develop", -6, "Begrenzter Entwicklungsspielraum bei einer Wohnung");
+    } else if (type === "commercial") {
+      add("rent", 2, "Gewerbeobjekt: Vermietung als typische Nutzung");
+      add("keep", -8, "Gewerbeimmobilie: Eigennutzung selten passend");
+    } else if (type === "land") {
+      add("sell", 4, "Ein Grundstück lässt sich vergleichsweise einfach verkaufen");
+      add("rent", -20, "Unbebautes Grundstück: keine klassische Vermietung");
+      add("keep", -6, "Unbebautes Grundstück ohne laufende Nutzung");
+      add("develop", 14, "Grundstück mit Entwicklungspotenzial");
+    }
+    if (units >= 3 && type !== "multi_family") {
+      add("rent", 3, units + " Wohneinheiten");
+      add("develop", 3, units + " Wohneinheiten");
+    }
+    if (plot >= 800 && (type === "house" || type === "multi_family" || type === "land")) {
+      add("develop", 4, "Großes Grundstück");
+    }
+
+    /* ---- Finanzierung ---- */
+    if (f.financing === "yes") {
+      add("sell", 4, "Bestehende Finanzierung");
+      add("rent", -2, "Bestehende Finanzierung");
+      add("keep", -4, "Bestehende Finanzierung läuft weiter");
+      add("develop", -4, "Bestehende Finanzierung plus Investitionsbedarf");
+    }
+    if (highDebt) {
+      add("sell", 4, "Hohe Restschuld");
+      add("rent", -2, "Hohe Restschuld");
+      add("keep", -4, "Hohe Restschuld");
+      add("develop", -4, "Hohe Restschuld");
+    }
+    if (f.encumbrance === "yes") {
+      add("sell", -3, "Eingetragene Rechte müssen vor einem Verkauf geklärt werden");
+      add("rent", -3, "Eingetragene Rechte können die Vermietung einschränken");
+    }
+
+    /* ---- Entscheidungsdruck (bestehendes Assessment) ---- */
+    if (assessment.pressure === "Hoch") {
+      add("sell", 4, "Hoher Entscheidungsdruck");
+      add("develop", -4, "Hoher Entscheidungsdruck");
+    }
+
+    /* ---- Möglichkeiten, die der Nutzer selbst erwägt ---- */
+    const concrete = opts.filter(function (o) { return o !== "open"; });
+    if (opts.includes("sell")) add("sell", 8, "Sie ziehen einen Verkauf selbst in Betracht");
+    if (opts.includes("rent")) add("rent", 8, "Sie ziehen eine Vermietung selbst in Betracht");
+    if (opts.includes("keep")) add("keep", 8, "Sie ziehen das Behalten selbst in Betracht");
+    if (opts.includes("family_takeover")) add("keep", 8, "Sie ziehen eine Übernahme innerhalb der Familie in Betracht");
+    if (opts.includes("develop")) add("develop", 12, "Sie ziehen eine Sanierung oder Entwicklung selbst in Betracht");
+    if (concrete.length) {
+      if (!opts.includes("sell")) add("sell", -3, "Aktuell nicht in Ihrer Auswahl");
+      if (!opts.includes("rent")) add("rent", -3, "Aktuell nicht in Ihrer Auswahl");
+      if (!opts.includes("keep") && !opts.includes("family_takeover")) add("keep", -3, "Aktuell nicht in Ihrer Auswahl");
+      if (!opts.includes("develop")) add("develop", -3, "Aktuell nicht in Ihrer Auswahl");
+    }
+
+    /* ---- Was gegen das Behalten spricht ---- */
+    if (bars.includes("refurbishment")) {
+      add("sell", 6, "Sanierungsbedarf spricht für Sie gegen das Behalten");
+      add("rent", -5, "Sanierungsbedarf als Hürde");
+      add("keep", -6, "Sanierungsbedarf als Hürde");
+      add("develop", -3, "Sanierungsbedarf empfinden Sie als Hürde");
+    }
+    if (bars.includes("low_rent")) {
+      add("sell", 5, "Mieteinnahmen erscheinen Ihnen zu gering");
+      add("rent", -8, "Mieteinnahmen erscheinen Ihnen zu gering");
+      add("keep", -2);
+    }
+    if (bars.includes("effort")) {
+      add("sell", 8, "Der Aufwand des Behaltens ist Ihnen zu hoch");
+      add("rent", -8, "Vermietung bedeutet laufenden Aufwand");
+      add("keep", -5, "Behalten bedeutet laufenden Aufwand");
+      add("develop", -12, "Sanierung bedeutet hohen Aufwand");
+    }
+    if (bars.includes("financing")) {
+      add("sell", 6, "Finanzierung oder Schulden belasten das Behalten");
+      add("rent", -4, "Finanzierung oder Schulden belasten das Behalten");
+      add("keep", -8, "Finanzierung oder Schulden belasten das Behalten");
+      add("develop", -8, "Finanzierung oder Schulden plus Investitionsbedarf");
+    }
+    if (bars.includes("heirs")) {
+      add("sell", 6, "Die Erbengemeinschaft spricht für Sie gegen das Behalten");
+      add("rent", -5, "Erbengemeinschaft als Hürde");
+      add("keep", -8, "Erbengemeinschaft als Hürde");
+      add("develop", -6, "Erbengemeinschaft als Hürde");
+    }
+    if (bars.includes("liquidity")) {
+      add("sell", 12, "Sie benötigen Liquidität");
+      add("rent", -8, "Kapital bleibt gebunden, obwohl Sie Liquidität benötigen");
+      add("keep", -10, "Kapital bleibt gebunden, obwohl Sie Liquidität benötigen");
+      add("develop", -10, "Investitionsbedarf trotz Liquiditätsbedarf");
+    }
+    if (bars.includes("no_landlord")) {
+      add("sell", 8, "Sie möchten kein Vermieter sein");
+      add("rent", -15, "Sie möchten kein Vermieter sein");
+      add("develop", -3);
+    }
+    if (bars.includes("lifestyle")) {
+      add("sell", 6, "Die Immobilie passt nicht zu Ihrer Lebenssituation");
+      add("rent", 2);
+      add("keep", -12, "Die Immobilie passt nicht zu Ihrer Lebenssituation");
+      add("develop", -4);
+    }
+    if (bars.includes("none")) {
+      add("sell", -2, "Aus Ihrer Sicht spricht nichts gegen das Behalten");
+      add("rent", 4, "Aus Ihrer Sicht spricht nichts gegen das Behalten");
+      add("keep", 6, "Aus Ihrer Sicht spricht nichts gegen das Behalten");
+      add("develop", 2, "Aus Ihrer Sicht spricht nichts gegen das Behalten");
+    }
+
+    /* ---- Prioritäten ---- */
+    if (prio.includes("price")) {
+      add("sell", 4, "Ein guter Preis ist Ihnen wichtig");
+      add("develop", 4, "Wertsteigerung vor einem Verkauf kann den Preis verbessern");
+    }
+    if (prio.includes("speed")) {
+      add("sell", 8, "Sie möchten schnell eine Lösung");
+      add("rent", -4, "Vermietung bindet Sie längerfristig");
+      add("keep", -6, "Behalten löst den Entscheidungsdruck nicht");
+      add("develop", -12, "Sanierung oder Entwicklung braucht Zeit");
+    }
+    if (prio.includes("effort")) {
+      add("sell", 6, "Möglichst wenig Aufwand ist Ihnen wichtig");
+      add("rent", -6, "Laufender Verwaltungsaufwand bei Vermietung");
+      add("keep", -4, "Laufende Instandhaltung beim Behalten");
+      add("develop", -12, "Hoher Aufwand bei Sanierung oder Entwicklung");
+    }
+    if (prio.includes("fair")) {
+      add("sell", 4, "Ein Verkaufserlös lässt sich fair aufteilen");
+      add("rent", -2, "Faire Aufteilung bei gemeinsamer Vermietung komplexer");
+      add("keep", -4, "Fairer Ausgleich beim Behalten schwieriger");
+      add("develop", -2);
+    }
+    if (prio.includes("wealth")) {
+      add("sell", -8, "Ein Verkauf beendet die Wertentwicklung der Immobilie für Sie");
+      add("rent", 8, "Sie möchten langfristig Vermögen aufbauen");
+      add("keep", 6, "Sie möchten langfristig Vermögen aufbauen");
+      add("develop", 10, "Wertsteigerung passt zum Vermögensaufbau");
+    }
+    if (prio.includes("own_use")) {
+      add("sell", -10, "Wunsch nach Eigennutzung");
+      add("rent", -6, "Wunsch nach Eigennutzung");
+      add("keep", 14, "Sie möchten die Immobilie selbst nutzen");
+      add("develop", 3, "Sanierung für die eigene Nutzung");
+    }
+    if (prio.includes("income")) {
+      add("sell", -8, "Ein Verkauf bringt keine laufenden Einnahmen");
+      add("rent", 12, "Sie möchten laufende Einnahmen erzielen");
+      add("keep", -4, "Eigennutzung bringt keine laufenden Einnahmen");
+      add("develop", 3, "Entwicklung kann spätere Einnahmen steigern");
+    }
+
+    /* ---- Ausgangsfrage (Schritt 1): leichte Gewichtung ---- */
+    if (state.situation === "sell_or_keep") { add("sell", 2); add("keep", 2); }
+    if (state.situation === "rent_or_sell") { add("sell", 2); add("rent", 2); }
+
+    /* ---- Normalisieren: Orientierungswerte, keine Scheinpräzision.
+       Die Rohsumme wird um die Mitte gestaucht und begrenzt, damit
+       starke Fälle nicht als „95 zu 8“ erscheinen — die Rangfolge
+       bleibt, die Zahlen lesen sich als Tendenz. ---- */
+    const scores = {};
+    OPTION_KEYS.forEach(function (key) {
+      const compressed = 50 + (score[key] - 50) * 0.55;
+      scores[key] = Math.max(12, Math.min(92, Math.round(compressed)));
+    });
+
+    function positives(key) {
+      return factors[key].filter(function (x) { return x.delta > 0; });
+    }
+
+    const ranking = OPTION_KEYS.map(function (key) {
+      return { key: key, label: OPTION_DEFS[key].label, score: scores[key] };
+    }).sort(function (a, b) {
+      return (b.score - a.score) || (positives(b.key).length - positives(a.key).length);
+    });
+
+    const recommended = ranking[0].key;
+    const runnerUp = ranking[1].key;
+    const closeCall = ranking[0].score - ranking[1].score <= 5;
+    const reasons = uniqueTexts(positives(recommended).sort(function (a, b) { return b.delta - a.delta; })).slice(0, 3);
+    const isOpen = !reasons.length || ranking[0].score === ranking[1].score;
+
+    /* Offene Angaben: Einschätzung bewusst vorsichtig formulieren */
+    let openCount = 0;
+    if (!concrete.length) openCount++;
+    if (bars.includes("unknown")) openCount++;
+    if (prio.includes("unknown")) openCount++;
+    if (usage === "unknown") openCount++;
+    if (f.financing === "unknown") openCount++;
+    if (f.encumbrance === "unknown") openCount++;
+    if (state.inheritance === "unclear") openCount++;
+
+    const args = {};
+    OPTION_KEYS.forEach(function (key) {
+      const fs = factors[key];
+      let pros = uniqueTexts(fs.filter(function (x) { return x.delta > 0; }).sort(function (a, b) { return b.delta - a.delta; }));
+      let cons = uniqueTexts(fs.filter(function (x) { return x.delta < 0; }).sort(function (a, b) { return a.delta - b.delta; }));
+      /* Dynamische Gründe zuerst; generische Eigenschaften der Option
+         füllen nur auf, wenn die Antworten wenig hergeben. */
+      pros = pros.concat(OPTION_DEFS[key].pros.filter(function (t) { return !pros.includes(t); })).slice(0, 3);
+      cons = cons.concat(OPTION_DEFS[key].cons.filter(function (t) { return !cons.includes(t); })).slice(0, 2);
+      args[key] = { pros: pros, cons: cons };
+    });
+
+    /* Aufwand / Tempo / Komplexität je Option — grob, aus denselben Antworten */
+    const cx = assessment.complexity.toLowerCase();
+    const meta = {
+      sell: {
+        effort: "gering",
+        speed: (agr === "dispute" || f.encumbrance === "yes" || f.financing === "unknown") ? "mittel" : "schnell",
+        complexity: cx
+      },
+      rent: {
+        effort: needsWork ? "hoch" : "mittel",
+        speed: usage === "rented" ? "läuft bereits" : needsWork ? "mittel" : "zügig",
+        complexity: multi ? "hoch" : cx
+      },
+      keep: {
+        effort: needsWork ? "hoch" : "mittel",
+        speed: multi ? "mittel" : "schnell",
+        complexity: multi ? "hoch" : f.financing === "yes" ? "mittel" : "niedrig"
+      },
+      develop: {
+        effort: "hoch",
+        speed: "langsam",
+        complexity: "hoch"
+      }
+    };
+
+    return {
+      scores: scores,
+      ranking: ranking,
+      recommended: recommended,
+      runnerUp: runnerUp,
+      closeCall: closeCall,
+      isOpen: isOpen,
+      uncertain: openCount >= 3,
+      reasons: reasons,
+      arguments: args,
+      meta: meta,
+      assessment: assessment
+    };
+  }
+
+  function uniqueTexts(list) {
+    const seen = [];
+    list.forEach(function (x) { if (!seen.includes(x.text)) seen.push(x.text); });
+    return seen;
+  }
+
+  /* Abwärtskompatibel zum bisherigen Einzelfeld „intention“ (Sheet-Spalte
+     „Absicht“, GTM-Variable): aus den erwogenen Möglichkeiten abgeleitet. */
+  function deriveIntention() {
+    const concrete = state.options.filter(function (o) { return o !== "open"; });
+    return concrete.length ? concrete.join(" | ") : "undecided";
+  }
+
+  function trackDecisionViewed() {
+    const r = computeOptionScores();
+    track("decision_result_viewed", {
+      score_sell: r.scores.sell,
+      score_rent: r.scores.rent,
+      score_keep: r.scores.keep,
+      score_develop: r.scores.develop,
+      recommended_option: r.isOpen ? "open" : r.recommended,
+      close_call: r.closeCall,
+      is_open: r.isOpen
+    });
+    track("decision_recommendation_viewed", {
+      recommended_option: r.isOpen ? "open" : r.recommended,
+      recommended_score: r.scores[r.recommended],
+      reasons_count: r.reasons.length,
+      options_considered: state.options.join(" | "),
+      barriers: state.barriers.join(" | ")
+    });
+  }
+
+  /* =========================================================
+     SCREEN — ERGEBNIS / ERSTE EINSCHÄTZUNG
+     Optionsvergleich (vier Karten, Rang nach Passung) plus
+     „Unsere erste Einschätzung“ mit Gründen aus den Antworten.
+     Weiter führt zum Report (vertiefte Analyse).
+     ========================================================= */
+
+  function renderOptionCard(entry, result) {
+    const isRec = entry.key === result.recommended && !result.isOpen;
+    const a = result.arguments[entry.key];
+    const m = result.meta[entry.key];
+    return `
+      <div class="bw-option-card ${isRec ? "bw-option-card--recommended" : ""}" role="listitem">
+        ${isRec ? `<span class="bw-option-card__tag">Passt aktuell am besten</span>` : ""}
+        <div class="bw-option-card__head">
+          <span class="bw-option-card__title">${entry.label}</span>
+          <span class="bw-option-card__score"><strong>${entry.score} %</strong> passend</span>
+        </div>
+        <div class="bw-option-card__bar" aria-hidden="true">
+          <div class="bw-option-card__bar-fill" style="width:${entry.score}%"></div>
+        </div>
+        <div class="bw-option-card__meta">
+          <span>Aufwand <strong>${m.effort}</strong></span>
+          <span>Tempo <strong>${m.speed}</strong></span>
+          <span>Komplexität <strong>${m.complexity}</strong></span>
+        </div>
+        <ul class="bw-option-card__list">
+          ${a.pros.map(function (t) { return `<li class="bw-pro">${esc(t)}</li>`; }).join("")}
+          ${a.cons.map(function (t) { return `<li class="bw-con">${esc(t)}</li>`; }).join("")}
+        </ul>
+      </div>
+    `;
+  }
+
+  function renderDecisionScreen() {
+    const result = computeOptionScores();
+    const rec = OPTION_DEFS[result.recommended];
+    const second = OPTION_DEFS[result.runnerUp];
+
+    let title;
+    let lead;
+    if (result.isOpen) {
+      title = "Aktuell liegen mehrere Optionen gleichauf.";
+      lead = "Ihre bisherigen Angaben geben noch keinen klaren Ausschlag. Im Report ordnen wir die Optionen anhand von Marktwert, Lage und Erbsituation genauer ein.";
+    } else {
+      title = rec.label + " könnte für Ihre aktuelle Situation die sinnvollste Option sein.";
+      lead = "Auf Basis Ihrer Angaben spricht aktuell am meisten für " + rec.phrase + "." +
+        (result.closeCall ? " " + second.label + " liegt nur knapp dahinter – beide Wege sind für Sie realistisch." : "") +
+        " Darauf stützt sich diese Einschätzung:";
+    }
+
+    const reasons = result.isOpen ? "" : `
+        <ul class="bw-verdict__reasons">
+          ${result.reasons.map(function (t) { return `<li>${BW_ICONS.check}<span>${esc(t)}</span></li>`; }).join("")}
+        </ul>`;
+
+    const note = result.uncertain ? `
+        <p class="bw-verdict__note">Einige Ihrer Angaben sind noch offen. Die Einschätzung ist deshalb bewusst vorsichtig – im Report gehen wir genauer darauf ein.</p>` : "";
+
+    return `
+      <div class="bw-header">
+        <div class="bw-header__eyebrow">Ihre Einschätzung</div>
+        <h1 class="bw-header__title">Welche Option passt aktuell am besten zu Ihrer Situation?</h1>
+      </div>
+
+      <div class="bw-required-note" style="margin:0 0 10px">Orientierungswerte auf Basis Ihrer Angaben – keine exakte Berechnung</div>
+
+      <div class="bw-option-grid" role="list" aria-label="Vergleich Ihrer Optionen">
+        ${result.ranking.map(function (entry) { return renderOptionCard(entry, result); }).join("")}
+      </div>
+
+      <section class="bw-verdict" aria-label="Unsere erste Einschätzung">
+        <div class="bw-header__eyebrow">Unsere erste Einschätzung</div>
+        <h2 class="bw-verdict__title">${title}</h2>
+        <p class="bw-verdict__lead">${lead}</p>
+        ${reasons}
+        <div class="bw-verdict__meta">
+          <span>Entscheidungsdruck: <strong>${result.assessment.pressure}</strong></span>
+          <span>Komplexität: <strong>${result.assessment.complexity}</strong></span>
+        </div>
+        ${note}
+      </section>
+
+      <p class="bw-disclaimer">Diese Einschätzung dient als erste Orientierung und ersetzt keine individuelle Rechts-, Steuer- oder Finanzberatung.</p>
+
+      ${renderContinueButton("Vertiefte Analyse im Report erhalten")}
+    `;
+  }
+
   function continueCurrent() {
     const error = validateCurrentStep();
     const validationEl = document.getElementById("bw-validation-error");
@@ -3193,6 +4134,23 @@
       }
     }
 
+    /* Decision Journey: die Mehrfachauswahlen als eigene Events, damit
+       sich Möglichkeiten und Hürden in GTM/GA4 auswerten lassen. */
+    if (state.currentStep === "options") {
+      track("decision_options_selected", {
+        options: state.options.join(" | "),
+        count: state.options.length,
+        is_open: state.options.includes("open")
+      });
+    }
+
+    if (state.currentStep === "barriers") {
+      track("decision_barriers_selected", {
+        barriers: state.barriers.join(" | "),
+        count: state.barriers.length
+      });
+    }
+
     goNext();
   }
 
@@ -3217,22 +4175,32 @@
     return target ? target[0][target[1]] : state[field];
   }
 
+  /* Mehrfachauswahl-Felder und ihre exklusiven Werte: „weiß nicht“- bzw.
+     „offen“-Antworten schließen konkrete Optionen aus und umgekehrt. */
+  const MULTI_SELECT = {
+    priority: ["unknown"],
+    options: ["open"],
+    barriers: ["none", "unknown"]
+  };
+
   function setChoice(field, value) {
 
-    /* Prioritäten: Mehrfachauswahl ohne Auto-Weiter.
-       "unknown" ist exklusiv zu allen anderen Optionen. */
-    if (field === "priority") {
-      const list = state.priority;
-      if (value === "unknown") {
-        state.priority = list.includes("unknown") ? [] : ["unknown"];
+    /* Mehrfachauswahl ohne Auto-Weiter (Möglichkeiten, Hürden, Prioritäten). */
+    if (MULTI_SELECT[field]) {
+      const list = state[field];
+      const exclusive = MULTI_SELECT[field];
+      if (exclusive.includes(value)) {
+        state[field] = list.includes(value) ? [] : [value];
       } else {
         const i = list.indexOf(value);
         if (i >= 0) {
           list.splice(i, 1);
         } else {
           list.push(value);
-          const u = list.indexOf("unknown");
-          if (u >= 0) list.splice(u, 1);
+          exclusive.forEach(function (x) {
+            const u = list.indexOf(x);
+            if (u >= 0) list.splice(u, 1);
+          });
         }
       }
       track("option_selected", { step: state.currentStep, answer: value });
@@ -3306,6 +4274,7 @@
     const isBot = Boolean(honeypot && honeypot.value.trim());
 
     const assessment = computeAssessment();
+    const decision = computeOptionScores();
 
     const payload = {
       submitted_at: new Date().toISOString(),
@@ -3334,11 +4303,22 @@
       financing: state.finance.financing || "",
       remaining_debt: state.finance.remainingDebt || "",
       encumbrances: state.finance.encumbrance || "",
-      intention: state.intention || "",
+      intention: deriveIntention(),
       priority: state.priority.join(" | "),
       assessment_pressure: assessment.pressure,
       assessment_complexity: assessment.complexity,
       assessment_risks: assessment.risks.join(" | "),
+      /* Decision Assistant */
+      options_considered: state.options.join(" | "),
+      decision_barriers: state.barriers.join(" | "),
+      option_score_sell: decision.scores.sell,
+      option_score_rent: decision.scores.rent,
+      option_score_keep: decision.scores.keep,
+      option_score_develop: decision.scores.develop,
+      recommended_option: decision.isOpen ? "open" : decision.recommended,
+      recommended_option_label: decision.isOpen ? "Offen" : OPTION_DEFS[decision.recommended].label,
+      decision_close_call: decision.closeCall ? "yes" : "no",
+      decision_factors: decision.reasons.join(" | "),
       inheritance: state.inheritance || "",
       utm_source: state.attribution.utmSource,
       utm_medium: state.attribution.utmMedium,
@@ -3397,7 +4377,9 @@
       property_type: state.propertyType,
       house_type: state.houseType,
       address_complete: true,
-      intention: state.intention,
+      intention: deriveIntention(),
+      options_considered: state.options.join(" | "),
+      recommended_option: decision.isOpen ? "open" : decision.recommended,
       inheritance: state.inheritance,
       contact_captured: true
     });
@@ -3458,7 +4440,9 @@
 
     trackField,
 
-    submitLead
+    submitLead,
+
+    computeOptionScores
 
   };
 
