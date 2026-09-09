@@ -2641,7 +2641,6 @@
         <div class="bw-situation-banner__text">
           <div class="bw-situation-banner__title">Erste Einschätzung &amp; persönlicher Report</div>
           <div class="bw-situation-banner__sub">Finden Sie heraus, welche Option zu Ihrer Situation passt</div>
-          <span class="bw-situation-banner__badge">Kostenlos</span>
         </div>
       </div>
 
