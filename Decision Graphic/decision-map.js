@@ -217,7 +217,7 @@
 </section>`;
   var STYLE_ID = 'ipd-decision-map-styles';
   var MOUNT_ID = 'ipd-decision-map';
-  var PHOTO_FILE = 'joerg-von-bierbrauer.png';   /* liegt neben decision-map.js im Repo */
+  var PHOTO_FILE = 'assets/Joerg_Headshot1.png';   /* liegt neben decision-map.js im Repo */
   var FALLBACK_PHOTO = 'https://cdn.prod.website-files.com/6a44ebdb190d2f1ca6ddf4a7/6a53db2e9363359153fd42de_jvbl-p-1080.jpg';
   var script = document.currentScript;
 
