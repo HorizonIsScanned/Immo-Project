@@ -264,8 +264,8 @@
         <img class="ipd-expert__img" src="" alt="Jörg von Bierbrauer zu Brennstein, Immobiliengutachter">
       </div>
       <div class="ipd-expert__body">
-        <h3 class="ipd-expert__title">In einem gemeinsamen Gespräch klären wir, welcher Weg zu Ihnen passt.</h3>
-        <p class="ipd-expert__text">Wir gehen die Möglichkeiten zusammen durch – mit Blick auf Ihre individuelle Situation und die Faktoren, die für Sie den Unterschied machen.</p>
+        <h3 class="ipd-expert__title">Wir klären, was für Sie das Richtige ist.</h3>
+        <p class="ipd-expert__text">Wir gehen die Möglichkeiten zusammen durch – mit Blick auf Ihre individuelle Situation.</p>
         <p class="ipd-expert__name"><strong>Jörg von Bierbrauer zu Brennstein</strong> · Zertifizierter Immobiliengutachter mit langjähriger Erfahrung im Rhein-Main-Gebiet</p>
       </div>
     </div>
@@ -274,7 +274,7 @@
 </section>`;
   var STYLE_ID = 'ipd-decision-map-styles';
   var MOUNT_ID = 'ipd-decision-map';
-  var PHOTO_FILE = 'joerg-von-bierbrauer.png';   /* liegt neben decision-map.js im Repo */
+  var PHOTO_FILE = 'assets/Joerg_Headshot1.png';
   var FALLBACK_PHOTO = 'https://cdn.prod.website-files.com/6a44ebdb190d2f1ca6ddf4a7/6a53db2e9363359153fd42de_jvbl-p-1080.jpg';
   var script = document.currentScript;
 
