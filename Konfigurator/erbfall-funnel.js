@@ -1750,13 +1750,13 @@
        Die relativen Dateinamen hier sind der lokale Fallback. */
     
     assets: window.BW_FUNNEL_ASSETS || {
-  hero: SCRIPT_BASE + "Assets/hero-rheinhessen.jpg",
-  houseDetached: SCRIPT_BASE + "Assets/haus-freistehend.png",
-  houseSemiDetached: SCRIPT_BASE + "Assets/haus-doppelhaushaelfte.png",
-  houseTerraced: SCRIPT_BASE + "Assets/haus-reihenhaus.png",
+  hero: SCRIPT_BASE + "assets/hero-rheinhessen.jpg",
+  houseDetached: SCRIPT_BASE + "assets/haus-freistehend.png",
+  houseSemiDetached: SCRIPT_BASE + "assets/haus-doppelhaushaelfte.png",
+  houseTerraced: SCRIPT_BASE + "assets/haus-reihenhaus.png",
   houseTwoFamily: "",
   houseMultiFamily: "",
-  report: SCRIPT_BASE + "Assets/erbfall%20report.png"
+  report: SCRIPT_BASE + "assets/erbfall%20report.png"
 },
     
     steps: [
