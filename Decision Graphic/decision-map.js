@@ -253,12 +253,6 @@
       </div>
     </div>
 
-    <div class="ipd-merge">
-      <span class="ipd-merge__l ipd-merge__l1"></span><span class="ipd-merge__l ipd-merge__l2"></span><span class="ipd-merge__l ipd-merge__l3"></span><span class="ipd-merge__l ipd-merge__l4"></span><span class="ipd-merge__l ipd-merge__l5"></span>
-      <span class="ipd-pill">Der Vergleich</span>
-      <span class="ipd-merge__l ipd-merge__l6"></span>
-    </div>
-
     <div class="ipd-card ipd-expert">
       <div class="ipd-expert__photo">
         <img class="ipd-expert__img" src="" alt="Jörg von Bierbrauer zu Brennstein, Immobiliengutachter">
