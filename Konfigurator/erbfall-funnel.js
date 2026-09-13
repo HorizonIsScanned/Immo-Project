@@ -2639,8 +2639,8 @@
             onerror="this.closest('.bw-situation-banner__thumb').style.display='none'">
         </div>
         <div class="bw-situation-banner__text">
-          <div class="bw-situation-banner__title">Erste Einschätzung &amp; persönlicher Report</div>
-          <div class="bw-situation-banner__sub">Finden Sie heraus, welche Option zu Ihrer Situation passt</div>
+          <div class="bw-situation-banner__title">In 3 Minuten &amp; zu ihrer persönlichen Einschätzung</div>
+          <div class="bw-situation-banner__sub">Beantworten Sie ein paar Fragen und erhalten Sie einen klaren Fahrplan für Ihre nächsten Schritte.</div>
         </div>
       </div>
 
