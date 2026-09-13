@@ -1749,16 +1749,17 @@
        gesetzt (kleiner Konfigurationsblock am Anfang des Embeds).
        Die relativen Dateinamen hier sind der lokale Fallback. */
     
-    assets: window.BW_FUNNEL_ASSETS || {
-  hero: SCRIPT_BASE + "assets/hero-rheinhessen.jpg",
-  houseDetached: SCRIPT_BASE + "assets/haus-freistehend.png",
-  houseSemiDetached: SCRIPT_BASE + "assets/haus-doppelhaushaelfte.png",
-  houseTerraced: SCRIPT_BASE + "assets/haus-reihenhaus.png",
+  assets: window.BW_FUNNEL_ASSETS || {
+  hero: SCRIPT_BASE + "../assets/hero-rheinhessen.jpg",
+  houseDetached: SCRIPT_BASE + "../assets/haus-freistehend.png",
+  houseSemiDetached: SCRIPT_BASE + "../assets/haus-doppelhaushaelfte.png",
+  houseTerraced: SCRIPT_BASE + "../assets/haus-reihenhaus.png",
   houseTwoFamily: "",
   houseMultiFamily: "",
-  report: SCRIPT_BASE + "assets/erbfall%20report.png"
+  report: SCRIPT_BASE + "../assets/erbfall%20report.png"
 },
-    
+
+  
     steps: [
       "situation",
       "timing",
