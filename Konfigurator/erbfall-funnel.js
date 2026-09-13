@@ -1748,16 +1748,17 @@
        Im Webflow-Embed werden sie über window.BW_FUNNEL_ASSETS
        gesetzt (kleiner Konfigurationsblock am Anfang des Embeds).
        Die relativen Dateinamen hier sind der lokale Fallback. */
+    
     assets: window.BW_FUNNEL_ASSETS || {
-      hero: SCRIPT_BASE + "hero-rheinhessen.jpg",
-      houseDetached: SCRIPT_BASE + "haus-freistehend.png",
-      houseSemiDetached: SCRIPT_BASE + "haus-doppelhaushaelfte.png",
-      houseTerraced: SCRIPT_BASE + "haus-reihenhaus.png",
-      houseTwoFamily: "",
-      houseMultiFamily: "",
-      report: SCRIPT_BASE + "erbfall%20report.png"
-    },
-
+  hero: SCRIPT_BASE + "Assets/hero-rheinhessen.jpg",
+  houseDetached: SCRIPT_BASE + "Assets/haus-freistehend.png",
+  houseSemiDetached: SCRIPT_BASE + "Assets/haus-doppelhaushaelfte.png",
+  houseTerraced: SCRIPT_BASE + "Assets/haus-reihenhaus.png",
+  houseTwoFamily: "",
+  houseMultiFamily: "",
+  report: SCRIPT_BASE + "Assets/erbfall%20report.png"
+},
+    
     steps: [
       "situation",
       "timing",
