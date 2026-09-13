@@ -45,16 +45,32 @@
 .ipd-eyebrow{margin:0;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-muted)}
 .ipd-icon{flex:0 0 44px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:var(--ipd-navy)}
 .ipd-icon svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.ipd-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ipd-gap)}
-.ipd-option{display:flex;flex-direction:column;padding:30px 28px 28px;border-radius:var(--ipd-radius);background:var(--ipd-fill)}
-.ipd-option__title{margin:20px 0 0;font-size:28px;line-height:1.15;font-weight:700;color:var(--ipd-navy)}
-.ipd-option__sub{margin:8px 0 0;font-size:17px;line-height:1.35;font-weight:700;color:var(--ipd-navy)}
-.ipd-option__lead{margin:10px 0 0;padding-bottom:20px;font-size:15px;line-height:1.55;color:var(--ipd-muted)}
-.ipd-option__listhead{margin:0;padding-top:20px;border-top:1px solid var(--ipd-line);font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-navy)}
-.ipd-option__take{margin:auto 0 0;padding-top:20px;font-size:15px;line-height:1.45;font-weight:700;color:var(--ipd-navy)}
-.ipd-option__list{margin:0;padding:12px 0 0;list-style:none;display:grid;gap:8px}
-.ipd-option__list li{position:relative;margin:0;padding-left:16px;font-size:14px;line-height:1.45;color:var(--ipd-navy)}
-.ipd-option__list li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--ipd-navy)}
+.ipd-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ipd-gap);align-items:start}
+.ipd-option{position:relative;display:flex;flex-direction:column;padding:34px 30px 30px;border-radius:var(--ipd-radius);background:var(--ipd-fill)}
+.ipd-option__title{margin:22px 0 0;font-size:28px;line-height:1.15;font-weight:700;color:var(--ipd-navy)}
+.ipd-option__lead{margin:12px 0 0;font-size:15px;line-height:1.6;color:var(--ipd-muted)}
+.ipd-option__label{margin:26px 0 0;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ipd-navy)}
+.ipd-tags{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.ipd-tag{display:inline-flex;align-items:center;min-height:32px;margin:0;padding:6px 12px;border:1px solid transparent;border-radius:999px;background:#fff;color:var(--ipd-navy);font-size:13px;line-height:1.3;font-weight:400;text-align:left;cursor:pointer;-webkit-appearance:none;appearance:none;transition:border-color .15s ease,box-shadow .15s ease}
+.ipd-tag:hover,.ipd-tag:focus-visible,.ipd-tag.is-active{border-color:var(--ipd-line-strong);outline:none}
+.ipd-tag.is-active{box-shadow:0 0 0 3px rgba(0,28,78,.06)}
+.ipd-tip{position:absolute;z-index:5;max-width:280px;margin:0;padding:12px 14px;border-radius:12px;background:#fff;box-shadow:0 10px 30px rgba(0,28,78,.14),0 1px 2px rgba(0,28,78,.06);color:var(--ipd-navy);font-size:13px;line-height:1.5;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s ease,transform .15s ease}
+.ipd-tip.is-visible{opacity:1;transform:none}
+.ipd-tip::after{content:"";position:absolute;left:var(--ipd-caret,50%);bottom:-6px;width:12px;height:12px;margin-left:-6px;border-radius:2px;background:#fff;transform:rotate(45deg);box-shadow:3px 3px 6px rgba(0,28,78,.05)}
+.ipd-details{margin:auto 0 0;padding-top:24px}
+.ipd-details__btn{border-top:1px solid var(--ipd-line)}
+.ipd-details__btn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:0;padding:16px 0;border:0;background:none;color:var(--ipd-navy);font-size:14px;line-height:1.3;font-weight:700;text-align:left;cursor:pointer;-webkit-appearance:none;appearance:none}
+.ipd-details__btn:focus-visible{outline:2px solid var(--ipd-line-strong);outline-offset:4px;border-radius:6px}
+.ipd-details__chev{flex:0 0 22px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;color:var(--ipd-navy);transition:transform .25s ease}
+.ipd-details__chev svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ipd-details.is-open .ipd-details__chev{transform:rotate(180deg)}
+.ipd-details__panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}
+.ipd-details.is-open .ipd-details__panel{grid-template-rows:1fr}
+.ipd-details__inner{min-height:0;overflow:hidden}
+.ipd-details__list{margin:0;padding:0 0 18px;list-style:none;display:grid;gap:8px}
+.ipd-details__list li{position:relative;margin:0;padding-left:16px;font-size:14px;line-height:1.5;color:var(--ipd-navy)}
+.ipd-details__list li::before{content:"";position:absolute;left:0;top:.65em;width:5px;height:5px;border-radius:50%;background:var(--ipd-line-strong)}
+.ipd-option__take{display:flex;align-items:center;min-height:98px;margin:20px 0 0;padding:16px 18px;border-radius:14px;background:#fff;font-size:15px;line-height:1.45;font-weight:700;color:var(--ipd-navy)}
 .ipd-merge{position:relative;height:104px;--ipd-c3l:calc(16.6667% - var(--ipd-gap)/3);--ipd-c3r:calc(83.3333% + var(--ipd-gap)/3)}
 .ipd-merge__l{position:absolute;display:block;width:1px;background:var(--ipd-line-strong)}
 .ipd-merge__l1{top:0;left:var(--ipd-c3l);height:22px}
@@ -73,6 +89,8 @@
 .ipd-expert__name strong{font-weight:700;color:var(--ipd-navy)}
 @media(min-width:768px){.ipd{padding-left:32px;padding-right:32px}}
 @media(max-width:900px){
+.ipd-options{grid-template-columns:minmax(0,1fr);gap:16px}
+.ipd-option{padding:28px 28px 26px}
 .ipd-wheel{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center}
 .ipd-wheel__arcs,.ipd-node,.ipd-wtext{display:none}
 .ipd-wheel__center{position:static;width:240px;padding:0}
@@ -85,8 +103,6 @@
 .ipd-join::before,.ipd-join::after,.ipd-merge::before,.ipd-merge::after{content:"";display:block;width:1px;height:22px;background:var(--ipd-line-strong)}
 .ipd-join__l,.ipd-merge__l{display:none}
 .ipd-pill{position:static;transform:none}
-.ipd-options{grid-template-columns:minmax(0,1fr);gap:16px}
-.ipd-option{padding:26px 28px}
 .ipd-expert{grid-template-columns:minmax(0,1fr);gap:0;padding:0}
 .ipd-expert__photo{min-height:0;padding:28px 28px 0}
 .ipd-expert__photo img{max-width:280px}
@@ -94,13 +110,15 @@
 }
 @media(max-width:600px){
 .ipd{--ipd-radius:20px}
-.ipd-join::before,.ipd-join::after,.ipd-merge::before,.ipd-merge::after{height:18px}
 .ipd-option{padding:24px 22px 22px}
-.ipd-option__title{font-size:25px}
-.ipd-option__sub{font-size:16px}
-.ipd-option__lead{font-size:14px;padding-bottom:16px}
-.ipd-option__listhead{padding-top:16px}
-.ipd-option__take{padding-top:16px;font-size:14px}
+.ipd-option__title{font-size:25px;margin-top:18px}
+.ipd-option__lead{font-size:14px}
+.ipd-option__label{margin-top:22px}
+.ipd-tip{max-width:none}
+.ipd-details{padding-top:20px}
+.ipd-details__btn{padding:14px 0}
+.ipd-option__take{min-height:0;font-size:14px;padding:14px 16px}
+.ipd-join::before,.ipd-join::after,.ipd-merge::before,.ipd-merge::after{height:18px}
 .ipd-expert__photo{padding:24px 20px 0}
 .ipd-expert__photo img{max-width:240px}
 .ipd-expert__body{padding:20px 22px 26px}
@@ -160,45 +178,77 @@
       <div class="ipd-option">
         <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l9 9-8 8-9-9Z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg></span>
         <h3 class="ipd-option__title">Verkaufen</h3>
-        <p class="ipd-option__sub">Wert realisieren. Klarheit schaffen.</p>
-        <p class="ipd-option__lead">Ein Verkauf kann sinnvoll sein, wenn Sie die Immobilie nicht selbst nutzen möchten und langfristige Verpflichtungen vermeiden wollen.</p>
-        <p class="ipd-option__listhead">Besonders relevant, wenn …</p>
-        <ul class="ipd-option__list">
-          <li>mehrere Erben beteiligt sind und eine gemeinsame Lösung gesucht wird</li>
-          <li>keine eigene Nutzung geplant ist</li>
-          <li>größere Sanierungen oder Instandhaltungen anstehen</li>
-          <li>die Auszahlung einzelner Miterben schwer zu finanzieren ist</li>
-        </ul>
-        <p class="ipd-option__take">→ Liquidität schaffen und klare Verhältnisse herstellen.</p>
+        <p class="ipd-option__lead">Ein Verkauf kann sinnvoll sein, wenn keine der Erben die Immobilie bewohnen möchte oder die Parteien sich nicht einig sind.</p>
+        <p class="ipd-option__label">Besonders relevant, wenn</p>
+        <div class="ipd-tags">
+          <button type="button" class="ipd-tag" data-tip="Bei mehreren Erben müssen verschiedene Personen ausbezahlt werden. Ein Verkauf kann deshalb sinnvoll sein, um schnell Liquidität herzustellen.">Mehrere Erben</button>
+          <button type="button" class="ipd-tag" data-tip="Wenn niemand die Immobilie selbst bewohnen möchte, kann ein Verkauf eine klare und einfache Lösung sein.">Keine Eigennutzung</button>
+          <button type="button" class="ipd-tag" data-tip="Hoher Sanierungsbedarf kann zusätzliche finanzielle Mittel erfordern. Ein Verkauf kann diese Belastung vermeiden.">Sanierungsbedarf</button>
+          <button type="button" class="ipd-tag" data-tip="Wenn kurzfristig Geld benötigt wird, kann ein Verkauf Kapital freisetzen.">Liquiditätsbedarf</button>
+        </div>
+        <div class="ipd-tip" role="tooltip" id="ipd-tip-1"></div>
+        <div class="ipd-details">
+          <button type="button" class="ipd-details__btn" aria-expanded="false" aria-controls="ipd-details-1">Vorher sollte geprüft werden<span class="ipd-details__chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></button>
+          <div class="ipd-details__panel" id="ipd-details-1">
+            <div class="ipd-details__inner"><ul class="ipd-details__list">
+              <li>welcher realistische Marktwert erzielt werden kann</li>
+              <li>welche Kosten und Steuern beim Verkauf entstehen</li>
+              <li>ob bestehende Darlehen oder Grundschulden abzulösen sind</li>
+              <li>wie der Verkaufserlös unter den Erben verteilt wird</li>
+            </ul></div>
+          </div>
+        </div>
+        <p class="ipd-option__take">→ Setzt schnell am meisten Liquidität frei.</p>
       </div>
       <div class="ipd-option">
         <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg></span>
         <h3 class="ipd-option__title">Behalten</h3>
-        <p class="ipd-option__sub">Vermögen sichern, wenn die Immobilie zu Ihnen passt.</p>
-        <p class="ipd-option__lead">Die Immobilie zu behalten, ist emotional oft naheliegend. Wirtschaftlich sinnvoll ist es, wenn Lage, Zustand, Nutzung und Finanzierung zusammenpassen.</p>
-        <p class="ipd-option__listhead">Entscheidend ist …</p>
-        <ul class="ipd-option__list">
-          <li>ob der tatsächliche Marktwert bekannt ist, um Miterben fair auszuzahlen</li>
-          <li>ob die Finanzierung langfristig tragbar ist</li>
-          <li>welcher Sanierungs- und Instandhaltungsbedarf besteht</li>
-          <li>ob die Immobilie zu Ihrer Lebensplanung passt</li>
-        </ul>
-        <p class="ipd-option__take">→ Behalten, wenn Nutzung und Vermögensperspektive überzeugen.</p>
+        <p class="ipd-option__lead">Die Immobilie kann sinnvoll sein, wenn Sie sie selbst nutzen oder langfristig als Vermögenswert halten möchten.</p>
+        <p class="ipd-option__label">Besonders relevant, wenn</p>
+        <div class="ipd-tags">
+          <button type="button" class="ipd-tag" data-tip="Wenn Sie selbst in der Immobilie wohnen möchten, kann das Behalten gegenüber einem Verkauf sinnvoll sein.">Eigene Nutzung</button>
+          <button type="button" class="ipd-tag" data-tip="Die Immobilie bleibt im Familienvermögen und kann langfristig von einer Wertentwicklung profitieren.">Familienvermögen</button>
+          <button type="button" class="ipd-tag" data-tip="Das Behalten setzt voraus, dass die Erben sich über Eigentum, Nutzung und Finanzierung einigen können.">Gemeinsame Lösung</button>
+          <button type="button" class="ipd-tag" data-tip="Die laufenden Kosten, Finanzierung und mögliche Auszahlungen an Miterben sollten dauerhaft tragbar sein.">Tragbare Finanzierung</button>
+        </div>
+        <div class="ipd-tip" role="tooltip" id="ipd-tip-2"></div>
+        <div class="ipd-details">
+          <button type="button" class="ipd-details__btn" aria-expanded="false" aria-controls="ipd-details-2">Vorher sollte geprüft werden<span class="ipd-details__chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></button>
+          <div class="ipd-details__panel" id="ipd-details-2">
+            <div class="ipd-details__inner"><ul class="ipd-details__list">
+              <li>welcher Marktwert als faire Grundlage zwischen den Erben gilt</li>
+              <li>ob Finanzierung, laufende Kosten und Rücklagen tragbar sind</li>
+              <li>welcher Sanierungs- und Instandhaltungsbedarf besteht</li>
+              <li>ob die Immobilie zur eigenen Lebens- und Vermögensplanung passt</li>
+            </ul></div>
+          </div>
+        </div>
+        <p class="ipd-option__take">→ Selbst darin wohnen und von der langfristigen Wertentwicklung profitieren.</p>
       </div>
       <div class="ipd-option">
         <span class="ipd-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="14.5" r="4"/><path d="M11 11.5 20 2.5"/><path d="M17 5.5 19.5 8M14.5 8l2.5 2.5"/></svg></span>
         <h3 class="ipd-option__title">Vermieten</h3>
-        <p class="ipd-option__sub">Immobilie behalten und Erträge erzielen.</p>
-        <p class="ipd-option__lead">Vermieten kann ein guter Mittelweg sein: Die Immobilie bleibt im Familienvermögen und erzeugt laufende Einnahmen. Entscheidend ist die Rendite nach allen Kosten.</p>
-        <p class="ipd-option__listhead">Vorher sollte geprüft werden …</p>
-        <ul class="ipd-option__list">
-          <li>welche Miete am Standort realistisch und zulässig ist</li>
-          <li>ob Zustand, Grundriss und energetische Qualität passen</li>
-          <li>welche Kosten für Instandhaltung, Verwaltung und Rücklagen entstehen</li>
-          <li>wie hoch der laufende Aufwand für Sie ist</li>
-          <li>ob eine attraktive Nettorendite bleibt</li>
-        </ul>
-        <p class="ipd-option__take">→ Nicht die Miete zählt – sondern was am Ende übrig bleibt.</p>
+        <p class="ipd-option__lead">Vermieten kann ein guter Mittelweg sein: Die Immobilie bleibt im Familienvermögen und erzeugt laufende Einnahmen.</p>
+        <p class="ipd-option__label">Besonders relevant, wenn</p>
+        <div class="ipd-tags">
+          <button type="button" class="ipd-tag" data-tip="Wenn niemand selbst einziehen möchte, kann Vermietung die Immobilie trotzdem im Familienvermögen halten.">Keine Eigennutzung</button>
+          <button type="button" class="ipd-tag" data-tip="Vermietung eignet sich besonders, wenn die Immobilie langfristig gehalten und nicht kurzfristig verkauft werden soll.">Langfristiger Bestand</button>
+          <button type="button" class="ipd-tag" data-tip="Eine stabile Nachfrage am Standort erhöht die Chance auf verlässliche Mieteinnahmen.">Gute Mietnachfrage</button>
+          <button type="button" class="ipd-tag" data-tip="Mieteinnahmen können laufende Kosten decken und einen regelmäßigen Ertrag aus der Immobilie schaffen.">Laufende Einnahmen</button>
+        </div>
+        <div class="ipd-tip" role="tooltip" id="ipd-tip-3"></div>
+        <div class="ipd-details">
+          <button type="button" class="ipd-details__btn" aria-expanded="false" aria-controls="ipd-details-3">Vorher sollte geprüft werden<span class="ipd-details__chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></button>
+          <div class="ipd-details__panel" id="ipd-details-3">
+            <div class="ipd-details__inner"><ul class="ipd-details__list">
+              <li>welche Miete realistisch und rechtlich zulässig ist</li>
+              <li>welche Kosten für Instandhaltung, Verwaltung und Rücklagen entstehen</li>
+              <li>ob Zustand, Grundriss und energetische Qualität zur Vermietung passen</li>
+              <li>welche Nettorendite nach allen Kosten tatsächlich bleibt</li>
+            </ul></div>
+          </div>
+        </div>
+        <p class="ipd-option__take">→ Laufende Erträge erzielen, ohne die Immobilie zu verkaufen.</p>
       </div>
     </div>
 
@@ -236,6 +286,111 @@
     document.head.appendChild(st);
   }
 
+  /* Tooltips der Tags ("Besonders relevant, wenn") + Aufklappbereich ("Vorher sollte geprüft werden") */
+  function initInteractions(host) {
+    var lastTouch = 0;
+    var pinned = null;      /* per Klick/Tap fixierter Tag */
+    var hovered = null;
+
+    function tipOf(tag) { return tag.parentNode.parentNode.querySelector('.ipd-tip'); }
+
+    function place(tag, tip) {
+      var card = tag.parentNode.parentNode;
+      var pad = parseFloat(getComputedStyle(card).paddingLeft) || 0;
+      var inner = card.clientWidth - pad * 2;
+      tip.style.maxWidth = Math.min(280, inner) + 'px';
+      var tipW = tip.offsetWidth;
+      var tagCx = tag.offsetLeft + tag.offsetWidth / 2;
+      var left = Math.max(pad, Math.min(tagCx - tipW / 2, pad + inner - tipW));
+      tip.style.left = left + 'px';
+      tip.style.top = (tag.offsetTop - tip.offsetHeight - 10) + 'px';
+      tip.style.setProperty('--ipd-caret', Math.max(14, Math.min(tagCx - left, tipW - 14)) + 'px');
+    }
+
+    function show(tag) {
+      var tip = tipOf(tag);
+      if (!tip) return;
+      tip.textContent = tag.getAttribute('data-tip') || '';
+      tip.classList.add('is-visible');
+      place(tag, tip);
+      tag.classList.add('is-active');
+      tag.setAttribute('aria-describedby', tip.id);
+    }
+
+    function hide(tag) {
+      var tip = tipOf(tag);
+      if (tip) tip.classList.remove('is-visible');
+      tag.classList.remove('is-active');
+      tag.removeAttribute('aria-describedby');
+    }
+
+    function hideAll() {
+      var open = host.querySelectorAll('.ipd-tag.is-active');
+      for (var i = 0; i < open.length; i++) hide(open[i]);
+      pinned = null; hovered = null;
+    }
+
+    var tags = host.querySelectorAll('.ipd-tag');
+    for (var i = 0; i < tags.length; i++) (function (tag) {
+      tag.addEventListener('mouseenter', function () {
+        if (Date.now() - lastTouch < 600) return;   /* Touch-Emulation ignorieren */
+        if (pinned && pinned !== tag) hide(pinned), pinned = null;
+        hovered = tag; show(tag);
+      });
+      tag.addEventListener('mouseleave', function () {
+        if (pinned === tag) return;
+        hovered = null; hide(tag);
+      });
+      tag.addEventListener('focus', function () { show(tag); });
+      tag.addEventListener('blur', function () { if (pinned !== tag) hide(tag); });
+      tag.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (pinned === tag) { hide(tag); pinned = null; return; }
+        if (pinned) hide(pinned);
+        pinned = tag; show(tag);
+      });
+    })(tags[i]);
+
+    host.addEventListener('touchstart', function () { lastTouch = Date.now(); }, { passive: true });
+    document.addEventListener('click', function (e) {
+      if (pinned && !pinned.contains(e.target)) hideAll();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hideAll();
+    });
+    window.addEventListener('resize', function () {
+      var active = pinned || hovered;
+      if (active) place(active, tipOf(active));
+    });
+
+    /* Gleiche Kartenhöhe im geschlossenen Zustand (Desktop); beim Aufklappen wächst nur die eigene Karte */
+    var cards = host.querySelectorAll('.ipd-option');
+    function equalize() {
+      var i, h, max = 0;
+      for (i = 0; i < cards.length; i++) cards[i].style.minHeight = '';
+      if (window.innerWidth <= 900) return;
+      for (i = 0; i < cards.length; i++) {
+        var panel = cards[i].querySelector('.ipd-details__panel');
+        h = cards[i].offsetHeight - (panel ? panel.offsetHeight : 0);
+        if (h > max) max = h;
+      }
+      for (i = 0; i < cards.length; i++) cards[i].style.minHeight = max + 'px';
+    }
+    equalize();
+    window.addEventListener('resize', equalize);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(equalize);
+
+    var btns = host.querySelectorAll('.ipd-details__btn');
+    for (var j = 0; j < btns.length; j++) (function (btn) {
+      btn.addEventListener('click', function () {
+        var box = btn.parentNode;
+        var open = !box.classList.contains('is-open');
+        box.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })(btns[j]);
+  }
+
   function mount() {
     injectStyles();
     var host = document.getElementById(MOUNT_ID);
@@ -254,6 +409,7 @@
       img.onerror = function () { img.onerror = null; img.src = FALLBACK_PHOTO; };
       img.src = window.IPD_EXPERT_PHOTO || (base + PHOTO_FILE);
     }
+    initInteractions(host);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
