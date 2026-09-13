@@ -79,7 +79,7 @@
 .ipd-merge__l3{top:0;left:var(--ipd-c3r);height:22px}
 .ipd-merge__l4{top:22px;left:var(--ipd-c3l);right:calc(100% - var(--ipd-c3r));width:auto;height:1px}
 .ipd-merge__l5{top:22px;left:50%;height:16px}
-.ipd-merge__l6{top:70px;left:50%;height:34px}
+.ipd-merge__l6{top:22px;left:50%;height:82px}
 .ipd-expert{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:36px;align-items:center;padding:0 56px 0 0;overflow:hidden}
 .ipd-expert__photo{align-self:stretch;display:flex;align-items:flex-end;justify-content:center;min-height:300px;padding:28px 24px 0}
 .ipd-expert__photo img{display:block;width:100%;max-width:260px;height:auto;border-radius:18px 18px 0 0}
@@ -254,9 +254,18 @@
     </div>
 
  <div class="ipd-merge">
-      <span class="ipd-merge__l ipd-merge__l1"></span><span class="ipd-merge__l ipd-merge__l2"></span><span class="ipd-merge__l ipd-merge__l3"></span><span class="ipd-merge__l ipd-merge__l4"></span><span class="ipd-merge__l ipd-merge__l5"></span>
-      <span class="ipd-merge__l ipd-merge__l6"></span>
-    </div>
+
+  <span class="ipd-merge__l ipd-merge__l1"></span>
+
+  <span class="ipd-merge__l ipd-merge__l2"></span>
+
+  <span class="ipd-merge__l ipd-merge__l3"></span>
+
+  <span class="ipd-merge__l ipd-merge__l4"></span>
+
+  <span class="ipd-merge__l ipd-merge__l6"></span>
+
+</div>
 
     <div class="ipd-card ipd-expert">
       <div class="ipd-expert__photo">
