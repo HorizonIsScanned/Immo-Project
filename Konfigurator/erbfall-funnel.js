@@ -3138,7 +3138,7 @@
     return `
       <div class="bw-header">
         <div class="bw-header__eyebrow">Ihr persönlicher Report</div>
-        <h1 class="bw-header__title">Vertiefen Sie Ihre erste Einschätzung mit dem persönlichen Erbfall-Report.</h1>
+        <h1 class="bw-header__title">Geschafft: Ihr kostenloser persönlicher Erbfall-Report ist fertig.</h1>
       </div>
 
       <div class="bw-lead-layout">
