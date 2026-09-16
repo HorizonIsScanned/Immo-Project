@@ -2641,8 +2641,8 @@
             onerror="this.closest('.bw-situation-banner__thumb').style.display='none'">
         </div>
         <div class="bw-situation-banner__text">
-          <div class="bw-situation-banner__title">In 3 Minuten zu Ihrem persönlichen Erbfall-Report</div>
-          <div class="bw-situation-banner__sub">Beantworten Sie ein paar Fragen und erhalten Sie einen klaren Fahrplan für Ihre nächsten Schritte.</div>
+          <div class="bw-situation-banner__title">In 3 Minuten zu Ihrem kostenlosen Erbfall-Report</div>
+          <div class="bw-situation-banner__sub">Beantworten Sie ein paar Fragen und erhalten Sie einen individuellen Fahrplan für Ihrer Situation.</div>
         </div>
       </div>
 
