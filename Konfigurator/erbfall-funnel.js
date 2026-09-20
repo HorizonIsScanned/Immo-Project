@@ -1416,6 +1416,109 @@
 }
 
 /* =========================================================
+   FINALER SCHRITT — KOMPAKTES CONVERSION-LAYOUT
+   Ergebnis in einer Zeile, drei Benefits mit kleiner
+   Report-Vorschau daneben, Fokus auf dem Formular.
+   ========================================================= */
+
+#bw-property-funnel .bw-final-result {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--bw-radius-small);
+  background: var(--bw-tint);
+}
+
+#bw-property-funnel .bw-final-result span {
+  display: block;
+  font-family: var(--bw-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-final-result strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--bw-serif);
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-final-text {
+  margin: 12px 0 0;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-final-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+#bw-property-funnel .bw-trust--final {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 0;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-final-row .bw-report-image {
+  flex: 0 0 76px;
+  width: 76px;
+  margin: 0;
+  box-shadow: 0 6px 18px rgba(5, 27, 76, .16);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#bw-property-funnel .bw-final-row .bw-report-image img {
+  border-radius: 0;
+}
+
+#bw-property-funnel .bw-final-form__title {
+  margin: 0;
+  font-family: var(--bw-serif);
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--bw-navy);
+}
+
+#bw-property-funnel .bw-final-form__sub {
+  margin: 4px 0 14px;
+  font-family: var(--bw-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--bw-muted);
+}
+
+#bw-property-funnel .bw-app--report .bw-field {
+  margin-bottom: 10px;
+}
+
+#bw-property-funnel .bw-app--report .bw-trust {
+  gap: 6px 14px;
+}
+
+#bw-property-funnel .bw-app--report .bw-privacy {
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* =========================================================
    SUCCESS
    ========================================================= */
 
@@ -1590,6 +1693,11 @@
 
   #bw-property-funnel .bw-verdict {
     padding: 24px;
+  }
+
+  #bw-property-funnel .bw-final-row .bw-report-image {
+    flex-basis: 104px;
+    width: 104px;
   }
 }
 
@@ -1998,6 +2106,9 @@
     return CONFIG.steps.filter(function (step) {
       if (step === "house_type") return state.propertyType === "house";
       if (step === "heirs") return state.inheritance === "multiple_heirs";
+      /* Ergebnis-Schritt ist in den finalen Report-Schritt integriert:
+         das Ergebnis wird dort kompakt gezeigt (renderReportResult). */
+      if (step === "decision") return false;
       return true;
     });
   }
@@ -2041,7 +2152,9 @@
 
     render();
 
-    if (step === "decision") {
+    /* Das Ergebnis erscheint jetzt auf dem finalen Schritt — die
+       Ergebnis-Events feuern deshalb dort weiter. */
+    if (step === "decision" || step === "contact") {
       trackDecisionViewed();
     }
 
@@ -2295,6 +2408,11 @@
 
         <div class="bw-progress__meta">
 
+          ${state.currentStep === "contact" ? `
+          <span>
+            Fast geschafft
+          </span>
+          ` : `
           <span>
             Schritt ${current} von ${total}
           </span>
@@ -2302,6 +2420,7 @@
           <span>
             ${Math.round(percentage)} %
           </span>
+          `}
 
         </div>
 
@@ -3133,30 +3252,48 @@
       </div>`;
   }
 
+  /* Kompaktes Ergebnis auf dem finalen Schritt — kommt unverändert aus
+     computeOptionScores(), nur die Darstellung ist reduziert. */
+  function renderReportResult() {
+    const r = computeOptionScores();
+    if (r.isOpen) {
+      return `
+        <div class="bw-final-result">
+          <span>Nach Ihren Angaben liegen aktuell</span>
+          <strong>mehrere Optionen gleichauf</strong>
+        </div>`;
+    }
+    return `
+        <div class="bw-final-result">
+          <span>Nach Ihren Angaben spricht aktuell am meisten für:</span>
+          <strong>${OPTION_DEFS[r.recommended].label}</strong>
+        </div>`;
+  }
+
   function renderContactScreen() {
     const c = state.contact;
     return `
-      <div class="bw-header">
-        <div class="bw-header__eyebrow">Ihr persönlicher Report</div>
-        <h1 class="bw-header__title">Geschafft: Ihr kostenloser persönlicher Erbfall-Report ist fertig.</h1>
-      </div>
-
       <div class="bw-lead-layout">
-        <div>
-          ${renderReportCover()}
+        <div class="bw-final-intro">
+          <h1 class="bw-header__title">Ihre persönliche Auswertung ist fertig</h1>
 
-          ${renderReportRecap()}
+          ${renderReportResult()}
 
-          <div class="bw-trust bw-trust--stack">
-            <span>Marktwert &amp; realistische Preisspanne</span>
-            <span>Erbschaftsrelevante Faktoren</span>
-            <span>Vergleich Ihrer Optionen: Chancen &amp; Risiken</span>
-            <span>Entscheidungsfaktoren &amp; nächste Schritte</span>
+          <p class="bw-final-text">Im vollständigen Erbfall-Report erfahren Sie, welche Optionen für Ihre Situation infrage kommen – und warum.</p>
+
+          <div class="bw-final-row">
+            <div class="bw-trust bw-trust--final">
+              <span>Verkauf, Behalten &amp; Vermieten im Vergleich</span>
+              <span>Einschätzung von Wert &amp; Chancen</span>
+              <span>Konkrete nächste Schritte für Ihre Situation</span>
+            </div>
+            ${renderReportCover()}
           </div>
         </div>
 
         <div class="bw-form-card">
-          <div class="bw-section-label" style="margin-top:0">Wohin dürfen wir Ihren Report senden?</div>
+          <h2 class="bw-final-form__title">Ihr persönlicher Erbfall-Report</h2>
+          <p class="bw-final-form__sub">Kostenlos &amp; unverbindlich per E-Mail erhalten.</p>
 
           <div class="bw-field">
             <label class="bw-field__label" for="bw-email">E-Mail</label>
@@ -3195,13 +3332,12 @@
 
           <div class="bw-trust">
             <span>Kostenlos &amp; unverbindlich</span>
-            <span>Neutral &amp; unabhängig</span>
+            <span>Ohne Verkaufsdruck</span>
             <span>Vertrauliche Behandlung Ihrer Daten</span>
           </div>
 
           <div class="bw-privacy">
-            Auf Wunsch bespricht Immobilienexperte Jörg von Bierbrauer (Rhein-Main) die Ergebnisse persönlich mit Ihnen.
-            Mit dem Absenden stimmen Sie der Kontaktaufnahme zum Erbfall-Report zu.
+            Mit dem Absenden stimmen Sie der Kontaktaufnahme zum Erbfall-Report zu – auf Wunsch bespricht Immobilienexperte Jörg von Bierbrauer (Rhein-Main) die Ergebnisse persönlich mit Ihnen. Erste Orientierung, keine Rechts-, Steuer- oder Finanzberatung.
           </div>
         </div>
       </div>
