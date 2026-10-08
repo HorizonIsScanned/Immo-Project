@@ -1775,6 +1775,53 @@
   margin-top: 12px;
 }
 
+/* Kompakter Einstieg: Hero inkl. Trust-Leiste passt in den Desktop-Viewport */
+#bw-property-funnel.bw-compact .bw-situation-banner {
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 4px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-banner__thumb {
+  width: 44px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-banner__title {
+  font-size: 17px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-banner__sub {
+  display: none;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-content h1 {
+  font-size: 21px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-options {
+  gap: 6px;
+  margin-top: 12px !important;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-card {
+  min-height: 52px;
+  padding: 6px 12px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-card__number {
+  width: 36px;
+  height: 36px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-card__title {
+  font-size: 15px;
+}
+
+#bw-property-funnel.bw-compact .bw-situation-card__description {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 #bw-property-funnel.bw-compact .bw-form-card {
   padding: 16px 12px;
 }
